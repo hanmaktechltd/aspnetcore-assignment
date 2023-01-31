@@ -29,7 +29,8 @@ namespace Queue_Management_System.Common
                         user.Id = Convert.ToInt32(dataReader["id"]);
                         user.Name = dataReader["name"].ToString();
                         user.Password =dataReader["password"].ToString();
-
+                        //Add role here
+                        user.Role = dataReader["role"].ToString();
                     }
                 }
                 connection.Close();

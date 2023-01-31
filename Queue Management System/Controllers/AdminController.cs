@@ -7,7 +7,7 @@ namespace Queue_Management_System.Controllers
     public class AdminController : Controller
     {
 
-       /* [HttpGet]*/
+        [HttpGet]
         public IActionResult Dashboard()
         {
             return View("Index");

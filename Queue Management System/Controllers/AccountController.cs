@@ -58,9 +58,18 @@ namespace Queue_Management_System.Controllers
                     }
                 }
             }
-            return RedirectToAction("Dashboard", "Admin");
+            var role = HttpContext.Session.GetString("Role");
+            //Add if condition according to role
+            if (role == "Admin")
+            {
+                return RedirectToAction("Dashboard", "Admin");
+            }
+            else
+            {
+                return RedirectToAction("ServicePoint", "Queue");
+            }
+            
         }
-
         private bool SignInMethod(string name, string password)
         {
             bool flag = false;
@@ -72,6 +81,8 @@ namespace Queue_Management_System.Controllers
                 flag = true;
 
                 HttpContext.Session.SetString("Name", userDetails.Name);
+                HttpContext.Session.SetString("Role", userDetails.Role);
+               
             }
             else
             {
