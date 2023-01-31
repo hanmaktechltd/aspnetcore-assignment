@@ -12,6 +12,7 @@
     <div class="col-md-4">
         <form asp-action="Login">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @Html.HiddenFor(x => x.ReturnUrl)
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -31,6 +32,18 @@
 
 <div>
     <a asp-action="Index">Back to List</a>
+</div>
+
+<div>
+    @if (ViewBag.ErrorMsg != null)
+    {
+        <span class="alert alert-danger">@ViewBag.ErrorMsg</span>
+    }
+
+    @if (ViewBag.Success != null)
+    {
+        <span class="alert alert-success">@ViewBag.Success</span>
+    }
 </div>
 
 @section Scripts {

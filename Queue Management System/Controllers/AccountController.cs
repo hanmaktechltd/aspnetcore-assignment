@@ -1,13 +1,72 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Queue_Management_System.Common;
+using Queue_Management_System.Models;
 
 namespace Queue_Management_System.Controllers
 {
     public class AccountController : Controller
     {
-
-        public IActionResult Login()
+        private const string TableName = "users";
+        private IConfiguration _config;
+        CommonHelper _helper;        
+        public AccountController(IConfiguration config)
         {
-            return View();
+            _config = config;
+            _helper = new CommonHelper(_config);
+        }
+        public IActionResult Login(string ReturnUrl = "/")
+        {
+            LoginVM objLoginModel = new LoginVM();
+            objLoginModel.ReturnUrl = ReturnUrl;
+            return View(objLoginModel);
+        }
+
+        [HttpPost]
+        public IActionResult Login(LoginVM vm)
+        {
+            if (string.IsNullOrEmpty(vm.Name) && string.IsNullOrEmpty(vm.Password))
+            {
+                ViewBag.ErrorMsg = "Name and Password Empty";
+                return View();
+            }
+            else
+            {
+                bool Isfind = SignInMethod(vm.Name, vm.Password);
+                if (Isfind == true)
+                {
+                    ViewBag.Success = "Thanks for Login";
+                  
+                    if (vm.ReturnUrl == "/Admin/Dashboard")
+                    {
+                      return  RedirectToAction("Dashboard", "Admin");
+                    }
+                    else if((vm.ReturnUrl == "/Queue/ServicePoint"))
+                    {
+                        return RedirectToAction("ServicePoint", "Queue");
+                    } 
+                }
+            }
+            return View("Loginn");
+        }
+
+        private bool SignInMethod(string name, string password)
+        {
+            bool flag = false;
+            string query = $"select * from {TableName} where Name='{name}' and Password='{password}'  ";
+            var userDetails = _helper.GetUserByUserName(query);
+
+            if (userDetails.Name != null)
+            {
+                flag = true;
+
+                HttpContext.Session.SetString("Name", userDetails.Name);
+            }
+            else
+            {
+                ViewBag.ErrorMsg = "Name $ Password wrong";
+            }
+            return flag;
         }
 
     }
