@@ -13,6 +13,7 @@ namespace Queue_Management_System.Repositories
                           "Database=QMS";
 
         private const string TABLE_NAME = "users";
+        private const string TABLE_NAME2 = "servicepoints";
 
         private NpgsqlConnection connection;
 
@@ -36,16 +37,32 @@ namespace Queue_Management_System.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<AdminVM>> GetAll()
+        public async Task<IEnumerable<ServiceProviderVM>> GetServiceProviders()
         {
-            List<AdminVM> games = new List<AdminVM>();
+            List<ServiceProviderVM> games = new List<ServiceProviderVM>();
 
             string commandText = $"SELECT * FROM {TABLE_NAME}";
             await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
             await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
                 while (await reader.ReadAsync())
                 {
-                    AdminVM game = ReadBoardGame(reader);
+                    ServiceProviderVM game = ReadBoardGame(reader);
+                    games.Add(game);
+                }
+
+            return games;
+        }
+
+        public async Task<IEnumerable<ServicePointVM>> GetServicePoints()
+        {
+            List<ServicePointVM> games = new List<ServicePointVM>();
+
+            string commandText = $"SELECT * FROM {TABLE_NAME2}";
+            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
+            await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                while (await reader.ReadAsync())
+                {
+                    ServicePointVM game = ReadServicePoints(reader);
                     games.Add(game);
                 }
 
@@ -57,16 +74,30 @@ namespace Queue_Management_System.Repositories
             throw new NotImplementedException();
         }
 
-        private static AdminVM ReadBoardGame(NpgsqlDataReader reader)
+        private static ServiceProviderVM ReadBoardGame(NpgsqlDataReader reader)
         {
             int? id = reader["id"] as int?;
             string name = reader["name"] as string;
             string role = reader["role"] as string;
-            AdminVM game = new AdminVM
+            ServiceProviderVM game = new ServiceProviderVM
             {
                 Id = (int)id,
                 Name = name,
                 Role = role
+            };
+            return game;
+        }
+
+        private static ServicePointVM ReadServicePoints(NpgsqlDataReader reader)
+        {
+            int? id = reader["id"] as int?;
+            string name = reader["name"] as string;
+            int? serviceproviderId = reader["serviceproviderId"] as int?;
+            ServicePointVM game = new ServicePointVM
+            {
+                Id = (int)id,
+                Name = name,
+                ServiceProviderId = (int)serviceproviderId
             };
             return game;
         }

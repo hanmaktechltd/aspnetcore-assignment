@@ -4,8 +4,8 @@ namespace Queue_Management_System.Contracts
 {
     public interface IAdminRepository
     {
-        Task<IEnumerable<AdminVM>> GetAll();
-
+        Task<IEnumerable<ServiceProviderVM>> GetServiceProviders();
+        Task<IEnumerable<ServicePointVM>> GetServicePoints();
         Task<AdminVM> Get(int id);
 
         Task Add(AdminVM game);

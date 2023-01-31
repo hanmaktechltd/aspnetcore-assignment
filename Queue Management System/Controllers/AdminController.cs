@@ -20,14 +20,20 @@ namespace Queue_Management_System.Controllers
         {
             return View();
         }
-        public async Task<ActionResult<IEnumerable<AdminVM>>> ViewServiceProviders()
+        public async Task<ActionResult<IEnumerable<ServiceProviderVM>>> ViewServiceProviders()
         {
-            var allGames = await _adminRepository.GetAll();//rename this to  GetServiceProviders
+            var allGames = await _adminRepository.GetServiceProviders();
             return View(allGames);
         }
-       
 
-       
+        public async Task<ActionResult<IEnumerable<ServicePointVM>>> ViewServicePoints()
+        {
+            var allGames = await _adminRepository.GetServicePoints(); 
+            return View(allGames);
+        }
+
+
+
 
     }
 }
