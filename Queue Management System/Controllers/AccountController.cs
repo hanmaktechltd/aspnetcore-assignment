@@ -37,13 +37,17 @@ namespace Queue_Management_System.Controllers
             }
             else
             {
+
+                
                 bool Isfind = SignInMethod(vm.Name, vm.Password);
+                var gerUserrole = HttpContext.Session.GetString("Role");
                 if (Isfind == true)
                 {
                     ViewBag.Success = "Thanks for Login";
                     var claims = new List<Claim>
                             {
-                                new Claim(ClaimTypes.Name, vm.Name)
+                                new Claim(ClaimTypes.Name, vm.Name),
+                                new Claim(ClaimTypes.Role, gerUserrole)
                             };
                     var claimsIdentity = new ClaimsIdentity(claims, "Login");
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
@@ -93,7 +97,7 @@ namespace Queue_Management_System.Controllers
 
 
 
-        public async Task<IActionResult> LogOut()
+        public async Task<IActionResult> Logout()
         {
             //SignOutAsync is Extension method for SignOut
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

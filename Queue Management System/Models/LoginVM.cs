@@ -12,8 +12,7 @@ namespace Queue_Management_System.Models
 
         [Required]
         public string Password { get; set; }
-        public string Role { get; set; }
-
+        public string Role { get; set; } //This should be removed
         public string ReturnUrl { get; set; }
     }
 }
