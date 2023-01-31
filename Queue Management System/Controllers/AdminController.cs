@@ -10,7 +10,7 @@ namespace Queue_Management_System.Controllers
        /* [HttpGet]*/
         public IActionResult Dashboard()
         {
-            return View();
+            return View("Index");
         }
 
     }

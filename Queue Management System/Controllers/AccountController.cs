@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using Queue_Management_System.Common;
+using Queue_Management_System.Data;
 using Queue_Management_System.Models;
+using System.Security.Claims;
 
 namespace Queue_Management_System.Controllers
 {
@@ -9,7 +14,7 @@ namespace Queue_Management_System.Controllers
     {
         private const string TableName = "users";
         private IConfiguration _config;
-        CommonHelper _helper;        
+        CommonHelper _helper;
         public AccountController(IConfiguration config)
         {
             _config = config;
@@ -23,7 +28,7 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(LoginVM vm)
+        public async Task<IActionResult> Login(LoginVM vm)
         {
             if (string.IsNullOrEmpty(vm.Name) && string.IsNullOrEmpty(vm.Password))
             {
@@ -36,18 +41,24 @@ namespace Queue_Management_System.Controllers
                 if (Isfind == true)
                 {
                     ViewBag.Success = "Thanks for Login";
-                  
+                    var claims = new List<Claim>
+                            {
+                                new Claim(ClaimTypes.Name, vm.Name)
+                            };
+                    var claimsIdentity = new ClaimsIdentity(claims, "Login");
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
                     if (vm.ReturnUrl == "/Admin/Dashboard")
                     {
-                      return  RedirectToAction("Dashboard", "Admin");
+                        return RedirectToAction("Dashboard", "Admin");
                     }
-                    else if((vm.ReturnUrl == "/Queue/ServicePoint"))
+                    else if ((vm.ReturnUrl == "/Queue/ServicePoint"))
                     {
                         return RedirectToAction("ServicePoint", "Queue");
-                    } 
+                    }
                 }
             }
-            return View("Loginn");
+            return RedirectToAction("Dashboard", "Admin");
         }
 
         private bool SignInMethod(string name, string password)
@@ -69,5 +80,18 @@ namespace Queue_Management_System.Controllers
             return flag;
         }
 
+
+
+        public async Task<IActionResult> LogOut()
+        {
+            //SignOutAsync is Extension method for SignOut
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //Redirect to home page
+            return LocalRedirect("/");
+
+        }
     }
+
+
+
 }

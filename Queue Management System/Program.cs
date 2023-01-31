@@ -12,6 +12,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
             });
 
+/*builder.Services.AddAuthentication()
+       .AddCookie(options =>
+       {
+           options.LoginPath = "/Account/Unauthorized/";
+           options.AccessDeniedPath = "/Account/Forbidden/";
+       });
+*/
 builder.Services.AddSession();
 
 var app = builder.Build();
