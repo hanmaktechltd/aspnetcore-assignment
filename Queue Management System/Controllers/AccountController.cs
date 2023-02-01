@@ -12,7 +12,7 @@ namespace Queue_Management_System.Controllers
 {
     public class AccountController : Controller
     {
-        private const string TableName = "users";
+        private const string _tableName = "users";
         private IConfiguration _config;
         CommonHelper _helper;
         public AccountController(IConfiguration config)
@@ -77,7 +77,7 @@ namespace Queue_Management_System.Controllers
         private bool SignInMethod(string name, string password)
         {
             bool flag = false;
-            string query = $"select * from {TableName} where Name='{name}' and Password='{password}'  ";
+            string query = $"select * from {_tableName} where Name='{name}' and Password='{password}'  ";
             var userDetails = _helper.GetUserByUserName(query);
 
             if (userDetails.Name != null)

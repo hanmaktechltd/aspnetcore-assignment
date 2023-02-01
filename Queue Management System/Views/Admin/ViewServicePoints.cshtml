@@ -7,7 +7,7 @@
 <h1>ViewServicePoints</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="CreateServicePoint">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -37,9 +37,9 @@
                 @Html.DisplayFor(modelItem => item.ServiceProviderId)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    <a asp-action="EditServicePoint" asp-route-id="@item.Id">Edit</a>
+                    <a asp-action="ViewServicePointDetails" asp-route-id="@item.Id">Details</a>
+                    <a data-id="@item.Id" type="button" class="deleteBtn">Delete</a>
             </td>
         </tr>
 }

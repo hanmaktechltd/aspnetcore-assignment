@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using NuGet.Protocol.Plugins;
 using Queue_Management_System.Contracts;
 using Queue_Management_System.Models;
@@ -12,8 +13,8 @@ namespace Queue_Management_System.Repositories
                           "Password=*mikemathu;" +
                           "Database=QMS";
 
-        private const string TABLE_NAME = "users";
-        private const string TABLE_NAME2 = "servicepoints";
+        private const string _serviceProvidersTable = "users";
+        private const string _servicePointTable = "servicepoints";
 
         private NpgsqlConnection connection;
 
@@ -22,6 +23,212 @@ namespace Queue_Management_System.Repositories
             connection = new NpgsqlConnection(CONNECTION_STRING);
             connection.Open();
         }
+
+        public async Task<IEnumerable<ServiceProviderVM>> GetServiceProviders()
+        {
+            List<ServiceProviderVM> serviceProviders = new List<ServiceProviderVM>();
+
+            string commandText = $"SELECT * FROM {_serviceProvidersTable}";
+            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
+            await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                while (await reader.ReadAsync())
+                {
+                    ServiceProviderVM serviceProvider = ReadServiceProviders(reader);
+                    serviceProviders.Add(serviceProvider);
+                }
+
+            return serviceProviders;
+        }
+
+        private static ServiceProviderVM ReadServiceProviders(NpgsqlDataReader reader)
+        {
+            int? id = reader["id"] as int?;
+            string name = reader["name"] as string;
+            string role = reader["role"] as string;
+            ServiceProviderVM serviceProviders = new ServiceProviderVM
+            {
+                Id = (int)id,
+                Name = name,
+                Role = role
+            };
+            return serviceProviders;
+        }
+
+        public async Task<ServiceProviderVM> GetServiceProviderDetails(int id)
+        {
+            string commandText = $"SELECT * FROM {_serviceProvidersTable} WHERE ID = @Id";
+            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
+            {
+                cmd.Parameters.AddWithValue("Id", id);
+
+                await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    while (await reader.ReadAsync())
+                    {
+                        ServiceProviderVM ServiceProviderDetails = ReadServiceProviderDetails(reader);
+                        return ServiceProviderDetails;
+                    }
+            }
+            return null;
+        }
+
+        private static ServiceProviderVM ReadServiceProviderDetails(NpgsqlDataReader reader)
+        {
+            int? id = reader["id"] as int?;
+            string name = reader["name"] as string;
+            string password = reader["password"] as string;
+            string role = reader["role"] as string;
+            ServiceProviderVM ServiceProviderDetails = new ServiceProviderVM
+            {
+                Id = (int)id,
+                Name = name,
+                Password = password,
+                Role = role
+            };
+            return ServiceProviderDetails;
+        }
+
+        public async Task CreateServiceProvider(ServiceProviderVM serviceProvider)
+        {
+            string commandText = $"INSERT INTO {_serviceProvidersTable} (name, password, role) VALUES (@name, @password, 'Service Provider')";
+
+            await using (var cmd = new NpgsqlCommand(commandText, connection))
+            {
+                cmd.Parameters.AddWithValue("name", serviceProvider.Name);
+                cmd.Parameters.AddWithValue("password", serviceProvider.Password);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
+        public async Task UpdateServiceProvider(int id, ServiceProviderVM serviceProvider)
+        {
+            var commandText = $@"UPDATE {_serviceProvidersTable} SET name = @name, password = @password, role = @role WHERE id = @id";
+           /* string commandText = $"UPDATE {_serviceProvidersTable} SET (name, password, role) VALUES (@name, @password, 'Service Provider') WHERE id = @id";*/
+
+            await using (var cmd = new NpgsqlCommand(commandText, connection))
+            {
+                cmd.Parameters.AddWithValue("name", serviceProvider.Name);
+                cmd.Parameters.AddWithValue("password", serviceProvider.Password);
+                cmd.Parameters.AddWithValue("role", serviceProvider.Role);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
+        //TODO
+        //Delete ServiceProvider
+        public async Task<IEnumerable<ServicePointVM>> GetServicePoints()
+        {
+            List<ServicePointVM> servicePoints = new List<ServicePointVM>();
+
+            string commandText = $"SELECT * FROM {_servicePointTable}";
+            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
+            await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                while (await reader.ReadAsync())
+                {
+                    ServicePointVM servicePoint = ReadServicePoints(reader);
+                    servicePoints.Add(servicePoint);
+                }
+
+            return servicePoints;
+        }
+
+        private static ServicePointVM ReadServicePoints(NpgsqlDataReader reader)
+        {
+            int? id = reader["id"] as int?;
+            string name = reader["name"] as string;
+            int? serviceproviderId = reader["serviceproviderId"] as int?;
+            ServicePointVM servicePoint = new ServicePointVM
+            {
+                Id = (int)id,
+                Name = name,
+                ServiceProviderId = (int)serviceproviderId
+            };
+            return servicePoint;
+        }
+        public async Task<ServicePointVM> GetServicePointDetails(int id)
+        {
+            string commandText = $"SELECT * FROM {_servicePointTable} WHERE ID = @Id";
+            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
+            {
+                cmd.Parameters.AddWithValue("Id", id);
+
+                await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    while (await reader.ReadAsync())
+                    {
+                        ServicePointVM ServiceProviderDetails = ReadServicePointDetails(reader);
+                        return ServiceProviderDetails;
+                    }
+            }
+            return null;
+        }
+
+        private static ServicePointVM ReadServicePointDetails(NpgsqlDataReader reader)
+        {
+            int? id = reader["id"] as int?;
+            string name = reader["name"] as string;
+            int? serviceproviderid = reader["serviceproviderid"] as int?;
+            ServicePointVM ServiceProviderDetails = new ServicePointVM
+            {
+                Id = (int)id,
+                Name = name,
+                ServiceProviderId = (int)serviceproviderid
+            };
+            return ServiceProviderDetails;
+        }
+
+
+
+
+
+
+
+
+
+
+
+        public async Task CreateServicePoint(ServicePointVM servicePoint)
+        {
+            string commandText = $"INSERT INTO {_servicePointTable} (name, serviceproviderid) VALUES (@name, @serviceproviderid)";
+
+            await using (var cmd = new NpgsqlCommand(commandText, connection))
+            {
+                cmd.Parameters.AddWithValue("name", servicePoint.Name);
+                cmd.Parameters.AddWithValue("serviceproviderid", servicePoint.ServiceProviderId);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public Task Add(AdminVM game)
         {
             throw new NotImplementedException();
@@ -37,69 +244,17 @@ namespace Queue_Management_System.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<ServiceProviderVM>> GetServiceProviders()
-        {
-            List<ServiceProviderVM> games = new List<ServiceProviderVM>();
+      
 
-            string commandText = $"SELECT * FROM {TABLE_NAME}";
-            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
-            await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
-                while (await reader.ReadAsync())
-                {
-                    ServiceProviderVM game = ReadBoardGame(reader);
-                    games.Add(game);
-                }
+       
 
-            return games;
-        }
-
-        public async Task<IEnumerable<ServicePointVM>> GetServicePoints()
-        {
-            List<ServicePointVM> games = new List<ServicePointVM>();
-
-            string commandText = $"SELECT * FROM {TABLE_NAME2}";
-            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
-            await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
-                while (await reader.ReadAsync())
-                {
-                    ServicePointVM game = ReadServicePoints(reader);
-                    games.Add(game);
-                }
-
-            return games;
-        }
+      
 
         public Task Update(int id, AdminVM game)
         {
             throw new NotImplementedException();
         }
 
-        private static ServiceProviderVM ReadBoardGame(NpgsqlDataReader reader)
-        {
-            int? id = reader["id"] as int?;
-            string name = reader["name"] as string;
-            string role = reader["role"] as string;
-            ServiceProviderVM game = new ServiceProviderVM
-            {
-                Id = (int)id,
-                Name = name,
-                Role = role
-            };
-            return game;
-        }
-
-        private static ServicePointVM ReadServicePoints(NpgsqlDataReader reader)
-        {
-            int? id = reader["id"] as int?;
-            string name = reader["name"] as string;
-            int? serviceproviderId = reader["serviceproviderId"] as int?;
-            ServicePointVM game = new ServicePointVM
-            {
-                Id = (int)id,
-                Name = name,
-                ServiceProviderId = (int)serviceproviderId
-            };
-            return game;
-        }
+      
     }
 }
