@@ -16,6 +16,7 @@ namespace Queue_Management_System.Contracts
         Task<IEnumerable<ServicePointVM>> GetServicePoints();
         Task<ServicePointVM> GetServicePointDetails(int id);
         Task CreateServicePoint(ServicePointVM servicePoint);
+        Task UpdateServicePoint(int id, ServicePointVM servicePoint);
 
 
 

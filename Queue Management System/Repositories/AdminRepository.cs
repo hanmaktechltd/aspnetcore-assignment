@@ -3,6 +3,7 @@ using Npgsql;
 using NuGet.Protocol.Plugins;
 using Queue_Management_System.Contracts;
 using Queue_Management_System.Models;
+using System;
 
 namespace Queue_Management_System.Repositories
 {
@@ -176,17 +177,6 @@ namespace Queue_Management_System.Repositories
             };
             return ServiceProviderDetails;
         }
-
-
-
-
-
-
-
-
-
-
-
         public async Task CreateServicePoint(ServicePointVM servicePoint)
         {
             string commandText = $"INSERT INTO {_servicePointTable} (name, serviceproviderid) VALUES (@name, @serviceproviderid)";
@@ -216,7 +206,19 @@ namespace Queue_Management_System.Repositories
 
 
 
+        public async Task UpdateServicePoint(int id, ServicePointVM servicePoint)
+        {
+            var commandText = $@"UPDATE {_servicePointTable} SET name = @name, serviceproviderid = @serviceproviderid WHERE id = @id";
+            /* string commandText = $"UPDATE {_serviceProvidersTable} SET (name, password, role) VALUES (@name, @password, 'Service Provider') WHERE id = @id";*/
 
+            await using (var cmd = new NpgsqlCommand(commandText, connection))
+            {
+                cmd.Parameters.AddWithValue("name", servicePoint.Name);
+                cmd.Parameters.AddWithValue("password", servicePoint.ServiceProviderId);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
 
 
 

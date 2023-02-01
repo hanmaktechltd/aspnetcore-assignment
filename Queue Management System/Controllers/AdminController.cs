@@ -93,14 +93,6 @@ namespace Queue_Management_System.Controllers
                 return NotFound();
         }
 
-
-
-
-
-
-
-
-
         // GET: Admin/CreateServicePoint
         public ActionResult CreateServicePoint()
         {
@@ -114,6 +106,25 @@ namespace Queue_Management_System.Controllers
         {
             await _adminRepository.CreateServicePoint(servicePoint);
             return RedirectToAction(nameof(ViewServicePoints));
+        }
+
+        // GET: Admin/EditServicePoint/5
+        public async Task<ActionResult> EditServicePoint(int id)
+        {
+            var servicePoint = await _adminRepository.GetServicePointDetails(id);
+            if (servicePoint != null)
+                return View(servicePoint);
+            else
+                return NotFound();
+        }
+
+        // POST: Admin/EditServicePoint/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditServicePoint(int id, ServicePointVM servicePoint)
+        {
+            await _adminRepository.UpdateServicePoint(id, servicePoint);
+            return RedirectToAction(nameof(ViewServicePointDetails), new { id = servicePoint.Id });
         }
 
 
