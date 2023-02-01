@@ -1,13 +1,12 @@
 ﻿@model Queue_Management_System.Models.ServiceProviderVM
 
 @{
-    ViewData["Title"] = "ViewServiceProviderDetails";
+    ViewData["Title"] = "Service Provider Details";
 }
 
-<h1>ViewServiceProviderDetails</h1>
+<h1>Details of @Model.Name</h1>
 
 <div>
-    <h4>ServiceProviderVM</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -36,7 +35,8 @@
         </dd>
     </dl>
 </div>
+<br />
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="ViewServiceProviders">Back to List</a>
+    <a asp-action="ViewServiceProviders" class="btn btn-dark">Back to List</a>
+    <a asp-action="EditServiceProvider" class="btn btn-warning" asp-route-id="@Model.Id">Edit</a>
 </div>

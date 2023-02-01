@@ -103,12 +103,12 @@ namespace Queue_Management_System.Repositories
 
         public async Task UpdateServiceProvider(int id, ServiceProviderVM serviceProvider)
         {
-            var commandText = $@"UPDATE {_serviceProvidersTable} SET name = @name, password = @password, role = @role WHERE id = @id";
+            var commandText = $@"UPDATE {_serviceProvidersTable} SET password = @password, role = @role WHERE id = @id";
            /* string commandText = $"UPDATE {_serviceProvidersTable} SET (name, password, role) VALUES (@name, @password, 'Service Provider') WHERE id = @id";*/
 
             await using (var cmd = new NpgsqlCommand(commandText, connection))
             {
-                cmd.Parameters.AddWithValue("name", serviceProvider.Name);
+               /* cmd.Parameters.AddWithValue("name", serviceProvider.Name);*/
                 cmd.Parameters.AddWithValue("password", serviceProvider.Password);
                 cmd.Parameters.AddWithValue("role", serviceProvider.Role);
 
@@ -198,13 +198,13 @@ namespace Queue_Management_System.Repositories
         }
         public async Task UpdateServicePoint(int id, ServicePointVM servicePoint)
         {
-            var commandText = $@"UPDATE {_servicePointTable} SET name = @name, serviceproviderid = @serviceproviderid WHERE id = @id";
+            var commandText = $@"UPDATE {_servicePointTable} SET  serviceproviderid = @serviceproviderid WHERE id = @id";
             /* string commandText = $"UPDATE {_serviceProvidersTable} SET (name, password, role) VALUES (@name, @password, 'Service Provider') WHERE id = @id";*/
 
             await using (var cmd = new NpgsqlCommand(commandText, connection))
             {
-                cmd.Parameters.AddWithValue("name", servicePoint.Name);
-                cmd.Parameters.AddWithValue("password", servicePoint.ServiceProviderId);
+                /*cmd.Parameters.AddWithValue("name", servicePoint.Name);*/
+                cmd.Parameters.AddWithValue("serviceproviderid", servicePoint.ServiceProviderId);
 
                 await cmd.ExecuteNonQueryAsync();
             }

@@ -143,6 +143,13 @@ namespace Queue_Management_System.Controllers
             return RedirectToAction(nameof(ViewServicePoints));
         }
 
+        public IActionResult Reports()
+        {
+            return View();
+        }
+
+
+
 
 
 
