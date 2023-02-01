@@ -46,3 +46,34 @@
         }
     </tbody>
 </table>
+
+
+<form id="deleteFrom" asp-action="DeleteServiceProvider">
+    <input type="hidden" id="serviceProviderId" name="Id" />
+</form>
+
+@section Scripts{
+    <script>
+        $(function () {
+
+            $('.deleteBtn').click(function (e) {
+                swal({
+                    title: "Are you sure?",
+                    text: "Are you sure you want to delete this record?",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true
+                }).then((confirm) => {
+                    if (confirm) {
+                        var btn = $(this);
+                        var id = btn.data("id");
+                        $('#serviceProviderId').val(id);
+                        $('#deleteFrom').submit();
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+

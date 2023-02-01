@@ -115,9 +115,16 @@ namespace Queue_Management_System.Repositories
                 await cmd.ExecuteNonQueryAsync();
             }
         }
+        public async Task DeleteServiceProvider(int id)
+        {
+            string commandText = $"DELETE FROM {_serviceProvidersTable} WHERE ID=(@p)";
+            await using (var cmd = new NpgsqlCommand(commandText, connection))
+            {
+                cmd.Parameters.AddWithValue("p", id);
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
 
-        //TODO
-        //Delete ServiceProvider
         public async Task<IEnumerable<ServicePointVM>> GetServicePoints()
         {
             List<ServicePointVM> servicePoints = new List<ServicePointVM>();
@@ -189,23 +196,6 @@ namespace Queue_Management_System.Repositories
                 await cmd.ExecuteNonQueryAsync();
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public async Task UpdateServicePoint(int id, ServicePointVM servicePoint)
         {
             var commandText = $@"UPDATE {_servicePointTable} SET name = @name, serviceproviderid = @serviceproviderid WHERE id = @id";
@@ -219,44 +209,16 @@ namespace Queue_Management_System.Repositories
                 await cmd.ExecuteNonQueryAsync();
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-        public Task Add(AdminVM game)
+        public async Task DeleteServicePoint(int id)
         {
-            throw new NotImplementedException();
+            string commandText = $"DELETE FROM {_servicePointTable} WHERE ID=(@p)";
+            await using (var cmd = new NpgsqlCommand(commandText, connection))
+            {
+                cmd.Parameters.AddWithValue("p", id);
+                await cmd.ExecuteNonQueryAsync();
+            }
         }
-
-        public Task Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<AdminVM> Get(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-      
 
        
-
-      
-
-        public Task Update(int id, AdminVM game)
-        {
-            throw new NotImplementedException();
-        }
-
-      
     }
 }

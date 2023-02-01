@@ -73,8 +73,15 @@ namespace Queue_Management_System.Controllers
         }
 
 
-        //TODO
-        //Delete EditServiceProvider
+        // POST: Admin/DeleteServiceProvider/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteServiceProvider(int id)
+        {
+            await _adminRepository.DeleteServiceProvider(id);
+            return RedirectToAction(nameof(ViewServiceProviders));
+        }
+
 
 
         // GET: Admin/ViewServicePoints
@@ -126,6 +133,27 @@ namespace Queue_Management_System.Controllers
             await _adminRepository.UpdateServicePoint(id, servicePoint);
             return RedirectToAction(nameof(ViewServicePointDetails), new { id = servicePoint.Id });
         }
+
+        // POST: Admin/DeleteServicePoint/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteServicePoint(int id)
+        {
+            await _adminRepository.DeleteServicePoint(id);
+            return RedirectToAction(nameof(ViewServicePoints));
+        }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

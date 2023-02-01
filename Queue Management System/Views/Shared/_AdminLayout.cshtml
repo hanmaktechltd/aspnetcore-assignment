@@ -1,20 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using System.Security.Claims
-
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
 
 <head>
-     <meta charset="utf-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta name="keywords"
-        content="leave management, .net 6, .net core, complete asp.net and entity framework development">
-    <meta name="description"
-        content="Educational Project for .NET 6 Development">
-    <meta name="robots" content="noindex,nofollow">
-    <title>@ViewData["Title"] - Leave Management System</title>
+    <title>@ViewData["Title"] - Queue Management System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.css" asp-append-version="true" />
@@ -70,7 +62,7 @@
                         <!--End Logo icon -->
                         <!-- Logo text -->
                         <span class="logo-text">
-                            Leave Management Web
+                            Queue Management System
                         </span>
                     </a>
                     <!-- ============================================================== -->
@@ -157,15 +149,13 @@
                                     </div>
                                 </div>
                                 <li class="p-15 m-t-10">
-                                     <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                                        <button type="submit" class="btn d-block w-100 create-btn text-white no-block d-flex align-items-center">
+                                    <a class="btn d-block w-100 create-btn text-white no-block d-flex align-items-center" asp-controller="Account" asp-action="Logout">
                                             <i class="fa fa-power-off m-r-5 m-l-5"></i>
                                             <span> Logout</span>
-                                        </button>
-                                    </form>
+                                        </a>                                    
                                 </li>
                             }
-                            else
+                          @*  else
                             {
                                 <li class="p-15 m-t-10">
                                     <a class="btn d-block w-100 create-btn text-white no-block d-flex align-items-center" asp-area="Identity" asp-page="/Account/Register">
@@ -180,33 +170,33 @@
                                         <span> Login</span>
                                     </a>
                                 </li>
-                            }
+                            }*@
                             <!-- End User Profile-->
                   
                         
                         <!-- User Profile-->
-                        <li class="sidebar-item"> 
+                       @* <li class="sidebar-item"> 
                             <a class="sidebar-link waves-effect waves-dark sidebar-link" asp-area="" asp-controller="Home" asp-action="Index">
                                 <i class="fas fa-home"></i> 
                                 <span> Home</span>
                             </a>
-                        </li>                       
-                            <li class="sidebar-item"> 
-                                <a class="sidebar-link waves-effect waves-dark sidebar-link" asp-area="" asp-controller="Employees" asp-action="Index">
-                                    <i class="fas fa-users"></i>
-                                    <span>Employees</span>
+                        </li> *@                      
+                            <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" asp-area="" asp-controller="Admin" asp-action="ViewServicePoints">
+                                    <i class="fas fa-home"></i>
+                                    <span>Service Points</span>
                                 </a>
                             </li>
-                            <li class="sidebar-item"> 
-                                <a class="sidebar-link waves-effect waves-dark sidebar-link" asp-area="" asp-controller="LeaveTypes" asp-action="Index">
-                                    <i class="fas fa-cogs"></i>
-                                    <span>Leave Types</span>
+                            <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" asp-area="" asp-controller="Admin" asp-action="ViewServiceProviders">
+                                <i class="fas fa-users"></i>
+                                    <span>Service Providers</span>
                                 </a>
                             </li>
-                            <li class="sidebar-item"> 
-                                <a class="sidebar-link waves-effect waves-dark sidebar-link" asp-area="" asp-controller="LeaveRequests" asp-action="Index">
-                                    <i class="fas fa-tasks"></i>
-                                    <span>Leave Requests</span>
+                            <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" asp-area="" asp-controller="Admin" asp-action="Index">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <span>Reports</span>
                                 </a>
                             </li>
                         
