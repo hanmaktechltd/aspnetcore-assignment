@@ -12,6 +12,7 @@ namespace Queue_Management_System.Data
         [ForeignKey("UserId")]
         public User User { get; set; }
         public int UserId { get; set; }
+        public string ServiceName { get; set; }
 
     }
 }

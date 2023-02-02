@@ -24,8 +24,8 @@ namespace Queue_Management_System.Controllers
         // GET: Admin/ViewServiceProviders
         public async Task<ActionResult<IEnumerable<ServiceProviderVM>>> ViewServiceProviders()
         {
-            var allGames = await _adminRepository.GetServiceProviders();
-            return View(allGames);
+            var serviceProviders = await _adminRepository.GetServiceProviders();
+            return View(serviceProviders);
         }
 
         // GET: Admin/ViewServiceProviderDetails/5

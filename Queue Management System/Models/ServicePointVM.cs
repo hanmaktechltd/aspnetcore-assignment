@@ -17,5 +17,10 @@ namespace Queue_Management_System.Models
         [Display(Name = "Service Provider Id")]
         [Required]
         public int ServiceProviderId { get; set; }
+        public string ServiceName { get; set; }
+
+   /*     public QueueVM CreatedAt { get; set; }
+        public QueueVM UpdatedAt { get; set; }
+        public QueueVM CompletedAt { get; set; }*/
     }
 }

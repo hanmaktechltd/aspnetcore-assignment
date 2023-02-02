@@ -9,8 +9,8 @@ namespace Queue_Management_System.Contracts
         Task<ServiceProviderVM> GetServiceProviderDetails(int id);
         Task CreateServiceProvider(ServiceProviderVM serviceProvider);
         Task UpdateServiceProvider(int id, ServiceProviderVM serviceProvider);
-
         Task DeleteServiceProvider(int id);
+
 
         Task<IEnumerable<ServicePointVM>> GetServicePoints();
         Task<ServicePointVM> GetServicePointDetails(int id);
