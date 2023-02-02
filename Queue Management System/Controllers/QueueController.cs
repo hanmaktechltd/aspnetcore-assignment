@@ -29,24 +29,6 @@ namespace Queue_Management_System.Controllers
             return RedirectToAction(nameof(CheckinPage));
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         [HttpGet]
         public IActionResult WaitingPage()
         {
@@ -55,10 +37,29 @@ namespace Queue_Management_System.Controllers
 
 
 
+
+
+
+
+
+        /*        [Authorize, HttpGet]
+                public IActionResult ServicePoint()
+                {
+                    return View();
+                }*/
+
         [Authorize, HttpGet]
-        public IActionResult ServicePoint()
+        public async Task<ActionResult<IEnumerable<QueueVM>>> ServicePoint()
         {
-            return View("Index");
+
+            foreach (var claim in User.Claims)
+            {
+                var userServingPointId = @claim.Value;
+
+                var waitingCustomers = await _queueRepository.GetWaitingCustomers(userServingPointId);
+                return View(waitingCustomers);
+            }
+            return NotFound();
         }
 
 

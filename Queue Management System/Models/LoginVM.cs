@@ -14,5 +14,8 @@ namespace Queue_Management_System.Models
         public string Password { get; set; }
         public string Role { get; set; } //This should be removed
         public string ReturnUrl { get; set; }
+
+        public bool RememberLogin { get; set; }
+
     }
 }

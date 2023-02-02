@@ -7,6 +7,7 @@ using Queue_Management_System.Common;
 using Queue_Management_System.Data;
 using Queue_Management_System.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace Queue_Management_System.Controllers
 {
@@ -40,17 +41,28 @@ namespace Queue_Management_System.Controllers
 
                 
                 bool Isfind = SignInMethod(vm.Name, vm.Password);
-                var gerUserrole = HttpContext.Session.GetString("Role");
+                var getUserRole = HttpContext.Session.GetString("Role");
+                var getUserServingPointId = HttpContext.Session.GetInt32("ServicePointId");
                 if (Isfind == true)
                 {
                     ViewBag.Success = "Thanks for Login";
                     var claims = new List<Claim>
                             {
-                                new Claim(ClaimTypes.Name, vm.Name),
-                                new Claim(ClaimTypes.Role, gerUserrole)
+                              new Claim(ClaimTypes.NameIdentifier,Convert.ToString(getUserServingPointId)),
+                              new Claim(ClaimTypes.Name, vm.Name),
+                              new Claim(ClaimTypes.Role, getUserRole)
+
                             };
-                    var claimsIdentity = new ClaimsIdentity(claims, "Login");
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                    /*  var claimsIdentity = new ClaimsIdentity(claims, "Login");
+                      await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));*/
+
+                    //Initialize a new instance of the ClaimsIdentity with the claims and authentication scheme
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    //Initialize a new instance of the ClaimsPrincipal with ClaimsIdentity
+                    var principal = new ClaimsPrincipal(identity);
+                    //SignInAsync is a Extension method for Sign in a principal for the specified scheme.
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        principal, new AuthenticationProperties() { IsPersistent = vm.RememberLogin });
 
                     if (vm.ReturnUrl == "/Admin/Dashboard")
                     {
@@ -62,6 +74,7 @@ namespace Queue_Management_System.Controllers
                     }
                 }
             }
+            var getUserServingPointId2 = HttpContext.Session.GetInt32("ServicePointId"); //not implemented
             var role = HttpContext.Session.GetString("Role");
             //Add if condition according to role
             if (role == "Admin")
@@ -86,7 +99,8 @@ namespace Queue_Management_System.Controllers
 
                 HttpContext.Session.SetString("Name", userDetails.Name);
                 HttpContext.Session.SetString("Role", userDetails.Role);
-               
+                HttpContext.Session.SetInt32("ServicePointId", userDetails.ServicePointId);
+
             }
             else
             {

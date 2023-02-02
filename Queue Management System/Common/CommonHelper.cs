@@ -31,6 +31,7 @@ namespace Queue_Management_System.Common
                         user.Password =dataReader["password"].ToString();
                         //Add role here
                         user.Role = dataReader["role"].ToString();
+                        user.ServicePointId = Convert.ToInt32(dataReader["servicepointid"]);
                     }
                 }
                 connection.Close();

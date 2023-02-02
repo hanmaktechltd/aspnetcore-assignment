@@ -1,6 +1,9 @@
 ﻿using Npgsql;
 using Queue_Management_System.Contracts;
+using Queue_Management_System.Data;
 using Queue_Management_System.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace Queue_Management_System.Repositories
 {
@@ -68,6 +71,33 @@ namespace Queue_Management_System.Repositories
 
                 await cmd.ExecuteNonQueryAsync();
             }
+        }
+ 
+        public async Task<IEnumerable<QueueVM>> GetWaitingCustomers(string userServingPointId)
+        {
+            List<QueueVM> waitingCustomers = new List<QueueVM>();
+            string commandText = $"SELECT * FROM {_queueTable} WHERE servicepointid = {userServingPointId}";
+            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
+            await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                while (await reader.ReadAsync())
+                {
+                    QueueVM waitingCustomer = ReadWaitingCustomers(reader);
+                    waitingCustomers.Add(waitingCustomer);
+                }
+
+            return waitingCustomers;
+        }
+
+        private static QueueVM ReadWaitingCustomers(NpgsqlDataReader reader)
+        {
+            int? id = reader["id"] as int?;
+            DateTime createdat = (DateTime)reader["createdat"];
+            QueueVM waitingCustomers = new QueueVM
+            {
+                Id = (int)id,
+                CreatedAt = createdat
+            };
+            return waitingCustomers;
         }
     }
 }

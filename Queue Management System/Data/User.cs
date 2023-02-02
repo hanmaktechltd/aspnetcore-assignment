@@ -9,5 +9,6 @@ namespace Queue_Management_System.Data
         public string Name{ get; set; }
         public string Password{ get; set; }
         public string Role{ get; set; }
+        public int ServicePointId { get; set; }
     }
 }
