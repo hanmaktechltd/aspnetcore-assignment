@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Queue_Management_System.Contracts;
 using Queue_Management_System.Models;
 using Queue_Management_System.Repositories;
@@ -35,20 +36,7 @@ namespace Queue_Management_System.Controllers
             return View();
         }
 
-
-
-
-
-
-
-
-        /*        [Authorize, HttpGet]
-                public IActionResult ServicePoint()
-                {
-                    return View();
-                }*/
-
-        [Authorize, HttpGet]
+        [Authorize(Roles = "Service Provider"), HttpGet]
         public async Task<ActionResult<IEnumerable<QueueVM>>> ServicePoint()
         {
 
@@ -61,6 +49,29 @@ namespace Queue_Management_System.Controllers
             }
             return NotFound();
         }
+
+        [Authorize(Roles = "Service Provider"), HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> GetNextNumber(int id)
+        {
+            foreach (var claim in User.Claims)
+            {
+                var userServingPointId = @claim.Value;
+
+                var ServiceProviderDetails = await _queueRepository.UpdateStatus(id, userServingPointId);
+                return RedirectToAction(nameof(ServicePoint), new { id = ServiceProviderDetails.Id });
+            }
+            return NotFound();
+
+        }
+
+
+
+
+
+
+
+
 
 
     }

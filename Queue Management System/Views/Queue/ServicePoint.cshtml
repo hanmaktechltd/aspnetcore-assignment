@@ -16,21 +16,8 @@
                 @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ServicePointId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.CreatedAt)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CompletedAt)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -40,26 +27,59 @@
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ServicePointId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.CreatedAt)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
+               <a class="btn btn-warning" asp-action="EditServiceProvider" asp-route-id="@item.Id">Edit</a>
+               <a class="btn btn-warning" asp-action="EditServiceProvider" asp-route-id="@item.Id">Details</a>
+                    <button data-id="@item.Id" class="btn btn-danger deleteBtn" type="button"> <i class="far fa-trash-alt"></i></button>
+
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CompletedAt)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
+            
         </tr>
 }
+
     </tbody>
 </table>
+
+
+<button data-id="8" class="btn btn-danger deleteBtn" type="button"> Next</button>
+
+
+@*<a class="btn btn-warning" asp-action="GetNextNumber" asp-route-id="">Next</a>*@
+<a class="btn btn-warning" asp-action="RecallNumber" asp-route-id="">Recall</a>
+<a class="btn btn-warning" asp-action="MarkNumberAsNoShow" asp-route-id="">No Show</a>
+<a class="btn btn-warning" asp-action="MarkNumberAsFinished" asp-route-id="">Finished</a>
+<a class="btn btn-warning" asp-action="TransferNumber" asp-route-id="">Transfer Number</a>
+
+
+
+<form id="deleteFrom" asp-action="GetNextNumber">
+    <input type="hidden" id="serviceProviderId" name="Id" />
+</form>
+
+@section Scripts{
+    <script>
+        $(function () {
+
+            $('.deleteBtn').click(function (e) {
+                swal({
+                    title: "Are you sure?",
+                    text: "Are you sure you want to delete this record?",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true
+                })
+                .then
+                ((confirm) => {
+                    if (confirm) {
+                        var btn = $(this);
+                        var id = btn.data("id");
+                        $('#serviceProviderId').val(id);
+                        $('#deleteFrom').submit();
+                    }
+                } ) ;
+            });
+        });
+    </script>
+}

@@ -99,5 +99,67 @@ namespace Queue_Management_System.Repositories
             };
             return waitingCustomers;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /* public async Task UpdateStatus(int id)*/
+        public async Task<QueueVM> UpdateStatus(int id, string serviceProvider)
+        {
+            //Update the current customer as served
+            var commandText = $@"UPDATE {_queueTable} SET status = 3 WHERE id = @id";
+            await using (var cmd = new NpgsqlCommand(commandText, connection))
+            {
+                cmd.Parameters.AddWithValue("id", id);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            //Get id of the next customer
+        /*    string commandText2 = $"SELECT * FROM {_queueTable} WHERE ID = @Id";*/
+            string commandText2 = $"SELECT * FROM {_queueTable} WHERE status = 0 AND servicepointid = {serviceProvider} ";
+
+            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText2, connection))
+            {
+                cmd.Parameters.AddWithValue("Id", id);
+
+                await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    while (await reader.ReadAsync())
+                    {
+                        QueueVM ServiceProviderDetails = ReadServiceProviderDetails(reader);
+                        return ServiceProviderDetails;
+                    }
+            }
+            return null;
+        }
+
+        private static QueueVM ReadServiceProviderDetails(NpgsqlDataReader reader)
+        {
+            int? id = reader["id"] as int?;
+            QueueVM CustomerQueueId = new QueueVM
+            {
+                Id = (int)id
+            };
+            return CustomerQueueId;
+        }
+
+
+
+
+
     }
 }

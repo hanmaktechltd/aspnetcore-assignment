@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Queue_Management_System.Contracts;
 using Queue_Management_System.Models;
+using System.Data;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace Queue_Management_System.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly IAdminRepository _adminRepository;

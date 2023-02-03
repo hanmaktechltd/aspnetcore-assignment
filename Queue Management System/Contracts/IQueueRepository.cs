@@ -7,5 +7,6 @@ namespace Queue_Management_System.Contracts
         Task<IEnumerable<ServicePointVM>> GetServices();
         Task AddCustomerToQueue(ServicePointVM customer);
         Task<IEnumerable<QueueVM>> GetWaitingCustomers(string userServingPointId);
+        Task<QueueVM> UpdateStatus(int id, string serviceProvider);
     }
 }
