@@ -4,6 +4,7 @@ using Queue_Management_System.Data;
 using Queue_Management_System.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Queue_Management_System.Repositories
 {
@@ -17,12 +18,17 @@ namespace Queue_Management_System.Repositories
         private const string _servicePointsTable = "servicepoints";
         private const string _queueTable = "queue";
 
+     /*   private NpgsqlConnection connection;*/
         private NpgsqlConnection connection;
+        private static NpgsqlConnection connection2;
 
         public QueueRepository()
         {
             connection = new NpgsqlConnection(CONNECTION_STRING);
+            connection2 = new NpgsqlConnection(CONNECTION_STRING);
+
             connection.Open();
+            connection2.Open();
         }
 
         public async Task<IEnumerable<ServicePointVM>> GetServices()
@@ -76,7 +82,7 @@ namespace Queue_Management_System.Repositories
         public async Task<IEnumerable<QueueVM>> GetWaitingCustomers(string userServingPointId)
         {
             List<QueueVM> waitingCustomers = new List<QueueVM>();
-            string commandText = $"SELECT * FROM {_queueTable} WHERE servicepointid = {userServingPointId}";
+            string commandText = $"SELECT * FROM {_queueTable} WHERE servicepointid = {userServingPointId} AND status = 0 ORDER BY id ASC";
             await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
             await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
                 while (await reader.ReadAsync())
@@ -98,63 +104,99 @@ namespace Queue_Management_System.Repositories
                 CreatedAt = createdat
             };
             return waitingCustomers;
+        }       
+
+        //
+        
+         public async Task<IEnumerable<QueueVM>> GetCurrentServingCustomer(string userServingPointId)
+        {
+            List<QueueVM> waitingCustomers = new List<QueueVM>();
+            string commandText = $"SELECT * FROM {_queueTable} WHERE servicepointid = {userServingPointId} AND status = 0 ORDER BY id ASC";
+            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
+            await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                while (await reader.ReadAsync())
+                {
+                    QueueVM waitingCustomer = ReadCurrentServingCustomer(reader);
+                    waitingCustomers.Add(waitingCustomer);
+                }
+
+            return waitingCustomers;
         }
 
+        private static QueueVM ReadCurrentServingCustomer(NpgsqlDataReader reader)
+        {
+            int? id = reader["id"] as int?;
+            DateTime createdat = (DateTime)reader["createdat"];
+            QueueVM waitingCustomers = new QueueVM
+            {
+                Id = (int)id,
+                CreatedAt = createdat
+            };
+            return waitingCustomers;
+        } 
+        
+        
+        
+        
+        
+        //
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /* public async Task UpdateStatus(int id)*/
-        public async Task<QueueVM> UpdateStatus(int id, string serviceProvider)
+        public async Task<QueueVM> UpdateOutGoingAndIncomingCustomerStatus(int outgoingCustomerId, string serviceProviderId)
         {
             //Update the current customer as served
             var commandText = $@"UPDATE {_queueTable} SET status = 3 WHERE id = @id";
             await using (var cmd = new NpgsqlCommand(commandText, connection))
             {
-                cmd.Parameters.AddWithValue("id", id);
+                cmd.Parameters.AddWithValue("id", outgoingCustomerId);
 
                 await cmd.ExecuteNonQueryAsync();
             }
 
-            //Get id of the next customer
-        /*    string commandText2 = $"SELECT * FROM {_queueTable} WHERE ID = @Id";*/
-            string commandText2 = $"SELECT * FROM {_queueTable} WHERE status = 0 AND servicepointid = {serviceProvider} ";
+            //Get id of the next customer to be served
+            string commandText2 = $"SELECT * FROM {_queueTable} WHERE status = 0 AND servicepointid = {serviceProviderId} ORDER BY id ASC LIMIT 1  "; 
 
             await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText2, connection))
             {
-                cmd.Parameters.AddWithValue("Id", id);
-
                 await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
                     while (await reader.ReadAsync())
                     {
-                        QueueVM ServiceProviderDetails = ReadServiceProviderDetails(reader);
-                        return ServiceProviderDetails;
+                        QueueVM IncomingCustomerDetails = ReadIncomingCustomerId(reader);
+                     
+                       
+                            return IncomingCustomerDetails;
+                                             
                     }
             }
             return null;
         }
+        private static QueueVM ReadIncomingCustomerId(NpgsqlDataReader reader)
 
-        private static QueueVM ReadServiceProviderDetails(NpgsqlDataReader reader)
         {
-            int? id = reader["id"] as int?;
-            QueueVM CustomerQueueId = new QueueVM
+            int? incomingCustomerId = reader["id"] as int?;
+        /*    UpdateNewStatus(id);*/
+            QueueVM IncomingCustomerId = new QueueVM
             {
-                Id = (int)id
+                Id = (int)incomingCustomerId
             };
-            return CustomerQueueId;
+            UpdateIncomingCustomerStatus(IncomingCustomerId.Id);
+            return IncomingCustomerId;
+        }
+
+        private static async void UpdateIncomingCustomerStatus(int incomingCustomerId) 
+                                                         
+        {
+            /*var commandText = $@"UPDATE {_queueTable} SET status = 2 WHERE id = @id";*/
+            var commandText = $@"UPDATE {_queueTable} SET status = 2, updatedat = NOW() WHERE id = @id";
+            await using (var cmd = new NpgsqlCommand(commandText, connection2))
+            {
+                cmd.Parameters.AddWithValue("id", incomingCustomerId);
+
+               await cmd.ExecuteNonQueryAsync();                 
+            }
+
         }
 
 

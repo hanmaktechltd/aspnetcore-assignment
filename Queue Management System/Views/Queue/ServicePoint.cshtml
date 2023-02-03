@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Queue_Management_System.Models.QueueVM>
+﻿@model Queue_Management_System.Models.QueueVM2
 
 @{
     ViewData["Title"] = "ServicePoint";
@@ -21,7 +21,8 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var item in Model.WaitingCustomers)
+        {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
@@ -43,7 +44,8 @@
 </table>
 
 
-<button data-id="8" class="btn btn-danger deleteBtn" type="button"> Next</button>
+@*<button data-id="7" class="btn btn-danger deleteBtn" type="button"> Next</button>*@
+<button data-id="@Model.IncomingCustomerId" class="btn btn-danger deleteBtn" type="button"> Next</button>
 
 
 @*<a class="btn btn-warning" asp-action="GetNextNumber" asp-route-id="">Next</a>*@
