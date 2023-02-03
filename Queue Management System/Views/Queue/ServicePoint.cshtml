@@ -46,7 +46,7 @@
 
 @if (@Model.MyCurrentServingCustomerId != null)
 {    
-    <button data-id="@Model.MyCurrentServingCustomerId.Id" class="btn btn-danger deleteBtn" type="button"> Next</button>
+    <button data-id="@Model.MyCurrentServingCustomerId.Id" class="btn btn-danger deleteBtn" type="button"> Neext</button>
 }
 else
 {
@@ -58,6 +58,10 @@ else
 <a class="btn btn-warning" asp-action="MarkNumberAsFinished" asp-route-id="">Finished</a>
 <a class="btn btn-warning" asp-action="TransferNumber" asp-route-id="">Transfer Number</a>
 
+@if (@Model.MyCurrentServingCustomerId != null)
+{
+    <H1>You are currently serving Customer @Model.MyCurrentServingCustomerId.Id </H1>
+}
 
 
 <form id="deleteFrom" asp-action="GetNextNumber">

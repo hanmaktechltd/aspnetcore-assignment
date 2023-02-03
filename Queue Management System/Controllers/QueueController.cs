@@ -31,9 +31,16 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpGet]
-        public IActionResult WaitingPage()
+        public async Task< IActionResult> WaitingPage()
         {
-            return View();
+            foreach (var claim in User.Claims)
+            {
+                var userServingPointId = @claim.Value;
+              /*  var currentServingCustomerId = await _queueRepository.MyCurrentServingCustomer(userServingPointId);*/
+               var calledCustomers = await _queueRepository.GetCalledCustomers();
+                return View(calledCustomers);
+            }
+            return NotFound();
         }
 
         [Authorize(Roles = "Service Provider"), HttpGet]
@@ -45,17 +52,9 @@ namespace Queue_Management_System.Controllers
                 var userServingPointId = @claim.Value;
 
                 var waitingCustomers = await _queueRepository.GetWaitingCustomers(userServingPointId);
-                /////////////
+               
                 var currentServingCustomerId = await _queueRepository.MyCurrentServingCustomer(userServingPointId);
-              /*  if (currentServingCustomerId == null)
-                {
-                    return View(new QueueVM2()
-                    {                        
-                        WaitingCustomers = waitingCustomers
-                    });
-                } */
-
-                ////////////
+          
                 return View(new QueueVM2() { IncomingCustomerId = incomingCustomerId, 
                                              WaitingCustomers = waitingCustomers, 
                                              MyCurrentServingCustomerId = currentServingCustomerId

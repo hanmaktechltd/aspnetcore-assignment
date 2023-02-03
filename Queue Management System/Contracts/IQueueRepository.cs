@@ -6,16 +6,12 @@ namespace Queue_Management_System.Contracts
     {
         Task<IEnumerable<ServicePointVM>> GetServices();
         Task AddCustomerToQueue(ServicePointVM customer);
-        Task<IEnumerable<QueueVM>> GetWaitingCustomers(string userServingPointId);
+        //
+        Task<IEnumerable<QueueVM>> GetCalledCustomers();
 
-        //**//
-        Task<QueueVM> MyCurrentServingCustomer(string userServingPointId);
-
-
-
-
-
-        //**//
-        Task<QueueVM> UpdateOutGoingAndIncomingCustomerStatus(int outgoingCustomerId, string serviceProviderId); //RENAME: userServingPointId, outgoungcustomerid
+        //
+        Task<IEnumerable<QueueVM>> GetWaitingCustomers(string userServingPointId);        
+        Task<QueueVM> MyCurrentServingCustomer(string userServingPointId);       
+        Task<QueueVM> UpdateOutGoingAndIncomingCustomerStatus(int outgoingCustomerId, string serviceProviderId);
     }
 }

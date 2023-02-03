@@ -66,7 +66,6 @@ namespace Queue_Management_System.Repositories
         public async Task AddCustomerToQueue(ServicePointVM customer)
         {
             var status = 0;
-            /*string commandText = $"INSERT INTO {_queueTable} (servicepointid, status, createdat) VALUES (@servicepointid, {status}, {createdAt})";*/
             string commandText = $"INSERT INTO {_queueTable} (servicepointid, status) VALUES (@servicepointid, {status})";
 
 
@@ -78,7 +77,48 @@ namespace Queue_Management_System.Repositories
                 await cmd.ExecuteNonQueryAsync();
             }
         }
- 
+        //
+
+        public async Task<IEnumerable<QueueVM>> GetCalledCustomers()
+        {
+            List<QueueVM> calledCustomers = new List<QueueVM>();
+
+            string commandText = $"SELECT * FROM {_queueTable} WHERE status = 2";
+            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
+            await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                while (await reader.ReadAsync())
+                {
+                    QueueVM calledCustomer = ReadCalledCustomers(reader);
+                    calledCustomers.Add(calledCustomer);
+                }
+
+            return calledCustomers;
+        }
+
+        private static QueueVM ReadCalledCustomers(NpgsqlDataReader reader)
+        {
+            int? calledCustomerId = reader["id"] as int?;
+            int? servicePointId = reader["servicepointid"] as int?;
+            QueueVM calledCustomer = new QueueVM
+            {
+                Id = (int)calledCustomerId,
+                ServicePointId = (int)servicePointId
+            };
+            return calledCustomer;
+        }
+
+
+
+
+
+
+
+
+
+
+
+        //
+
         public async Task<IEnumerable<QueueVM>> GetWaitingCustomers(string userServingPointId)
         {
             List<QueueVM> waitingCustomers = new List<QueueVM>();
@@ -104,9 +144,7 @@ namespace Queue_Management_System.Repositories
                 CreatedAt = createdat
             };
             return waitingCustomers;
-        }
-
-        //
+        }        
 
         public async Task<QueueVM> MyCurrentServingCustomer(string userServingPointId)
         {
@@ -134,15 +172,6 @@ namespace Queue_Management_System.Repositories
             };
             return MyCurrentCustomerDetails;
         }
-
-
-
-
-
-        //
-
-
-
 
         public async Task<QueueVM> UpdateOutGoingAndIncomingCustomerStatus(int outgoingCustomerId, string serviceProviderId)
         {
@@ -176,7 +205,6 @@ namespace Queue_Management_System.Repositories
 
         {
             int? incomingCustomerId = reader["id"] as int?;
-        /*    UpdateNewStatus(id);*/
             QueueVM IncomingCustomerId = new QueueVM
             {
                 Id = (int)incomingCustomerId
@@ -188,7 +216,6 @@ namespace Queue_Management_System.Repositories
         private static async void UpdateIncomingCustomerStatus(int? incomingCustomerId) 
                                                          
         {
-            /*var commandText = $@"UPDATE {_queueTable} SET status = 2 WHERE id = @id";*/
             var commandText = $@"UPDATE {_queueTable} SET status = 2, updatedat = NOW() WHERE id = @id";
             await using (var cmd = new NpgsqlCommand(commandText, connection2))
             {
@@ -196,7 +223,6 @@ namespace Queue_Management_System.Repositories
 
                await cmd.ExecuteNonQueryAsync();                 
             }
-
         }
 
 
