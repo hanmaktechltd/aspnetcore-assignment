@@ -8,7 +8,7 @@ namespace Queue_Management_System.Models
     public class QueueVM
     {
         [Display(Name = "Customer Id")]
-        public int Id { get; set; }
+        public int? Id { get; set; } = 0;
         public ServicePointVM ServicePoint { get; set; }
         public int ServicePointId { get; set; }
      
@@ -22,7 +22,8 @@ namespace Queue_Management_System.Models
     public class QueueVM2
     {
         public int Id { get; set; }
-        public int IncomingCustomerId { get; set; }
+        public int? IncomingCustomerId { get; set; }
+        public QueueVM MyCurrentServingCustomerId { get; set; }
         public IEnumerable<QueueVM> WaitingCustomers { get; set; }
         [Display(Name = "Joined Queue At")]
         public DateTime CreatedAt { get; set; }

@@ -37,7 +37,7 @@ namespace Queue_Management_System.Controllers
         }
 
         [Authorize(Roles = "Service Provider"), HttpGet]
-        public async Task<ActionResult<IEnumerable<QueueVM>>> ServicePoint(int id)
+        public async Task<ActionResult<IEnumerable<QueueVM>>> ServicePoint(int incomingCustomerId)
         {
 
             foreach (var claim in User.Claims)
@@ -45,7 +45,21 @@ namespace Queue_Management_System.Controllers
                 var userServingPointId = @claim.Value;
 
                 var waitingCustomers = await _queueRepository.GetWaitingCustomers(userServingPointId);
-                return View(new QueueVM2() { IncomingCustomerId = id, WaitingCustomers = waitingCustomers } );
+                /////////////
+                var currentServingCustomerId = await _queueRepository.MyCurrentServingCustomer(userServingPointId);
+              /*  if (currentServingCustomerId == null)
+                {
+                    return View(new QueueVM2()
+                    {                        
+                        WaitingCustomers = waitingCustomers
+                    });
+                } */
+
+                ////////////
+                return View(new QueueVM2() { IncomingCustomerId = incomingCustomerId, 
+                                             WaitingCustomers = waitingCustomers, 
+                                             MyCurrentServingCustomerId = currentServingCustomerId
+                                            });
             }
             return NotFound();
         }

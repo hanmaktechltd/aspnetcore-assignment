@@ -104,41 +104,41 @@ namespace Queue_Management_System.Repositories
                 CreatedAt = createdat
             };
             return waitingCustomers;
-        }       
-
-        //
-        
-         public async Task<IEnumerable<QueueVM>> GetCurrentServingCustomer(string userServingPointId)
-        {
-            List<QueueVM> waitingCustomers = new List<QueueVM>();
-            string commandText = $"SELECT * FROM {_queueTable} WHERE servicepointid = {userServingPointId} AND status = 0 ORDER BY id ASC";
-            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
-            await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
-                while (await reader.ReadAsync())
-                {
-                    QueueVM waitingCustomer = ReadCurrentServingCustomer(reader);
-                    waitingCustomers.Add(waitingCustomer);
-                }
-
-            return waitingCustomers;
         }
 
-        private static QueueVM ReadCurrentServingCustomer(NpgsqlDataReader reader)
+        //
+
+        public async Task<QueueVM> MyCurrentServingCustomer(string userServingPointId)
         {
-            int? id = reader["id"] as int?;
-            DateTime createdat = (DateTime)reader["createdat"];
-            QueueVM waitingCustomers = new QueueVM
+            string commandText = $"SELECT * FROM {_queueTable} WHERE status = 2 AND servicepointid = {userServingPointId}";
+            await using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
             {
-                Id = (int)id,
-                CreatedAt = createdat
+                cmd.Parameters.AddWithValue("Id", userServingPointId);
+
+                await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    while (await reader.ReadAsync())
+                    {
+                        QueueVM MyCurrentCustomerDetails = ReadMyCurrentServingCustomerDetails(reader);
+                        return MyCurrentCustomerDetails;
+                    }
+            }
+            return null;
+        }
+
+        private static QueueVM ReadMyCurrentServingCustomerDetails(NpgsqlDataReader reader)
+        {
+            int? myCurrentCustomerId = reader["id"] as int?;
+            QueueVM MyCurrentCustomerDetails = new QueueVM
+            {
+                Id = (int)myCurrentCustomerId
             };
-            return waitingCustomers;
-        } 
-        
-        
-        
-        
-        
+            return MyCurrentCustomerDetails;
+        }
+
+
+
+
+
         //
 
 
@@ -185,7 +185,7 @@ namespace Queue_Management_System.Repositories
             return IncomingCustomerId;
         }
 
-        private static async void UpdateIncomingCustomerStatus(int incomingCustomerId) 
+        private static async void UpdateIncomingCustomerStatus(int? incomingCustomerId) 
                                                          
         {
             /*var commandText = $@"UPDATE {_queueTable} SET status = 2 WHERE id = @id";*/

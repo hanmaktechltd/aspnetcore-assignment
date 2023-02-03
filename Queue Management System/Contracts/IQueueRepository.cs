@@ -9,7 +9,7 @@ namespace Queue_Management_System.Contracts
         Task<IEnumerable<QueueVM>> GetWaitingCustomers(string userServingPointId);
 
         //**//
-        Task<IEnumerable<QueueVM>> GetCurrentServingCustomer(string userServingPointId);
+        Task<QueueVM> MyCurrentServingCustomer(string userServingPointId);
 
 
 

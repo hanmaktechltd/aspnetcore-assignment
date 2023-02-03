@@ -44,11 +44,15 @@
 </table>
 
 
-@*<button data-id="7" class="btn btn-danger deleteBtn" type="button"> Next</button>*@
-<button data-id="@Model.IncomingCustomerId" class="btn btn-danger deleteBtn" type="button"> Next</button>
+@if (@Model.MyCurrentServingCustomerId != null)
+{    
+    <button data-id="@Model.MyCurrentServingCustomerId.Id" class="btn btn-danger deleteBtn" type="button"> Next</button>
+}
+else
+{
+    <button data-id="0" class="btn btn-danger deleteBtn" type="button"> Next</button>
+}
 
-
-@*<a class="btn btn-warning" asp-action="GetNextNumber" asp-route-id="">Next</a>*@
 <a class="btn btn-warning" asp-action="RecallNumber" asp-route-id="">Recall</a>
 <a class="btn btn-warning" asp-action="MarkNumberAsNoShow" asp-route-id="">No Show</a>
 <a class="btn btn-warning" asp-action="MarkNumberAsFinished" asp-route-id="">Finished</a>
