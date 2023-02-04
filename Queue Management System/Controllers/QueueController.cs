@@ -30,6 +30,7 @@ namespace Queue_Management_System.Controllers
             return RedirectToAction(nameof(CheckinPage));
         }
 
+        // GET: Queue/WaitingPage
         [HttpGet]
         public async Task< IActionResult> WaitingPage()
         {
@@ -43,6 +44,7 @@ namespace Queue_Management_System.Controllers
             return NotFound();
         }
 
+        // GET: Queue/ServicePoint
         [Authorize(Roles = "Service Provider"), HttpGet]
         public async Task<ActionResult<IEnumerable<QueueVM>>> ServicePoint(int incomingCustomerId)
         {
@@ -63,8 +65,7 @@ namespace Queue_Management_System.Controllers
             return NotFound();
         }
 
-        [Authorize(Roles = "Service Provider"), HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost]
         public async Task<ActionResult> GetNextNumber(int id) //outgoingCustomerId
         {
             foreach (var claim in User.Claims)
@@ -72,21 +73,36 @@ namespace Queue_Management_System.Controllers
                 var serviceProviderId = @claim.Value;
 
                 var IncomingCustomerDetails = await _queueRepository.UpdateOutGoingAndIncomingCustomerStatus(id, serviceProviderId);
+                if (IncomingCustomerDetails == null )
+                {
+                    return RedirectToAction(nameof(ServicePoint));
+                   
+                }
                 return RedirectToAction(nameof(ServicePoint), new { incomingCustomerId = IncomingCustomerDetails.Id });
             }
             return NotFound();
 
         }
-
-        [Authorize(Roles = "Service Provider"), HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> MarkNumberASFinished() //outgoingCustomerId
+        //
+        [HttpPost]
+        public async Task<ActionResult> MarkNumberASNoShow()
         {
+            foreach (var claim in User.Claims)
+            {
+                var serviceProviderId = @claim.Value;
 
+                var IncomingCustomerDetails = await _queueRepository.MarkNumberASNoShow(serviceProviderId);
+                return RedirectToAction(nameof(ServicePoint));
+            }
+            return NotFound();
 
-            /* await _queueRepository.MarkNumberASFinished(id);
-             return RedirectToAction(nameof(ServicePoint));*/
+        }
 
+        //
+
+        [HttpPost]
+        public async Task<ActionResult> MarkNumberASFinished()
+        {
             foreach (var claim in User.Claims)
             {
                 var serviceProviderId = @claim.Value;
@@ -95,8 +111,6 @@ namespace Queue_Management_System.Controllers
                 return RedirectToAction(nameof(ServicePoint));
             }
             return NotFound();
-
-
 
         }
 

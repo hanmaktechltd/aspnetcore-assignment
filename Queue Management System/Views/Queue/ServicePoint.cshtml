@@ -46,22 +46,15 @@
 
 @if (@Model.MyCurrentServingCustomerId != null)
 {
-    var customerid = @Model.MyCurrentServingCustomerId.Id;
     <button data-id="@Model.MyCurrentServingCustomerId.Id" class="btn btn-danger nextBtn" type="button"> Neext</button>
-    <button data-id="@Model.MyCurrentServingCustomerId.Id" class="btn btn-danger recallBtn" type="button"> Recall</button>
-    <button data-id="@Model.MyCurrentServingCustomerId.Id" class="btn btn-danger noShowBtn" type="button"> No Show</button>
-    <button class="btn btn-danger finishedBtn" type="button"> Finished</button>
-    <button data-id="@Model.MyCurrentServingCustomerId.Id" class="btn btn-danger transfernumberBtn" type="button"> Transfer Number</button>
-
-    <a class="btn btn-warning" asp-action="MarkNumberAsNoShow" asp-route-id="">No Show</a>
+    <button  class="btn btn-danger recallBtn" type="button"> Recall</button>
+    <button  class="btn btn-danger noShowBtn" type="button"> No Show</button>
+    <button  class="btn btn-danger finishedBtn" type="button"> Finished</button>
+    <button  class="btn btn-danger transfernumberBtn" type="button"> Transfer Number</button>
 }
 else
 {
-    <button  data-id="0" class="btn btn-danger nextBtn" type="button"> Neext</button>
-    <button disabled data-id="" class="btn btn-danger recallBtn" type="button"> Recall</button>
-    <button disabled data-id="" class="btn btn-danger noShowBtn" type="button"> No Show</button>
-    <button disabled  class="btn btn-danger finishedBtn" type="button"> Finished</button>
-    <button disabled data-id="" class="btn btn-danger transfernumberBtn" type="button"> Transfer Number</button>
+    <button  data-id="" class="btn btn-danger nextBtn" type="button"> Nexttt</button>
 }
 
 
@@ -76,7 +69,7 @@ else
     <input type="hidden" id="currentServingCustomerId" name="Id" />
 </form>
 
-<form id="recallForm" asp-action="RecallNumber">
+<form id="recallForm">
     <input type="hidden" id="currentServingCustomerId" name="Id" />
 </form>
 
@@ -94,8 +87,8 @@ else
 
             $('.nextBtn').click(function (e) {
                 swal({
-                    title: "Are you sure?",
-                    text: "Are you sure you want to call next number?",
+                    title: "Next?",
+                    text: "Call next number?",
                     icon: "warning",
                     buttons: true,
                     dangerMode: true
@@ -118,8 +111,8 @@ else
 
             $('.recallBtn').click(function (e) {
                 swal({
-                    title: "Are you sure?",
-                    text: "Are you sure you want to recall next number?",
+                    title: "Recall?",
+                    text: "Recall the number?",
                     icon: "warning",
                     buttons: true,
                     dangerMode: true
@@ -130,7 +123,6 @@ else
                             var btn = $(this);
                             var id = btn.data("id");
                             $('#currentServingCustomerId').val(id);
-                            $('#recallForm').submit();
                         }
                     });
             });
@@ -140,8 +132,8 @@ else
 
             $('.noShowBtn').click(function (e) {
                 swal({
-                    title: "Are you sure?",
-                    text: "Are you sure you want to recall next number?",
+                    title: "No Show",
+                    text: "Mark Number as NoShow?",
                     icon: "warning",
                     buttons: true,
                     dangerMode: true
@@ -162,7 +154,7 @@ else
 
             $('.finishedBtn').click(function (e) {
                 swal({
-                    title: "Are you sure?",
+                    title: "Finished",
                     text: "Are you sure you want to mark this number as finished?",
                     icon: "warning",
                     buttons: true,

@@ -161,13 +161,14 @@ namespace Queue_Management_System.Repositories
         public async Task<QueueVM> UpdateOutGoingAndIncomingCustomerStatus(int outgoingCustomerId, string serviceProviderId)
         {
             //Update the current customer as served
-            var commandText = $@"UPDATE {_queueTable} SET status = 3 WHERE id = @id";
+            var commandText = $@"UPDATE {_queueTable} SET status = 3, completedat = NOW() WHERE id = @id";
             await using (var cmd = new NpgsqlCommand(commandText, connection))
             {
                 cmd.Parameters.AddWithValue("id", outgoingCustomerId);
 
                 await cmd.ExecuteNonQueryAsync();
             }
+
 
             //Get id of the next customer to be served
             string commandText2 = $"SELECT * FROM {_queueTable} WHERE status = 0 AND servicepointid = {serviceProviderId} ORDER BY id ASC LIMIT 1  "; 
@@ -210,25 +211,27 @@ namespace Queue_Management_System.Repositories
             }
         }
 
-
         //
-        /*    public async Task MarkNumberASFinished(int id)
+        public async Task<QueueVM> MarkNumberASNoShow(string serviceProviderId)
+        {
+            QueueVM customerIdToMarkAsFinished = await MyCurrentServingCustomer(serviceProviderId);
+            //Update the current customer as served
+            var commandText = $@"UPDATE {_queueTable} SET status = 4 , updatedat= NULL, completedat = NULL WHERE id = @id";
+            await using (var cmd = new NpgsqlCommand(commandText, connection))
             {
-                //Update the current customer as served
-                var commandText = $@"UPDATE {_queueTable} SET status = 3 WHERE id = @id";
-                await using (var cmd = new NpgsqlCommand(commandText, connection))
-                {
-                    cmd.Parameters.AddWithValue("id", id);
+                cmd.Parameters.AddWithValue("id", customerIdToMarkAsFinished.Id);
 
-                    await cmd.ExecuteNonQueryAsync();
-                }
-            }*/
+                await cmd.ExecuteNonQueryAsync();
+            }
+            return null;
+        }
+        //
 
         public async Task<QueueVM> MarkNumberASFinished(string serviceProviderId)
         {
             QueueVM customerIdToMarkAsFinished = await MyCurrentServingCustomer(serviceProviderId);
             //Update the current customer as served
-            var commandText = $@"UPDATE {_queueTable} SET status = 3 WHERE id = @id";
+            var commandText = $@"UPDATE {_queueTable} SET status = 3 , completedat = NOW() WHERE id = @id";
             await using (var cmd = new NpgsqlCommand(commandText, connection))
             {
                 cmd.Parameters.AddWithValue("id", customerIdToMarkAsFinished.Id);
