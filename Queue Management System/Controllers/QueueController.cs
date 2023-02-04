@@ -78,6 +78,30 @@ namespace Queue_Management_System.Controllers
 
         }
 
+        [Authorize(Roles = "Service Provider"), HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> MarkNumberASFinished() //outgoingCustomerId
+        {
+
+
+            /* await _queueRepository.MarkNumberASFinished(id);
+             return RedirectToAction(nameof(ServicePoint));*/
+
+            foreach (var claim in User.Claims)
+            {
+                var serviceProviderId = @claim.Value;
+
+                var IncomingCustomerDetails = await _queueRepository.MarkNumberASFinished(serviceProviderId);
+                return RedirectToAction(nameof(ServicePoint));
+            }
+            return NotFound();
+
+
+
+        }
+
+
+
 
 
 

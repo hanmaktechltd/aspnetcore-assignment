@@ -8,7 +8,9 @@ namespace Queue_Management_System.Models
     public class QueueVM
     {
         [Display(Name = "Customer Id")]
-        public int? Id { get; set; } = 0;
+       /* public int? Id { get; set; } = 0;*/
+        public int? Id { get; set; }
+
         public ServicePointVM ServicePoint { get; set; }
         public int ServicePointId { get; set; }
      

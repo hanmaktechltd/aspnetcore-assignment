@@ -76,9 +76,7 @@ namespace Queue_Management_System.Repositories
 
                 await cmd.ExecuteNonQueryAsync();
             }
-        }
-        //
-
+        }       
         public async Task<IEnumerable<QueueVM>> GetCalledCustomers()
         {
             List<QueueVM> calledCustomers = new List<QueueVM>();
@@ -106,19 +104,6 @@ namespace Queue_Management_System.Repositories
             };
             return calledCustomer;
         }
-
-
-
-
-
-
-
-
-
-
-
-        //
-
         public async Task<IEnumerable<QueueVM>> GetWaitingCustomers(string userServingPointId)
         {
             List<QueueVM> waitingCustomers = new List<QueueVM>();
@@ -226,7 +211,32 @@ namespace Queue_Management_System.Repositories
         }
 
 
+        //
+        /*    public async Task MarkNumberASFinished(int id)
+            {
+                //Update the current customer as served
+                var commandText = $@"UPDATE {_queueTable} SET status = 3 WHERE id = @id";
+                await using (var cmd = new NpgsqlCommand(commandText, connection))
+                {
+                    cmd.Parameters.AddWithValue("id", id);
 
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }*/
+
+        public async Task<QueueVM> MarkNumberASFinished(string serviceProviderId)
+        {
+            QueueVM customerIdToMarkAsFinished = await MyCurrentServingCustomer(serviceProviderId);
+            //Update the current customer as served
+            var commandText = $@"UPDATE {_queueTable} SET status = 3 WHERE id = @id";
+            await using (var cmd = new NpgsqlCommand(commandText, connection))
+            {
+                cmd.Parameters.AddWithValue("id", customerIdToMarkAsFinished.Id);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            return null;
+        }
 
 
     }
