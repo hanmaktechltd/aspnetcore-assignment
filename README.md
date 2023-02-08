@@ -48,3 +48,37 @@ Create a simple Queue Management System with the following pages:
 - If you don't want to create a public repository please invite (@hanmaktechltd) to your working repository.
 - Please include a brief description of how to run your solution and also include a copy of the database schema.
 - If you have any questions contact us (<hr@hanmak.co.ke>)
+
+
+
+# To Configure For Local Use
+
+1. Clone repository to local computer
+2. Create new postgres database 
+3. Import sql file located at "Data" folder of this repository 
+4. Edit connection strings to point to the database by editing the code in following files accordingly
+- appsettings.json file
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+- AdminRepository.cs file
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+- QueueRepository.cs file
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+5. When completed, run the website in Visual Studio
+- Login as Admin using Name: Admin | Password Admin@123
+- Login as service provider using Name as Nurse1, Nurse2, Nurse3, Nurse4 or Nurse5 and Password as Nurse1@123, Nurse2@123, Nurse3@123, Nurse4@123 or Nurse5@123 respectively.
+
+
+## Screenshots
+1. Check-In page
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+
+2. Waiting page
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+3. Service point
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+4. Admin dashboard
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
