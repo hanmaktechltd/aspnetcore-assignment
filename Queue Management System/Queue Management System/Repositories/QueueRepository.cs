@@ -8,7 +8,7 @@ namespace Queue_Management_System.Repositories
     {
         private const string CONNECTION_STRING = "Host=localhost:5432;" +
                           "Username=postgres;" +
-                          "Password=*mikemathu;" +
+                          "Password=password;" +
                           "Database=QMS";
 
         private const string _servicePointsTable = "servicepoints";
