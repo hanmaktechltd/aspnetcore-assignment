@@ -58,11 +58,11 @@ Create a simple Queue Management System with the following pages:
 3. Import sql file located at "Data" folder of this repository 
 4. Edit connection strings to point to the database by editing the code in following files accordingly
 - appsettings.json file
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/appsettings%20.json%20connection%20string.PNG)
 - AdminRepository.cs file
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Admin%20Repository%20string.PNG)
 - QueueRepository.cs file
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Queue%20Repository%20string.PNG)
 
 5. When completed, run the website in Visual Studio
 - Login as Admin using Name: Admin | Password Admin@123
@@ -71,14 +71,14 @@ Create a simple Queue Management System with the following pages:
 
 ## Screenshots
 1. Check-In page
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Check-In%20page.PNG)
 
 
 2. Waiting page
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Waiting%20Page.PNG)
 
 3. Service point
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Service%20point.PNG)
 
 4. Admin dashboard
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Admin%20Page.PNG)
