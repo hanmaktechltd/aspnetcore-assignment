@@ -14,11 +14,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\" />
+    <Compile Remove="Repository\**" />
+    <Content Remove="Repository\**" />
+    <EmbeddedResource Remove="Repository\**" />
+    <None Remove="Repository\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
     <Folder Include="Data\" />
     <Folder Include="Repositories\" />
-    <Folder Include="Repository\" />
-    <Folder Include="Services\" />
     <Folder Include="Views\Account\" />
   </ItemGroup>
 

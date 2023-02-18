@@ -1,7 +1,7 @@
 ﻿using Queue_Management_System.Models;
 using System.Threading.Tasks;
 
-namespace Queue_Management_System.Contracts
+namespace Queue_Management_System.Services
 {
     public interface IAdminRepository
     {

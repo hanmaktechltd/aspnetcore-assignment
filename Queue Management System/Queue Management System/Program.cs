@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Queue_Management_System.Contracts;
+using Queue_Management_System.Services;
 using Queue_Management_System.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
