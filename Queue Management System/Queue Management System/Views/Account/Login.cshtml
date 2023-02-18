@@ -22,16 +22,9 @@
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="row" style="padding-top: 10px;">
-                <div class="col-8">
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="RememberLogin" /> @Html.DisplayNameFor(model => model.RememberLogin)
-                        </label>
-                    </div>
-                </div>
-                <div class="col-4 ">
-                    <input type="submit" value="Login" class="btn btn-primary btn-block float-end" />
+            <div class="row float-end" style="padding-top: 10px;">
+                <div class="col-12  ">
+                    <input type="submit" value="Login" class="btn btn-primary btn-block " />
                 </div>
             </div>
         </form>

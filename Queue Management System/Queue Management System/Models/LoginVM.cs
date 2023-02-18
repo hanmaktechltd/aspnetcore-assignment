@@ -12,8 +12,5 @@ namespace Queue_Management_System.Models
         [Required]
         public string Password { get; set; }
         public string ReturnUrl { get; set; }
-
-        [Display(Name = "Remember Me")]
-        public bool RememberLogin { get; set; }
     }
 }
