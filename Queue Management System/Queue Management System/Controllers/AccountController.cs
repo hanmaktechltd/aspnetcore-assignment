@@ -48,11 +48,9 @@ namespace Queue_Management_System.Controllers
 
                     //Initialize a new instance of the ClaimsIdentity with the claims and authentication scheme
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    //Initialize a new instance of the ClaimsPrincipal with ClaimsIdentity
-                    var ClaimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                     //SignInAsync is a Extension method for Sign in a principal for the specified scheme.
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                      ClaimsPrincipal);
+                      new ClaimsPrincipal(claimsIdentity));
 
                     if (vm.ReturnUrl == "/Admin/Dashboard")
                     {

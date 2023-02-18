@@ -11,11 +11,8 @@ builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options =>
-            {
-                options.LoginPath = "/Account/Login";
+                .AddCookie();
 
-            });
 builder.Services.AddSession();
 
 var app = builder.Build();
