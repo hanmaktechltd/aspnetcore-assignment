@@ -1,4 +1,4 @@
-﻿using Queue_Management_System.Data;
+﻿using Queue_Management_System.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Queue_Management_System.Models
@@ -11,7 +11,8 @@ namespace Queue_Management_System.Models
         [Display(Name = "Service Point Name")]
         [Required]
         public string Name { get; set; }
-        public User User { get; set; }
+     /*   public Data.AppUserVM User { get; set; }*/
+        public AppUserVM User { get; set; }
 
         [Display(Name = "Service Provider Id")]
         [Required]

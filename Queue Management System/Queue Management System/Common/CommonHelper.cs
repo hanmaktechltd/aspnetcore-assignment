@@ -1,5 +1,5 @@
 ﻿using Npgsql;
-using Queue_Management_System.Data;
+using Queue_Management_System.Models;
 
 namespace Queue_Management_System.Common
 {
@@ -10,9 +10,9 @@ namespace Queue_Management_System.Common
         {
             _config = config;
         }
-        public User GetUserByUserName(string query)
+        public AppUserVM GetUserByUserName(string query)
         {
-            User user = new User();
+            AppUserVM user = new AppUserVM();
 
             string connectionString = _config.GetConnectionString("DefaultConnection");
 
