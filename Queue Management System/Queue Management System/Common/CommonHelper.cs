@@ -18,10 +18,15 @@ namespace Queue_Management_System.Common
 
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
-                connection.Open();
 
                 string sql = query;
+
+                // Prep command object.
                 NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+
+                connection.Open();
+
+                // Obtain a data reader via ExecuteReader()
                 using (NpgsqlDataReader dataReader = command.ExecuteReader())
                 {
                     while (dataReader.Read())
@@ -32,6 +37,7 @@ namespace Queue_Management_System.Common
                         user.Role = dataReader["role"].ToString();
                         user.ServicePointId = Convert.ToInt32(dataReader["servicepointid"]);
                     }
+                    dataReader.Close();
                 }
                 connection.Close();
             }
