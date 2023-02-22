@@ -2,30 +2,46 @@
 using Microsoft.AspNetCore.Mvc;
 using Queue_Management_System.Services;
 using Queue_Management_System.Models;
-using System.Net;
+using System.Security.Claims;
 
 namespace Queue_Management_System.Controllers
 {
     public class QueueController : Controller
     {
         private readonly IQueueRepository _queueRepository;
+
+        private ClaimsIdentity _identity;
         public QueueController(IQueueRepository queueRepository)
         {
             _queueRepository = queueRepository;
+        }
+
+        private int? GetServicePointId()
+        {
+            _identity = new ClaimsIdentity(User.Claims);
+            var userServingPointId = _identity.HasClaim(claim => claim.Type == "ServicePointId")
+               ? _identity.Claims.First(claim => claim.Type == "ServicePointId").Value
+               : null;
+            return Convert.ToInt32(userServingPointId);
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ServicePointVM>>> CheckinPage()
         {
             var services = await _queueRepository.GetServices();
-            return View(services);
+
+            ServicePointsList servicesList = new ServicePointsList()
+            {
+                Services = services
+            };
+            return View(servicesList);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddCustomerToQueue(ServicePointVM customer)
+        public async Task<ActionResult> AddCustomerToQueue(ServicePointVM servicePointId)
         {
-            await _queueRepository.AddCustomerToQueue(customer);
+            await _queueRepository.AddCustomerToQueue(servicePointId);
             return RedirectToAction(nameof(CheckinPage));
         }
 
@@ -39,23 +55,24 @@ namespace Queue_Management_System.Controllers
 
         // GET: Queue/ServicePoint
         [Authorize(Roles = "Service Provider"), HttpGet]
-        public async Task<ActionResult<IEnumerable<QueueVM>>> ServicePoint(int incomingCustomerId)
+        public async Task<ActionResult<IEnumerable<QueueVM>>> ServicePoint()
         {
+            int? servicePointId = GetServicePointId();
 
-            foreach (var claim in User.Claims)
+            if (servicePointId != null)
             {
-                var userServingPointId = @claim.Value;
+                var waitingCustomers = await _queueRepository.GetWaitingCustomers((int)servicePointId);//can return count = 0. In that case dont do the mycurrentserving customers function
+                //TODO
+                //if GetWaitingCustomers() count = 0, return view without going thru the MyCurrentServingCustomer() method
+                QueueVM currentServingCustomerId = await _queueRepository.MyCurrentServingCustomer((int)servicePointId);//can return null
 
-                var waitingCustomers = await _queueRepository.GetWaitingCustomers(userServingPointId);
-
-                var currentServingCustomerId = await _queueRepository.MyCurrentServingCustomer(userServingPointId);
-
-                return View(new QueueVM2()
+                QueueVMList queueList = new QueueVMList()
                 {
-                    IncomingCustomerId = incomingCustomerId,
+                    /*IncomingCustomerId = incomingCustomerId,*/
                     WaitingCustomers = waitingCustomers,
                     MyCurrentServingCustomerId = currentServingCustomerId
-                });
+                };
+                return View(queueList);
             }
             return NotFound();
         }
@@ -63,18 +80,18 @@ namespace Queue_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult> GetNextNumber(int id) //outgoingCustomerId
         {
-            foreach (var claim in User.Claims)
-            {
-                var serviceProviderId = @claim.Value;
+            int? servicePointId = GetServicePointId();
 
-                var IncomingCustomerDetails = await _queueRepository.UpdateOutGoingAndIncomingCustomerStatus(id, serviceProviderId);
+            if (servicePointId != null)
+            {
+                QueueVM IncomingCustomerDetails = await _queueRepository.UpdateOutGoingAndIncomingCustomerStatus(id, (int)servicePointId);
                 if (IncomingCustomerDetails == null)
                 {
                     return RedirectToAction(nameof(ServicePoint));
 
                 }
                 TempData["AlertMessage"] = $"Queue Id Number {IncomingCustomerDetails.Id} Called successfully";
-                return RedirectToAction(nameof(ServicePoint), new { incomingCustomerId = IncomingCustomerDetails.Id });
+                return RedirectToAction(nameof(ServicePoint));
             }
             return NotFound();
         }
@@ -82,18 +99,19 @@ namespace Queue_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult> RecallNumber()
         {
-            foreach (var claim in User.Claims)
-            {
-                var serviceProviderId = @claim.Value;
+            int? servicePointId = GetServicePointId();
 
-                var CurrentlyCalledCustomerDetails = await _queueRepository.GetCurentlyCalledNumber(serviceProviderId);//change this name
+            if (servicePointId != null)
+            {
+                QueueVM CurrentlyCalledCustomerDetails = await _queueRepository.MyCurrentServingCustomer((int)servicePointId);//change this name
                 if (CurrentlyCalledCustomerDetails == null)
                 {
+                    TempData["AlertMessage"] = $"Error encountered while Recalling Queue Id Number";
                     return RedirectToAction(nameof(ServicePoint));
 
                 }
                 TempData["AlertMessage"] = $"Queue Id Number {CurrentlyCalledCustomerDetails.Id} ReCalled successfully";
-                return RedirectToAction(nameof(ServicePoint), new { incomingCustomerId = CurrentlyCalledCustomerDetails.Id });
+                return RedirectToAction(nameof(ServicePoint));
             }
             return NotFound();
         }
@@ -101,11 +119,12 @@ namespace Queue_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult> MarkNumberASNoShow()
         {
-            foreach (var claim in User.Claims)
-            {
-                var serviceProviderId = @claim.Value;
+            int? servicePointId = GetServicePointId();
 
-                var IncomingCustomerDetails = await _queueRepository.MarkNumberASNoShow(serviceProviderId);
+            if (servicePointId != null)
+            {
+
+                await _queueRepository.MarkNumberASNoShow((int)servicePointId);
                 TempData["AlertMessage"] = "Queue Id Number Marked as NoShow successfully";
                 return RedirectToAction(nameof(ServicePoint));
             }
@@ -116,11 +135,12 @@ namespace Queue_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult> MarkNumberASFinished()
         {
-            foreach (var claim in User.Claims)
-            {
-                var serviceProviderId = @claim.Value;
+            int? servicePointId = GetServicePointId();
 
-                var IncomingCustomerDetails = await _queueRepository.MarkNumberASFinished(serviceProviderId);
+            if (servicePointId != null)
+            {
+
+                 await _queueRepository.MarkNumberASFinished((int)servicePointId);
                 TempData["AlertMessage"] = "Queue Id Number Marked as Finished successfully";
                 return RedirectToAction(nameof(ServicePoint));
             }
@@ -130,14 +150,15 @@ namespace Queue_Management_System.Controllers
 
         // POST: Queue/TransferNumber
         [HttpPost]
-        public async Task<ActionResult> TransferNumber(int id, QueueVM2 room)
+        public async Task<ActionResult> TransferNumber(QueueVMList room)
         {
-            foreach (var claim in User.Claims)
-            {
-                var servicePointid = room.MyCurrentServingCustomerId.ServicePointId;
-                var serviceProviderId = @claim.Value;
+            int? currentServicePointId = GetServicePointId();
 
-                var IncomingCustomerDetails = await _queueRepository.TransferNumber(serviceProviderId, servicePointid);
+            if (currentServicePointId != null)
+            {
+                int servicePointIdTranser = room.MyCurrentServingCustomerId.ServicePointId;
+
+                await _queueRepository.TransferNumber((int)currentServicePointId, servicePointIdTranser);
                 TempData["AlertMessage"] = "Queue Id Number Transfered successfully";
                 return RedirectToAction(nameof(ServicePoint));
             }

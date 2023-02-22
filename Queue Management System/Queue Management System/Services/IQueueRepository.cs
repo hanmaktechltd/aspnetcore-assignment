@@ -7,12 +7,11 @@ namespace Queue_Management_System.Services
         Task<IEnumerable<ServicePointVM>> GetServices();
         Task AddCustomerToQueue(ServicePointVM customer);       
         Task<IEnumerable<QueueVM>> GetCalledCustomers();
-        Task<IEnumerable<QueueVM>> GetWaitingCustomers(string userServingPointId);        
-        Task<QueueVM> MyCurrentServingCustomer(string userServingPointId);       
-        Task<QueueVM> UpdateOutGoingAndIncomingCustomerStatus(int outgoingCustomerId, string serviceProviderId);
-        Task<QueueVM> GetCurentlyCalledNumber(string serviceProviderId);
-        Task<QueueVM> MarkNumberASNoShow(string serviceProviderId);
-        Task<QueueVM> MarkNumberASFinished(string serviceProviderId);
-        Task<QueueVM> TransferNumber(string serviceProviderId, int servicePointid);
+        Task<IEnumerable<QueueVM>> GetWaitingCustomers(int servicePointId);        
+        Task<QueueVM> MyCurrentServingCustomer(int servicePointId);       
+        Task<QueueVM> UpdateOutGoingAndIncomingCustomerStatus(int outgoingCustomerId, int servicePointId);
+        Task MarkNumberASNoShow(int servicePointId);
+        Task MarkNumberASFinished(int servicePointId);
+        Task TransferNumber(int currentServicePointId, int servicePointIdTranser);
     }
 }

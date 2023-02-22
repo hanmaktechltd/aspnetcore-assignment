@@ -1,11 +1,16 @@
-﻿@model Queue_Management_System.Models.QueueVM2
+﻿@model Queue_Management_System.Models.QueueVMList
 
 @{
     ViewData["Title"] = "Service Point";
 }
 <div class="row align-items-start" style="max-height: 75vh;">
     <div  class="col-md-5 " style="height: 70vh; background-color: #f8f9fa; ">
-        @if (@Model.MyCurrentServingCustomerId != null)
+        @if (@Model.MyCurrentServingCustomerId == null)
+        {
+            <H1 style="padding-top: 50px;" class="text-center">No customer being served</H1>
+
+        }
+        else
         {
             <div style="padding-top: 50px;">
                 <h4 class="text-center">Current Serving</h4>
@@ -13,14 +18,15 @@
                 <h1 class="text-center">@Model.MyCurrentServingCustomerId.Id</h1>
             </div>                 
         }
-        else
-        {
-            <H1 style="padding-top: 50px;" class="text-center">No customer being served</H1>
-        }
     </div>
 
     <div class="col-md-2 text-center" style="height: 70vh; background-color: rgb(255, 270, 355 );">
-        @if (@Model.MyCurrentServingCustomerId != null)
+        @if (@Model.MyCurrentServingCustomerId == null)
+        {
+            <button style="padding:15px 70px;" data-id="" class="btn btn-primary btn-lg rounded-0 nextBtn  " type="button"> Next</button>
+
+        }
+        else
         {
             <button style="padding:15px 70px;" data-id="@Model.MyCurrentServingCustomerId.Id" class="btn btn-primary btn-lg rounded-0 nextBtn  " type="button"> Next</button><br><br>
             <button style="padding:19px 70px;" class="btn btn-primary btn-lg rounded-0 recallBtn" type="button"> Recall</button> <br> <br>
@@ -28,20 +34,24 @@
             <button style="padding:15px 60px;" class="btn btn-primary btn-lg rounded-0 finishedBtn" type="button"> Finished</button> <br><br>
             <button style="padding:5px 60px;" data-bs-toggle="modal" data-bs-target="#transferNumberModal"  type="button" class="btn btn-primary btn-lg rounded-0 transferBtn">Transfer Number</button>
         }
-        else
-        {
-            <button style="padding:15px 70px;" data-id="" class="btn btn-primary btn-lg rounded-0 nextBtn  " type="button"> Next</button>
-        }
     </div>
 
     <div class="col-md-5" style="height: 70vh; background-color: #f8f9fa; overflow: hidden;">
+    @if (@Model.WaitingCustomers == null)
+    {
+        <H1 style="padding-top: 50px;" class="text-center">No customer on queue</H1>
+    }
+    else
+    {
+   
         @if(TempData["AlertMessage"] != null)
         {
            <div class="alert alert-success alert-dismissible fade show" role="alert" >
                 <strong>Success!</strong> @TempData["AlertMessage"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>  
-        } 
+        }
+         <h4 class="text-center">@Model.WaitingCustomers.Count() Customers on the queue</h4>
         <table class="table">
             <thead>
                 <tr>
@@ -67,10 +77,12 @@
                 }  
             </tbody>
         </table>    
-    </div>
+ 
+    }
+   </div>
 </div>
 
-@await Html.PartialAsync("_TransferNumberPartialView", new QueueVM2())
+@await Html.PartialAsync("_TransferNumberPartialView", new QueueVMList())
 
 <form id="nextForm" asp-action="GetNextNumber">
     <input type="hidden" id="currentServingCustomerId" name="Id" />

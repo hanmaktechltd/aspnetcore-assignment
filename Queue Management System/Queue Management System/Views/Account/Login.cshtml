@@ -11,6 +11,12 @@
     <div class="col-md-3 card card-outline" style="padding: 30px;">
         <form asp-action="Login">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (!string.IsNullOrEmpty(ViewBag.Message))
+            {
+                <span class="text-danger">
+                    @ViewBag.Message
+                </span>
+            }
             @Html.HiddenFor(x => x.ReturnUrl)
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>

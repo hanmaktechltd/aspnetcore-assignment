@@ -18,11 +18,11 @@ namespace Queue_Management_System.Models
         public DateTime CompletedAt { get; set; }
     }
 
-    public class QueueVM2
+    public class QueueVMList
     {
         [Display(Name = "Queue Id Number")]
         public int Id { get; set; }
-        public int? IncomingCustomerId { get; set; }
+       /* public int? IncomingCustomerId { get; set; }*/
         public QueueVM MyCurrentServingCustomerId { get; set; }
         public IEnumerable<QueueVM> WaitingCustomers { get; set; }
 

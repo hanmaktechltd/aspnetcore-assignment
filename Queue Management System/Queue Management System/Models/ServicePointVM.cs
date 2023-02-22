@@ -12,10 +12,14 @@ namespace Queue_Management_System.Models
         [Required]
         public string Name { get; set; }
      /*   public Data.AppUserVM User { get; set; }*/
-        public AppUserVM User { get; set; }
+        public AppUserVM AppUser { get; set; }
 
         [Display(Name = "Service Provider Id")]
         [Required]
         public int ServiceProviderId { get; set; }
+    }
+    public class ServicePointsList
+    {
+        public IEnumerable<ServicePointVM> Services { get; set; }
     }
 }
