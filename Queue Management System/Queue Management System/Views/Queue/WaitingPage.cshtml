@@ -1,10 +1,10 @@
-﻿@model Queue_Management_System.Models.QueueVMList
+﻿@model IEnumerable<Queue_Management_System.Models.QueueVM>
 
 @{
     ViewData["Title"] = "Waiting Page";
 }
 
-@if (@Model.CalledCustomers.Count() == 0)
+@if (@Model.Count() == 0)
 {
     <H1 style="padding-top: 50px;" class="text-center">No Customers Waiting</H1>
 }
@@ -18,12 +18,12 @@ else
                         @Html.DisplayNameFor(model => model.Id)
                     </th>
                     <th>
-                      @Html.DisplayNameFor(model => model.CalledCustomers)
+                      @Html.DisplayNameFor(model => model.ServicePointId)
                     </th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.CalledCustomers)
+                @foreach (var item in Model)
                 {
                     <tr>
                         <td>

@@ -4,8 +4,6 @@ namespace Queue_Management_System.Models
 {
     public class LoginVM
     {
-        public int Id { get; set; }
-
         [Required]
         public string Name { get; set; }
 

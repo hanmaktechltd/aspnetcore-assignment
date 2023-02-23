@@ -24,6 +24,36 @@ namespace Queue_Management_System.Repositories
             _connection = new NpgsqlConnection(connectionString);
             _connection.Open();
         }
+
+       /* public async Task<IEnumerable<ServicePointVM>> CountServices()
+        {
+            OpenConnection();
+            List<ServicePointVM> services = new List<ServicePointVM>();
+
+            string commandText = $"SELECT * FROM {_servicePointsTable}";
+            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _connection))
+            {
+                using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        ServicePointVM service = new ServicePointVM
+                        {
+                            Id = (int)reader["id"],
+                            Name = (string)reader["name"]
+                        };
+                        services.Add(service);
+                    }
+                    reader.Close();
+                }
+                _connection.Close();
+            }
+            if (services.Count() == 0)
+            {
+                return null;
+            }
+            return services;
+        }*/
         public async Task<IEnumerable<ServicePointVM>> GetServices()
         {
             OpenConnection();
@@ -143,7 +173,7 @@ namespace Queue_Management_System.Repositories
                     {
                         myCurrentCustomerId = new QueueVM
                         {
-                            Id = (int?)reader["id"]
+                            Id = (int)reader["id"]
                         };
                     }
                     reader.Close();

@@ -4,7 +4,6 @@ namespace Queue_Management_System.Models
 {
     public class ServiceProviderVM
     {
-        [Display(Name = "Service Provider Id")]
         public int Id { get; set; }
 
         [Required]
@@ -12,9 +11,7 @@ namespace Queue_Management_System.Models
 
         [Required]
         public string Password { get; set; }
-        public string Role { get; set; }
-
-        [Display(Name = "Service Point Id")]        
+        public string Role { get; set; }        
         public int ServicepointId { get; set; }
     }
 }

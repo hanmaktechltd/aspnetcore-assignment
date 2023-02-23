@@ -1,8 +1,10 @@
 ﻿@model Queue_Management_System.Models.QueueVMList
+using Queue_Management_System.Models.QueueVM;
 
 @{
     ViewData["Title"] = "Service Point";
 }
+
 <div class="row align-items-start" style="max-height: 75vh;">
     <div  class="col-md-5 " style="height: 70vh; background-color: #f8f9fa; ">
         @if (@Model.MyCurrentServingCustomerId == null)
@@ -82,7 +84,7 @@
    </div>
 </div>
 
-@await Html.PartialAsync("_TransferNumberPartialView", new QueueVMList())
+@await Html.PartialAsync("TransferNumberPartialView", new QueueVMList {ServicePointCount = @Model.Services.Count()})
 
 <form id="nextForm" asp-action="GetNextNumber">
     <input type="hidden" id="currentServingCustomerId" name="Id" />

@@ -27,7 +27,10 @@ namespace Queue_Management_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                string userAuthenticationQuery = $"SELECT name, role, servicepointid FROM {_tableName} WHERE Name='{loginViewModel.Name}' AND Password='{loginViewModel.Password}'";
+                string userAuthenticationQuery = $"SELECT name, role, servicepointid " +
+                                                $"FROM {_tableName} " +
+                                                $"WHERE Name='{loginViewModel.Name}' " +
+                                                $"AND Password='{loginViewModel.Password}'";
                 AppUserVM appUser = AuthenticateAppUser(userAuthenticationQuery);
                 if (appUser == null)
                 {   
@@ -41,7 +44,6 @@ namespace Queue_Management_System.Controllers
                         new Claim(ClaimTypes.Name, loginViewModel.Name),
                         new Claim(ClaimTypes.Role, appUser.Role),
                         new Claim("ServicePointId", Convert.ToString(appUser.ServicePointId))
-
                     };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -64,7 +66,6 @@ namespace Queue_Management_System.Controllers
             }
             return View(loginViewModel);
         }
-
         public AppUserVM? AuthenticateAppUser(string userAuthenticationQuery)
         {
             AppUserVM appUser = null;

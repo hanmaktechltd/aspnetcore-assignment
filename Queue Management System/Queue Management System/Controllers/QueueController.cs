@@ -9,13 +9,11 @@ namespace Queue_Management_System.Controllers
     public class QueueController : Controller
     {
         private readonly IQueueRepository _queueRepository;
-
         private ClaimsIdentity _identity;
         public QueueController(IQueueRepository queueRepository)
         {
             _queueRepository = queueRepository;
         }
-
         private int? GetServicePointId()
         {
             _identity = new ClaimsIdentity(User.Claims);
@@ -26,15 +24,10 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ServicePointVM>>> CheckinPage()
+        public async Task<IActionResult> CheckinPage()
         {
             var services = await _queueRepository.GetServices();
-
-            ServicePointsList servicesList = new ServicePointsList()
-            {
-                Services = services
-            };
-            return View(servicesList);
+            return View(services);
         }
 
         [HttpPost]
@@ -50,16 +43,12 @@ namespace Queue_Management_System.Controllers
         public async Task<IActionResult> WaitingPage()
         {
             var calledCustomers = await _queueRepository.GetCalledCustomers();
-            QueueVMList calledCustomersList = new QueueVMList()
-            {
-                CalledCustomers = calledCustomers
-            };
-            return View(calledCustomersList);
+            return View(calledCustomers);
         }
 
         // GET: Queue/ServicePoint
         [Authorize(Roles = "Service Provider"), HttpGet]
-        public async Task<ActionResult<IEnumerable<QueueVM>>> ServicePoint()
+        public async Task<IActionResult> ServicePoint()
         {
             int? servicePointId = GetServicePointId();
 
@@ -67,11 +56,13 @@ namespace Queue_Management_System.Controllers
             {
                 var waitingCustomers = await _queueRepository.GetWaitingCustomers((int)servicePointId);
                 QueueVM currentServingCustomerId = await _queueRepository.MyCurrentServingCustomer((int)servicePointId);
+                var services = await _queueRepository.GetServices();
 
                 QueueVMList queueList = new QueueVMList()
                 {
                     WaitingCustomers = waitingCustomers,
-                    MyCurrentServingCustomerId = currentServingCustomerId
+                    MyCurrentServingCustomerId = currentServingCustomerId,
+                    Services = services,
                 };
                 return View(queueList);
             }
@@ -136,13 +127,11 @@ namespace Queue_Management_System.Controllers
 
             if (servicePointId != null)
             {
-
-                 await _queueRepository.MarkNumberASFinished((int)servicePointId);
+                await _queueRepository.MarkNumberASFinished((int)servicePointId);
                 TempData["AlertMessage"] = "Queue Id Number Marked as Finished successfully";
                 return RedirectToAction(nameof(ServicePoint));
             }
             return NotFound();
-
         }
 
         // POST: Queue/TransferNumber

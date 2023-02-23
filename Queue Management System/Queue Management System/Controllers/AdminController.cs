@@ -9,7 +9,6 @@ namespace Queue_Management_System.Controllers
     public class AdminController : Controller
     {
         private readonly IAdminRepository _adminRepository;
-
         public AdminController(IAdminRepository adminRepository)
         {
             _adminRepository = adminRepository;
@@ -22,20 +21,19 @@ namespace Queue_Management_System.Controllers
         }
 
         // GET: Admin/ViewServiceProviders
-        public async Task<ActionResult<IEnumerable<ServiceProviderVM>>> ViewServiceProviders()
+        public async Task<ActionResult> ViewServiceProviders()
         {
             var serviceProviders = await _adminRepository.GetServiceProviders();
             return View(serviceProviders);
         }
 
         // GET: Admin/ViewServiceProviderDetails/5
-        public async Task<ActionResult<ServiceProviderVM>> ViewServiceProviderDetails(int id)
+        public async Task<ActionResult> ViewServiceProviderDetails(int id)
         {
-            var ServiceProviderDetails = await _adminRepository.GetServiceProviderDetails(id);
-            if (ServiceProviderDetails != null)
-                return View(ServiceProviderDetails);
-            else
-                return NotFound();
+            ServiceProviderVM serviceProviderDetails = await _adminRepository.GetServiceProviderDetails(id);
+            if (serviceProviderDetails != null)            
+                return View(serviceProviderDetails);            
+            return NotFound();
         }
 
         // GET: Admin/CreateServiceProvider
@@ -56,11 +54,12 @@ namespace Queue_Management_System.Controllers
         // GET: Admin/EditServiceProvider/5
         public async Task<ActionResult> EditServiceProvider(int id)
         {
-            var serviceProvider = await _adminRepository.GetServiceProviderDetails(id);
-            if (serviceProvider != null)
-                return View(serviceProvider);
-            else
-                return NotFound();
+            ServiceProviderVM serviceProviderDetails = await _adminRepository.GetServiceProviderDetails(id);
+            if (serviceProviderDetails != null)
+            {
+                return View(serviceProviderDetails);
+            }
+               return NotFound();
         }
 
         // POST: Admin/EditServiceProvider/5
@@ -72,7 +71,6 @@ namespace Queue_Management_System.Controllers
             return RedirectToAction(nameof(ViewServiceProviderDetails), new { id = serviceProvider.Id });
         }
 
-
         // POST: Admin/DeleteServiceProvider/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -83,20 +81,22 @@ namespace Queue_Management_System.Controllers
         }
 
         // GET: Admin/ViewServicePoints
-        public async Task<ActionResult<IEnumerable<ServicePointVM>>> ViewServicePoints()
+        public async Task<ActionResult> ViewServicePoints()
         {
             var servicePoints = await _adminRepository.GetServicePoints();
-            return View(servicePoints);
+            if (servicePoints != null)
+                return View(servicePoints);
+            return NotFound();
         }
 
         // GET: Admin/ViewServicePointDetails/5
-        public async Task<ActionResult<ServiceProviderVM>> ViewServicePointDetails(int id)
+        public async Task<ActionResult> ViewServicePointDetails(int id)
+
         {
-            var ServiceProviderDetails = await _adminRepository.GetServicePointDetails(id);
+            ServicePointVM ServiceProviderDetails = await _adminRepository.GetServicePointDetails(id);
             if (ServiceProviderDetails != null)
-                return View(ServiceProviderDetails);
-            else
-                return NotFound();
+                return View(ServiceProviderDetails);            
+            return NotFound();
         }
 
         // GET: Admin/CreateServicePoint
@@ -117,11 +117,10 @@ namespace Queue_Management_System.Controllers
         // GET: Admin/EditServicePoint/5
         public async Task<ActionResult> EditServicePoint(int id)
         {
-            var servicePoint = await _adminRepository.GetServicePointDetails(id);
+            ServicePointVM servicePoint = await _adminRepository.GetServicePointDetails(id);
             if (servicePoint != null)
                 return View(servicePoint);
-            else
-                return NotFound();
+            return NotFound();
         }
 
         // POST: Admin/EditServicePoint/5
