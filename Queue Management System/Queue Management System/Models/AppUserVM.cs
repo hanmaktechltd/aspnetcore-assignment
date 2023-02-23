@@ -8,6 +8,6 @@ namespace Queue_Management_System.Models
     {
         public string Name { get; set; }
         public string Role { get; set; }
-        public ServicePointVM ServicePointId { get; set; }
+        public int ServicePointId { get; set; }
     }
 }

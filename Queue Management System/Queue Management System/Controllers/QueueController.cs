@@ -142,7 +142,7 @@ namespace Queue_Management_System.Controllers
 
             if (currentServicePointId != null)
             {
-                int servicePointIdTranser = room.MyCurrentServingCustomerId.ServicePointId;
+                var servicePointIdTranser = room.MyCurrentServingCustomerId.ServicePointId;
 
                 await _queueRepository.TransferNumber((int)currentServicePointId, servicePointIdTranser);
                 TempData["AlertMessage"] = "Queue Id Number Transfered successfully";

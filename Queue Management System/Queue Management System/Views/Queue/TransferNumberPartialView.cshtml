@@ -17,7 +17,8 @@
                         {
                             <input asp-for="MyCurrentServingCustomerId.ServicePointId" min="0" max="0" class="form-control">
                         }
-                        else{
+                        else
+                        {
                             <input asp-for="MyCurrentServingCustomerId.ServicePointId" min="1" max="@Model.ServicePointCount" class="form-control">
 
                         }

@@ -1,5 +1,4 @@
 ﻿@model Queue_Management_System.Models.QueueVMList
-using Queue_Management_System.Models.QueueVM;
 
 @{
     ViewData["Title"] = "Service Point";
@@ -10,7 +9,6 @@ using Queue_Management_System.Models.QueueVM;
         @if (@Model.MyCurrentServingCustomerId == null)
         {
             <H1 style="padding-top: 50px;" class="text-center">No customer being served</H1>
-
         }
         else
         {
@@ -26,7 +24,6 @@ using Queue_Management_System.Models.QueueVM;
         @if (@Model.MyCurrentServingCustomerId == null)
         {
             <button style="padding:15px 70px;" data-id="" class="btn btn-primary btn-lg rounded-0 nextBtn  " type="button"> Next</button>
-
         }
         else
         {
@@ -38,21 +35,21 @@ using Queue_Management_System.Models.QueueVM;
         }
     </div>
 
-    <div class="col-md-5" style="height: 70vh; background-color: #f8f9fa; overflow: hidden;">
-    @if (@Model.WaitingCustomers == null)
-    {
-        <H1 style="padding-top: 50px;" class="text-center">No customer on queue</H1>
-    }
-    else
-    {
-   
-        @if(TempData["AlertMessage"] != null)
+    <div class="col-md-5" style="height: 70vh; background-color: #f8f9fa; overflow: auto;">
+         @if(TempData["AlertMessage"] != null)
         {
            <div class="alert alert-success alert-dismissible fade show" role="alert" >
                 <strong>Success!</strong> @TempData["AlertMessage"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>  
         }
+    @if (@Model.WaitingCustomers == null)
+    {
+        <H1 style="padding-top: 50px;" class="text-center">No customer on queue</H1>
+    }
+    else
+    {   
+       
          <h4 class="text-center">@Model.WaitingCustomers.Count() Customers on the queue</h4>
         <table class="table">
             <thead>
@@ -78,8 +75,7 @@ using Queue_Management_System.Models.QueueVM;
                     </tr>
                 }  
             </tbody>
-        </table>    
- 
+        </table>     
     }
    </div>
 </div>

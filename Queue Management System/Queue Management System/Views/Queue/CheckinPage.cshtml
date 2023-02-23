@@ -10,18 +10,18 @@
 }
 else
 {
-<div class="text-center row justify-content-center ">
-    <h1 class="">WELCOME TO OUR SERVICES</h1>
-    <h5>Pleace select the service</h5>
-    <div class="row justify-content-center" style="width: 50vw">
-        @foreach (var item in Model)
-        {       
-            <div class="col-6">
-                <button style="width: 100%; padding:20px;  margin: 20px; 10px;" data-id="@item.Id" class="btn btn-primary allocateBtn" type="button"> @Html.DisplayFor(modelItem => item.Name) </button>
-            </div>
-        }
-    </div>
-</div> 
+    <div class="text-center row justify-content-center ">
+        <h1 class="">WELCOME TO OUR SERVICES</h1>
+        <h5>Pleace select the service</h5>
+        <div class="row justify-content-center" style="width: 50vw">
+            @foreach (var item in Model)
+            {       
+                <div class="col-6">
+                    <button style="width: 100%; padding:20px;  margin: 20px; 10px;" data-id="@item.Id" class="btn btn-primary allocateBtn" type="button"> @Html.DisplayFor(modelItem => item.Name) </button>
+                </div>
+            }
+        </div>
+    </div> 
 }
 
 <form id="allocationForm" asp-action="AddCustomerToQueue">

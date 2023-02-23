@@ -1,7 +1,6 @@
 ﻿using Npgsql;
 using Queue_Management_System.Services;
 using Queue_Management_System.Models;
-using System.Data;
 
 namespace Queue_Management_System.Repositories
 {
@@ -9,6 +8,7 @@ namespace Queue_Management_System.Repositories
     {
         private const string _serviceProvidersTable = "appusers";
         private const string _servicePointTable = "servicepoints";
+        private const string _role = "Service Provider";
         private IConfiguration _config;
         private NpgsqlConnection _connection;
         public AdminRepository(IConfiguration config)
@@ -28,19 +28,18 @@ namespace Queue_Management_System.Repositories
             List<ServiceProviderVM> serviceProviders = new List<ServiceProviderVM>();
 
             // Prep command object.
-            string commandText = $"SELECT id, name FROM {_serviceProvidersTable} WHERE role = 'Service Provider'";
-            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _connection))
+            string commandText = $"SELECT id, name FROM {_serviceProvidersTable} WHERE role = '{_role}'";
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
-                using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
                     {
-                        ServiceProviderVM serviceProvider = new ServiceProviderVM
+                        serviceProviders.Add(new ServiceProviderVM
                         {
                             Id = (int)reader["id"],
                             Name = (string)reader["name"]
-                        };
-                        serviceProviders.Add(serviceProvider);
+                        });
                     }
                     reader.Close();
                 }
@@ -58,11 +57,11 @@ namespace Queue_Management_System.Repositories
             ServiceProviderVM serviceProviderDetails = null;
 
             string commandText = $"SELECT * FROM {_serviceProvidersTable} WHERE id = @id";
-            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
-                cmd.Parameters.AddWithValue("id", id);
+                command.Parameters.AddWithValue("@id", id);
 
-                using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                 {
                     if (await reader.ReadAsync())
                     {
@@ -84,30 +83,31 @@ namespace Queue_Management_System.Repositories
         public async Task CreateServiceProvider(ServiceProviderVM serviceProvider)
         {
             OpenConnection();
-            string commandText = $"INSERT INTO {_serviceProvidersTable} (name, password, role, servicepointid) VALUES (@name, @password, 'Service Provider', @servicepointid)";
-
-            using (var cmd = new NpgsqlCommand(commandText, _connection))
+            string commandText = $"INSERT INTO {_serviceProvidersTable} (name, password, role, servicepointid) " +
+                                 $"VALUES (@name, @password, @role, @servicepointid)";
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
-                cmd.Parameters.AddWithValue("name", serviceProvider.Name);
-                cmd.Parameters.AddWithValue("password", serviceProvider.Password);
-                cmd.Parameters.AddWithValue("servicepointid", serviceProvider.ServicepointId);
+                command.Parameters.AddWithValue("@name", serviceProvider.Name);
+                command.Parameters.AddWithValue("@password", serviceProvider.Password);
+                command.Parameters.AddWithValue("@role", _role);
+                command.Parameters.AddWithValue("@servicepointid", serviceProvider.ServicepointId);
 
-                await cmd.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync();
             }
             _connection.Close();
         }
         public async Task UpdateServiceProvider(int id, ServiceProviderVM serviceProvider)
         {
             OpenConnection();
-            string commandText = $@"UPDATE {_serviceProvidersTable} SET password = @password, servicepointid = @servicepointid WHERE id = @id";
-
-            using (var cmd = new NpgsqlCommand(commandText, _connection))
+            string commandText = $"UPDATE {_serviceProvidersTable} " +
+                                 $"SET password = @password, servicepointid = @servicepointid WHERE id = @id";
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {               
-                cmd.Parameters.AddWithValue("id", id);
-                cmd.Parameters.AddWithValue("password", serviceProvider.Password);
-                cmd.Parameters.AddWithValue("servicepointid", serviceProvider.ServicepointId);
+                command.Parameters.AddWithValue("@password", serviceProvider.Password);
+                command.Parameters.AddWithValue("@servicepointid", serviceProvider.ServicepointId);
+                command.Parameters.AddWithValue("@id", id);
 
-                await cmd.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync();
             }
             _connection.Close();
         }
@@ -115,34 +115,32 @@ namespace Queue_Management_System.Repositories
         {
             OpenConnection();
             string commandText = $"DELETE FROM {_serviceProvidersTable} WHERE ID=(@id)";
-            using (var cmd = new NpgsqlCommand(commandText, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
-                cmd.Parameters.AddWithValue("id", id);
+                command.Parameters.AddWithValue("@id", id);
 
-                await cmd.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync();
             }
             _connection.Close();
         }
-
         public async Task<IEnumerable<ServicePointVM>> GetServicePoints()
         {
             OpenConnection();
             List<ServicePointVM> servicePoints = new List<ServicePointVM>();
 
             string commandText = $"SELECT * FROM {_servicePointTable}";
-            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
-                using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
                     {
-                        ServicePointVM servicePoint = new ServicePointVM
+                        servicePoints.Add(new ServicePointVM
                         {
                             Id = (int)reader["id"],
                             Name = (string)reader["name"],
                             ServiceProviderId = (int)reader["serviceproviderid"]
-                        };
-                        servicePoints.Add(servicePoint);
+                        });
                     }
                     reader.Close();
                 }
@@ -161,11 +159,11 @@ namespace Queue_Management_System.Repositories
             ServicePointVM servicePointDetails = null;
 
             string commandText = $"SELECT * FROM {_servicePointTable} WHERE id = @id";
-            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
-                cmd.Parameters.AddWithValue("id", id);
+                command.Parameters.AddWithValue("@id", id);
 
-                using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                 {
                     if (await reader.ReadAsync())
                     {
@@ -189,39 +187,39 @@ namespace Queue_Management_System.Repositories
         public async Task CreateServicePoint(ServicePointVM servicePoint)
         {
             OpenConnection();
-            string commandText = $"INSERT INTO {_servicePointTable} (name, serviceproviderid) VALUES (@name, @serviceproviderid)";
-
-            using (var cmd = new NpgsqlCommand(commandText, _connection))
+            string commandText = $"INSERT INTO {_servicePointTable} (name, serviceproviderid) " +
+                                 $"VALUES (@name, @serviceproviderid)";
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
-                cmd.Parameters.AddWithValue("name", servicePoint.Name);
-                cmd.Parameters.AddWithValue("serviceproviderid", servicePoint.ServiceProviderId);
+                command.Parameters.AddWithValue("@name", servicePoint.Name);
+                command.Parameters.AddWithValue("@serviceproviderid", servicePoint.ServiceProviderId);
 
-                await cmd.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync();
             }
             _connection.Close();
         }
         public async Task UpdateServicePoint(int id, ServicePointVM servicePoint)
         {
             OpenConnection();
-            string commandText = $@"UPDATE {_servicePointTable} SET  serviceproviderid = @serviceproviderid WHERE id = @id";
+            string commandText = $"UPDATE {_servicePointTable} SET serviceproviderid = @serviceproviderid WHERE id = @id";
 
-            using (var cmd = new NpgsqlCommand(commandText, _connection))
+            using (var command = new NpgsqlCommand(commandText, _connection))
             {
-                cmd.Parameters.AddWithValue("id", id);
-                cmd.Parameters.AddWithValue("serviceproviderid", servicePoint.ServiceProviderId);
+                command.Parameters.AddWithValue("@serviceproviderid", servicePoint.ServiceProviderId);
+                command.Parameters.AddWithValue("@id", id);
 
-                await cmd.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync();
             }
             _connection.Close();
         }
         public async Task DeleteServicePoint(int id)
         {
             OpenConnection();
-            string commandText = $"DELETE FROM {_servicePointTable} WHERE ID=(@p)";
-            using (var cmd = new NpgsqlCommand(commandText, _connection))
+            string commandText = $"DELETE FROM {_servicePointTable} WHERE id = @id";
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
-                cmd.Parameters.AddWithValue("p", id);
-                await cmd.ExecuteNonQueryAsync();
+                command.Parameters.AddWithValue("@id", id);
+                await command.ExecuteNonQueryAsync();
             }
             _connection.Close();
         }       

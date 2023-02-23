@@ -91,12 +91,15 @@ namespace Queue_Management_System.Controllers
                             ServicePointId = Convert.ToInt32(dataReader["servicepointid"])
                         };
                     }
-                    dataReader.Close();
-                    connection.Close();
+                    dataReader.Close();                   
                 }
-                return appUser;                
+                connection.Close();
             }
-            return null;
+            if (appUser == null)
+            {
+                return null;
+            }
+            return appUser;
         }
         public async Task<IActionResult> Logout()
         {
