@@ -90,7 +90,11 @@ namespace Queue_Management_System.Repositories
                         reader.Close();                  
                 }
                 _connection.Close();
-            }          
+            }
+            if (calledCustomers.Count() == 0)
+            {
+                return null;
+            }
             return calledCustomers;
         }
         public async Task<IEnumerable<QueueVM>> GetWaitingCustomers(int servicePointId)
@@ -144,13 +148,13 @@ namespace Queue_Management_System.Repositories
                     }
                     reader.Close();
                 }
-                _connection.Close();
-                if (myCurrentCustomerId == null)
-                {
-                    return null;
-                }
-                return myCurrentCustomerId;
+                _connection.Close();              
             }
+            if (myCurrentCustomerId == null)
+            {
+                return null;
+            }
+            return myCurrentCustomerId;
         }
         public async Task<QueueVM> UpdateOutGoingAndIncomingCustomerStatus(int outgoingCustomerId, int servicePointId)
         {           
@@ -159,7 +163,7 @@ namespace Queue_Management_System.Repositories
             {
                 OpenConnection();
                 //Update the current customer as served
-                var commandText = $@"UPDATE {_queueTable} SET status = 3, completedat = NOW() WHERE id = @id";
+                string commandText = $@"UPDATE {_queueTable} SET status = 3, completedat = NOW() WHERE id = @id";
                 using (var cmd = new NpgsqlCommand(commandText, _connection))
                 {
                     cmd.Parameters.AddWithValue("id", outgoingCustomerId);
@@ -168,7 +172,7 @@ namespace Queue_Management_System.Repositories
                 }
                 _connection.Close();
             }
-            QueueVM nextCustomerId = await GetIdOfNextCustomer(servicePointId);
+            QueueVM nextCustomerId = await GetNextCustomerId(servicePointId);
             if(nextCustomerId != null)
             {
                 return nextCustomerId;
@@ -177,7 +181,7 @@ namespace Queue_Management_System.Repositories
         }
 
         //Get id of the next customer to be served
-        private async Task<QueueVM> GetIdOfNextCustomer(int servicePointId)
+        private async Task<QueueVM> GetNextCustomerId(int servicePointId)
         {
             OpenConnection();
             QueueVM incomingCustomerId = null;
@@ -209,7 +213,7 @@ namespace Queue_Management_System.Repositories
         private  async Task UpdateIncomingCustomerStatus(int? incomingCustomerId)                                                          
         {
             OpenConnection();
-            var commandText = $@"UPDATE {_queueTable} SET status = 2, updatedat = NOW() WHERE id = @id";
+            string commandText = $@"UPDATE {_queueTable} SET status = 2, updatedat = NOW() WHERE id = @id";
             using (var cmd = new NpgsqlCommand(commandText, _connection))
             {
                 cmd.Parameters.AddWithValue("id", incomingCustomerId);
@@ -225,7 +229,7 @@ namespace Queue_Management_System.Repositories
             OpenConnection();
 
             //Update the current customer as served
-            var commandText = $@"UPDATE {_queueTable} SET status = 4 , updatedat= NULL, completedat = NULL WHERE id = @id";
+            string commandText = $@"UPDATE {_queueTable} SET status = 4 , updatedat= NULL, completedat = NULL WHERE id = @id";
             using (var cmd = new NpgsqlCommand(commandText, _connection))
             {
                 cmd.Parameters.AddWithValue("id", customerIdToMarkAsFinished.Id);
@@ -240,7 +244,7 @@ namespace Queue_Management_System.Repositories
 
             OpenConnection();
             //Update the current customer as served
-            var commandText = $@"UPDATE {_queueTable} SET status = 3 , completedat = NOW() WHERE id = @id";
+            string commandText = $@"UPDATE {_queueTable} SET status = 3 , completedat = NOW() WHERE id = @id";
             using (var cmd = new NpgsqlCommand(commandText, _connection))
             {
                 cmd.Parameters.AddWithValue("id", customerIdToMarkAsFinished.Id);
@@ -255,7 +259,7 @@ namespace Queue_Management_System.Repositories
 
             OpenConnection();
             //Update the current customer as served
-            var commandText = $@"UPDATE {_queueTable} SET servicepointid = {servicePointid}, status = 0, updatedat= NULL, completedat = NULL WHERE id = @id";
+            string commandText = $@"UPDATE {_queueTable} SET servicepointid = {servicePointid}, status = 0, updatedat= NULL, completedat = NULL WHERE id = @id";
             using (var cmd = new NpgsqlCommand(commandText, _connection))
             {
                 cmd.Parameters.AddWithValue("id", customerIdToMarkAsFinished.Id);

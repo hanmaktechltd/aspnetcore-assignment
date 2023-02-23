@@ -6,9 +6,7 @@ namespace Queue_Management_System.Models
     {
         [Display(Name = "Queue Id")]
         public int? Id { get; set; }
-        public ServicePointVM ServicePoint { get; set; }
-
-        [Display(Name = "Room Number")]
+        public ServicePointVM ServicePoint { get; set; }       
         public int ServicePointId { get; set; }     
         public int Status { get; set; }
 
@@ -22,9 +20,11 @@ namespace Queue_Management_System.Models
     {
         [Display(Name = "Queue Id Number")]
         public int Id { get; set; }
-       /* public int? IncomingCustomerId { get; set; }*/
         public QueueVM MyCurrentServingCustomerId { get; set; }
         public IEnumerable<QueueVM> WaitingCustomers { get; set; }
+
+        [Display(Name = "Room Number")]
+        public IEnumerable<QueueVM> CalledCustomers { get; set; }
 
         [Display(Name = "Joined Queue At")]
         public DateTime CreatedAt { get; set; }

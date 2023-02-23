@@ -50,7 +50,11 @@ namespace Queue_Management_System.Controllers
         public async Task<IActionResult> WaitingPage()
         {
             var calledCustomers = await _queueRepository.GetCalledCustomers();
-            return View(calledCustomers);
+            QueueVMList calledCustomersList = new QueueVMList()
+            {
+                CalledCustomers = calledCustomers
+            };
+            return View(calledCustomersList);
         }
 
         // GET: Queue/ServicePoint
@@ -61,14 +65,11 @@ namespace Queue_Management_System.Controllers
 
             if (servicePointId != null)
             {
-                var waitingCustomers = await _queueRepository.GetWaitingCustomers((int)servicePointId);//can return count = 0. In that case dont do the mycurrentserving customers function
-                //TODO
-                //if GetWaitingCustomers() count = 0, return view without going thru the MyCurrentServingCustomer() method
-                QueueVM currentServingCustomerId = await _queueRepository.MyCurrentServingCustomer((int)servicePointId);//can return null
+                var waitingCustomers = await _queueRepository.GetWaitingCustomers((int)servicePointId);
+                QueueVM currentServingCustomerId = await _queueRepository.MyCurrentServingCustomer((int)servicePointId);
 
                 QueueVMList queueList = new QueueVMList()
                 {
-                    /*IncomingCustomerId = incomingCustomerId,*/
                     WaitingCustomers = waitingCustomers,
                     MyCurrentServingCustomerId = currentServingCustomerId
                 };
@@ -88,7 +89,6 @@ namespace Queue_Management_System.Controllers
                 if (IncomingCustomerDetails == null)
                 {
                     return RedirectToAction(nameof(ServicePoint));
-
                 }
                 TempData["AlertMessage"] = $"Queue Id Number {IncomingCustomerDetails.Id} Called successfully";
                 return RedirectToAction(nameof(ServicePoint));
@@ -108,7 +108,6 @@ namespace Queue_Management_System.Controllers
                 {
                     TempData["AlertMessage"] = $"Error encountered while Recalling Queue Id Number";
                     return RedirectToAction(nameof(ServicePoint));
-
                 }
                 TempData["AlertMessage"] = $"Queue Id Number {CurrentlyCalledCustomerDetails.Id} ReCalled successfully";
                 return RedirectToAction(nameof(ServicePoint));
@@ -123,13 +122,11 @@ namespace Queue_Management_System.Controllers
 
             if (servicePointId != null)
             {
-
                 await _queueRepository.MarkNumberASNoShow((int)servicePointId);
                 TempData["AlertMessage"] = "Queue Id Number Marked as NoShow successfully";
                 return RedirectToAction(nameof(ServicePoint));
             }
             return NotFound();
-
         }
 
         [HttpPost]
