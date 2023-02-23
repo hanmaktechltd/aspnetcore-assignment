@@ -56,13 +56,11 @@ Create a simple Queue Management System with the following pages:
 1. Clone repository to local computer
 2. Create new postgres database 
 3. Import sql file located at "Data" folder of this repository 
-4. Edit connection strings to point to the database by editing the code in following files accordingly
-- appsettings.json file
-![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/appsettings%20.json%20connection%20string.PNG)
-- AdminRepository.cs file
-![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Admin%20Repository%20string.PNG)
-- QueueRepository.cs file
-![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Queue%20Repository%20string.PNG)
+4. Set up User Secrets
+- right-click the project and choose *Manage User Secrets*
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/manageUserSecrets.PNG)
+- This opens an editor for a secrets.json file in which you can store your configuration
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/secretJson.PNG)
 
 5. When completed, run the website in Visual Studio
 - Login as Admin using Name: Admin | Password Admin@123
