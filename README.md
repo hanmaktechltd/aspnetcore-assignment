@@ -57,7 +57,7 @@ Create a simple Queue Management System with the following pages:
 2. Create new postgres database 
 3. Import sql file located at "Data" folder of this repository 
 4. Set up User Secrets
-- right-click the project and choose *Manage User Secrets*
+- right-click the project and choose "Manage User Secrets"
 ![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/manageUserSecrets.PNG)
 - This opens an editor for a secrets.json file in which you can store your configuration
 ![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/secretJson.PNG)
