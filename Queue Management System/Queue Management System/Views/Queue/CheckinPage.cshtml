@@ -25,7 +25,7 @@ else
 }
 
 <form id="allocationForm" asp-action="AddCustomerToQueue">
-    <input type="hidden" id="leaveTypeIdAllocate" name="Id" />
+    <input type="hidden" id="allocateQueueId" name="Id" />
 </form>
 
 @section Scripts{
@@ -42,7 +42,7 @@ else
                     if (confirm) {
                         var btn = $(this);
                         var id = btn.data("id");
-                        $('#leaveTypeIdAllocate').val(id);
+                        $('#allocateQueueId').val(id);
                         $('#allocationForm').submit();
                     }
                 });

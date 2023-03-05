@@ -46,9 +46,7 @@ namespace Queue_Management_System.Repositories
                 _connection.Close();
             }
             if (serviceProviders.Count() == 0)
-            {
                 return null;
-            }
             return serviceProviders;
         }
         public async Task<ServiceProviderVM> GetServiceProviderDetails(int id)
@@ -76,9 +74,10 @@ namespace Queue_Management_System.Repositories
                     reader.Close();
                 }
                 _connection.Close();
-                return serviceProviderDetails;
             }
-            return null;
+            if (serviceProviderDetails == null)
+                return null;
+            return serviceProviderDetails;
         }
         public async Task CreateServiceProvider(ServiceProviderVM serviceProvider)
         {
@@ -96,7 +95,7 @@ namespace Queue_Management_System.Repositories
             }
             _connection.Close();
         }
-        public async Task UpdateServiceProvider(int id, ServiceProviderVM serviceProvider)
+        public async Task UpdateServiceProvider(ServiceProviderVM serviceProvider)
         {
             OpenConnection();
             string commandText = $"UPDATE {_serviceProvidersTable} " +
@@ -105,7 +104,7 @@ namespace Queue_Management_System.Repositories
             {               
                 command.Parameters.AddWithValue("@password", serviceProvider.Password);
                 command.Parameters.AddWithValue("@servicepointid", serviceProvider.ServicepointId);
-                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@id", serviceProvider.Id);
 
                 await command.ExecuteNonQueryAsync();
             }
@@ -114,7 +113,7 @@ namespace Queue_Management_System.Repositories
         public async Task DeleteServiceProvider(int id)
         {
             OpenConnection();
-            string commandText = $"DELETE FROM {_serviceProvidersTable} WHERE ID=(@id)";
+            string commandText = $"DELETE FROM {_serviceProvidersTable} WHERE id=@id";
             using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
                 command.Parameters.AddWithValue("@id", id);
@@ -147,9 +146,7 @@ namespace Queue_Management_System.Repositories
                 _connection.Close();
             }
             if (servicePoints.Count() == 0)
-            {
                 return null;
-            }
             return servicePoints;
         }
         public async Task<ServicePointVM> GetServicePointDetails(int id)
@@ -179,9 +176,7 @@ namespace Queue_Management_System.Repositories
                 _connection.Close();
             }
             if (servicePointDetails == null)
-            {
                 return null;
-            }
             return servicePointDetails;
         }
         public async Task CreateServicePoint(ServicePointVM servicePoint)
@@ -198,7 +193,7 @@ namespace Queue_Management_System.Repositories
             }
             _connection.Close();
         }
-        public async Task UpdateServicePoint(int id, ServicePointVM servicePoint)
+        public async Task UpdateServicePoint(ServicePointVM servicePoint)
         {
             OpenConnection();
             string commandText = $"UPDATE {_servicePointTable} SET serviceproviderid = @serviceproviderid WHERE id = @id";
@@ -206,7 +201,7 @@ namespace Queue_Management_System.Repositories
             using (var command = new NpgsqlCommand(commandText, _connection))
             {
                 command.Parameters.AddWithValue("@serviceproviderid", servicePoint.ServiceProviderId);
-                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@id", servicePoint.Id);
 
                 await command.ExecuteNonQueryAsync();
             }

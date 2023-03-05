@@ -47,7 +47,7 @@ namespace Queue_Management_System.Controllers
         }
 
         // GET: Queue/ServicePoint
-        [Authorize(Roles = "Service Provider"), HttpGet]
+        [Authorize(Policy = "Service Provider"), HttpGet]
         public async Task<IActionResult> ServicePoint()
         {
             int? servicePointId = GetServicePointId();
@@ -55,13 +55,13 @@ namespace Queue_Management_System.Controllers
             if (servicePointId != null)
             {
                 var waitingCustomers = await _queueRepository.GetWaitingCustomers((int)servicePointId);
-                QueueVM currentServingCustomerId = await _queueRepository.MyCurrentServingCustomer((int)servicePointId);
+                QueueVM currentServingCustomerDetails = await _queueRepository.MyCurrentServingCustomer((int)servicePointId);
                 var services = await _queueRepository.GetServices();
 
                 QueueVMList queueList = new QueueVMList()
                 {
                     WaitingCustomers = waitingCustomers,
-                    MyCurrentServingCustomerId = currentServingCustomerId,
+                    MyCurrentServingCustomerDetails = currentServingCustomerDetails,
                     Services = services,
                 };
                 return View(queueList);
@@ -76,12 +76,12 @@ namespace Queue_Management_System.Controllers
 
             if (servicePointId != null)
             {
-                QueueVM IncomingCustomerDetails = await _queueRepository.UpdateOutGoingAndIncomingCustomerStatus(id, (int)servicePointId);
-                if (IncomingCustomerDetails == null)
+                QueueVM incomingCustomerDetails = await _queueRepository.UpdateOutGoingAndIncomingCustomerStatus(id, (int)servicePointId);
+                if (incomingCustomerDetails == null)
                 {
                     return RedirectToAction(nameof(ServicePoint));
                 }
-                TempData["AlertMessage"] = $"Queue Id Number {IncomingCustomerDetails.Id} Called successfully";
+                TempData["AlertMessage"] = $"Queue Id Number {incomingCustomerDetails.Id} Called successfully";
                 return RedirectToAction(nameof(ServicePoint));
             }
             return NotFound();
@@ -94,26 +94,26 @@ namespace Queue_Management_System.Controllers
 
             if (servicePointId != null)
             {
-                QueueVM CurrentlyCalledCustomerDetails = await _queueRepository.MyCurrentServingCustomer((int)servicePointId);//change this name
-                if (CurrentlyCalledCustomerDetails == null)
+                QueueVM currentlyCalledCustomerDetails = await _queueRepository.MyCurrentServingCustomer((int)servicePointId);
+                if (currentlyCalledCustomerDetails == null)
                 {
                     TempData["AlertMessage"] = $"Error encountered while Recalling Queue Id Number";
                     return RedirectToAction(nameof(ServicePoint));
                 }
-                TempData["AlertMessage"] = $"Queue Id Number {CurrentlyCalledCustomerDetails.Id} ReCalled successfully";
+                TempData["AlertMessage"] = $"Queue Id Number {currentlyCalledCustomerDetails.Id} ReCalled successfully";
                 return RedirectToAction(nameof(ServicePoint));
             }
             return NotFound();
         }
 
         [HttpPost]
-        public async Task<ActionResult> MarkNumberASNoShow()
+        public async Task<ActionResult> MarkNumberASNoShow(int id) //outgoingCustomerId
         {
             int? servicePointId = GetServicePointId();
 
             if (servicePointId != null)
             {
-                await _queueRepository.MarkNumberASNoShow((int)servicePointId);
+                await _queueRepository.MarkNumberASNoShow(id,(int)servicePointId);
                 TempData["AlertMessage"] = "Queue Id Number Marked as NoShow successfully";
                 return RedirectToAction(nameof(ServicePoint));
             }
@@ -121,13 +121,13 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> MarkNumberASFinished()
+        public async Task<ActionResult> MarkNumberASFinished(int id) //outgoingCustomerId
         {
             int? servicePointId = GetServicePointId();
 
             if (servicePointId != null)
             {
-                await _queueRepository.MarkNumberASFinished((int)servicePointId);
+                await _queueRepository.MarkNumberASFinished(id,(int)servicePointId);
                 TempData["AlertMessage"] = "Queue Id Number Marked as Finished successfully";
                 return RedirectToAction(nameof(ServicePoint));
             }
@@ -142,7 +142,7 @@ namespace Queue_Management_System.Controllers
 
             if (currentServicePointId != null)
             {
-                var servicePointIdTranser = room.MyCurrentServingCustomerId.ServicePointId;
+                int servicePointIdTranser = room.MyCurrentServingCustomerDetails.ServicePointId;
 
                 await _queueRepository.TransferNumber((int)currentServicePointId, servicePointIdTranser);
                 TempData["AlertMessage"] = "Queue Id Number Transfered successfully";

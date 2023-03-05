@@ -65,9 +65,9 @@ namespace Queue_Management_System.Controllers
         // POST: Admin/EditServiceProvider/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditServiceProvider(int id, ServiceProviderVM serviceProvider)
+        public async Task<ActionResult> EditServiceProvider(ServiceProviderVM serviceProvider)
         {
-            await _adminRepository.UpdateServiceProvider(id, serviceProvider);
+            await _adminRepository.UpdateServiceProvider(serviceProvider);
             return RedirectToAction(nameof(ViewServiceProviderDetails), new { id = serviceProvider.Id });
         }
 
@@ -126,9 +126,9 @@ namespace Queue_Management_System.Controllers
         // POST: Admin/EditServicePoint/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditServicePoint(int id, ServicePointVM servicePoint)
+        public async Task<ActionResult> EditServicePoint(ServicePointVM servicePoint)
         {
-            await _adminRepository.UpdateServicePoint(id, servicePoint);
+            await _adminRepository.UpdateServicePoint(servicePoint);
             return RedirectToAction(nameof(ViewServicePointDetails), new { id = servicePoint.Id });
         }
 

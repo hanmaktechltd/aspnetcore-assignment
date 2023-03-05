@@ -95,10 +95,8 @@ namespace Queue_Management_System.Controllers
                 }
                 connection.Close();
             }
-            if (appUser == null)
-            {
+            if (appUser == null)            
                 return null;
-            }
             return appUser;
         }
         public async Task<IActionResult> Logout()

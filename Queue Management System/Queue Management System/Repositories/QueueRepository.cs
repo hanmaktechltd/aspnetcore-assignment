@@ -46,9 +46,7 @@ namespace Queue_Management_System.Repositories
                 _connection.Close();
             }
             if (services.Count() == 0)
-            {
                 return null;
-            }
             return services;
         }
         public async Task AddCustomerToQueue(ServicePointVM servicePointId)
@@ -90,9 +88,7 @@ namespace Queue_Management_System.Repositories
                 _connection.Close();
             }
             if (calledCustomers.Count() == 0)
-            {
                 return null;
-            }
             return calledCustomers;
         }
         public async Task<IEnumerable<QueueVM>> GetWaitingCustomers(int servicePointId)
@@ -121,41 +117,85 @@ namespace Queue_Management_System.Repositories
                 _connection.Close();
             }
             if (waitingCustomers.Count() == 0)
-            {
                 return null;
-            }
             return waitingCustomers;
         }    
         public async Task<QueueVM> MyCurrentServingCustomer(int servicePointId)
         {
             OpenConnection();
-            QueueVM myCurrentCustomerId = null;
+            QueueVM myCurrentCustomerDetails = null;
             int status = 2;
 
-            string commandText = $"SELECT id FROM {_queueTable} " +
+            string commandText = $"SELECT id, updatedat FROM {_queueTable} " +
                                  $"WHERE status = {status} AND servicepointid = {servicePointId}";
             using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
-                command.Parameters.AddWithValue("Id", servicePointId);
-
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                 {
                     if (await reader.ReadAsync())
                     {
-                        myCurrentCustomerId = new QueueVM
+                        myCurrentCustomerDetails = new QueueVM
                         {
-                            Id = (int)reader["id"]
+                            Id = (int)reader["id"],
+                            UpdatedAt = (TimeSpan)reader["updatedat"]
                         };
                     }
                     reader.Close();
                 }
                 _connection.Close();              
             }
-            if (myCurrentCustomerId == null)
-            {
+            if (myCurrentCustomerDetails == null)
                 return null;
+            return myCurrentCustomerDetails;
+        }
+
+        public async Task<QueueVM> MyRecentServedCustomer(int outgoingCustomerId)
+        {
+            OpenConnection();
+            QueueVM myRecentServedCustomerDetails = null;
+
+            string commandText = $"SELECT id, updatedat, completedat FROM {_queueTable} " +
+                                 $"WHERE id = {outgoingCustomerId}";
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
+            {
+                using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
+                {
+                    if (await reader.ReadAsync())
+                    {
+                        myRecentServedCustomerDetails = new QueueVM
+                        {
+                            Id = (int)reader["id"],
+                            UpdatedAt = (TimeSpan)reader["updatedat"],
+                            CompletedAt = (TimeSpan)reader["completedat"]
+                        };
+                    }
+                    reader.Close();
+                }
+                _connection.Close();
             }
-            return myCurrentCustomerId;
+            if (myRecentServedCustomerDetails == null)
+                return null;
+            return myRecentServedCustomerDetails;
+        }
+        public async Task CalculateAndUpdateServiceTime(int outgoingCustomerId)
+        {           
+            QueueVM myRecentServedCustomerDetails = await MyRecentServedCustomer(outgoingCustomerId);
+            OpenConnection();
+            TimeSpan updatedAt = myRecentServedCustomerDetails.UpdatedAt;
+            TimeSpan completedAt = myRecentServedCustomerDetails.CompletedAt;
+            TimeSpan serviceTimeSpan = completedAt - updatedAt;
+            int serviceTimeInMinutes = (int)serviceTimeSpan.TotalMinutes;
+
+            var commandText = $"UPDATE {_queueTable} SET servicetime = @serviceTimeInMinutes where id = @id";
+
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
+            {
+                command.Parameters.AddWithValue("@id", myRecentServedCustomerDetails.Id);
+                command.Parameters.AddWithValue("@serviceTimeInMinutes", serviceTimeInMinutes);
+
+                await command.ExecuteNonQueryAsync();
+            }
+            _connection.Close();
         }
         public async Task<QueueVM> UpdateOutGoingAndIncomingCustomerStatus(int outgoingCustomerId, int servicePointId)
         {           
@@ -173,21 +213,20 @@ namespace Queue_Management_System.Repositories
                     await command.ExecuteNonQueryAsync();
                 }
                 _connection.Close();
+                await CalculateAndUpdateServiceTime(outgoingCustomerId);
             }
-            QueueVM nextCustomerId = await GetNextCustomerId(servicePointId);
-            if(nextCustomerId != null)
-            {
-                return nextCustomerId;
-            }
+            QueueVM nextCustomerDetails = await GetNextCustomerDetails(servicePointId);
+            if(nextCustomerDetails != null)
+                return nextCustomerDetails;
             return null;
         }
-        private async Task<QueueVM> GetNextCustomerId(int servicePointId)
+        private async Task<QueueVM> GetNextCustomerDetails(int servicePointId)
         {
             OpenConnection();
-            QueueVM incomingCustomerId = null;
+            QueueVM incomingCustomerDetails = null;
             int status = 0;
 
-            string commandText = $"SELECT id FROM {_queueTable} WHERE status = {status} " +
+            string commandText = $"SELECT id, createdat FROM {_queueTable} WHERE status = {status} " +
                                 $"AND servicepointid = {servicePointId} ORDER BY id ASC LIMIT 1  ";
             using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
@@ -195,23 +234,25 @@ namespace Queue_Management_System.Repositories
                 {
                     if (await reader.ReadAsync())
                     {
-                        incomingCustomerId = new QueueVM
+                        incomingCustomerDetails = new QueueVM
                         {
-                            Id = (int)reader["id"]
+                            Id = (int)reader["id"],
+                            CreatedAt = (DateTime)reader["createdat"]
                         };
                     }
                     reader.Close();
                 }
                 _connection.Close();
-                if (incomingCustomerId != null)
+                if (incomingCustomerDetails != null)
                 {
-                    UpdateIncomingCustomerStatus(incomingCustomerId.Id);
+                    await UpdateIncomingCustomerStatus(incomingCustomerDetails);
+                    await CalculateAndUpdateWaitingTime(incomingCustomerDetails);
                 }
-                return incomingCustomerId;
+                return incomingCustomerDetails;
             }
             return null;
         }
-        private  async Task UpdateIncomingCustomerStatus(int? incomingCustomerId)                                                          
+        private  async Task UpdateIncomingCustomerStatus(QueueVM incomingCustomerDetails)                                                          
         {
             OpenConnection();
             int status = 2;
@@ -219,21 +260,39 @@ namespace Queue_Management_System.Repositories
             string commandText = $"UPDATE {_queueTable} SET status = {status}, updatedat = NOW() WHERE id = @id";
             using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
-                command.Parameters.AddWithValue("@id", incomingCustomerId);
+                command.Parameters.AddWithValue("@id", incomingCustomerDetails.Id);
 
                 await command.ExecuteNonQueryAsync();                 
             }
             _connection.Close();
         }
-        public async Task MarkNumberASNoShow(int servicePointId)
+
+        public async Task CalculateAndUpdateWaitingTime(QueueVM incomingCustomerDetails)
+        {
+            OpenConnection();
+            DateTime createdAt = incomingCustomerDetails.CreatedAt;
+            DateTime UpdatedAt = DateTime.Now;
+            TimeSpan waitingTimeSpan = UpdatedAt - createdAt;
+            int waitingTimeInMinutes = (int)waitingTimeSpan.TotalMinutes;
+            var commandText = $"UPDATE {_queueTable} SET waitingtime = @waitingTimeInMinutes where id = @id";
+
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
+            {
+                command.Parameters.AddWithValue("@id", incomingCustomerDetails.Id);
+                command.Parameters.AddWithValue("@waitingTimeInMinutes", waitingTimeInMinutes);
+
+                await command.ExecuteNonQueryAsync();
+            }
+            _connection.Close();
+        }
+        public async Task MarkNumberASNoShow(int outgoingCustomerId, int servicePointId)
         {
             QueueVM customerIdToMarkAsFinished = await MyCurrentServingCustomer(servicePointId); 
 
             OpenConnection();
             int status = 4;
 
-            string commandText = $"UPDATE {_queueTable} SET status = {status} , " +
-                                 $"updatedat= NULL, completedat = NULL WHERE id = @id";
+            string commandText = $"UPDATE {_queueTable} SET status = {status}, completedat = NOW() WHERE id = @id";
             using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
                 command.Parameters.AddWithValue("@id", customerIdToMarkAsFinished.Id);
@@ -241,8 +300,9 @@ namespace Queue_Management_System.Repositories
                 await command.ExecuteNonQueryAsync();
             }
             _connection.Close();
+            await CalculateAndUpdateServiceTime(outgoingCustomerId);
         }
-        public async Task MarkNumberASFinished(int servicePointId)
+        public async Task MarkNumberASFinished(int outgoingCustomerId, int servicePointId)
         {
             QueueVM customerIdToMarkAsFinished = await MyCurrentServingCustomer(servicePointId);
 
@@ -257,6 +317,7 @@ namespace Queue_Management_System.Repositories
                 await command.ExecuteNonQueryAsync();
             }
             _connection.Close();
+            await CalculateAndUpdateServiceTime(outgoingCustomerId);
         }
         public async Task TransferNumber(int servicePointId, int servicePointIdTranser)
         {
@@ -265,7 +326,7 @@ namespace Queue_Management_System.Repositories
             OpenConnection();
             int status = 0;
             string commandText = $"UPDATE {_queueTable} SET servicepointid = {servicePointIdTranser}, " +
-                                 $"status = {status}, updatedat= NULL, completedat = NULL WHERE id = @id";
+                                 $"status = {status}, completedat = NOW()  WHERE id = @id";
             using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
             {
                 command.Parameters.AddWithValue("@id", customerIdToMarkAsFinished.Id);

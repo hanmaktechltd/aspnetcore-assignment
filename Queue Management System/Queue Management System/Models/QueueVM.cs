@@ -7,6 +7,8 @@ namespace Queue_Management_System.Models
         public int Id { get; set; }
         public int ServicePointId { get; set; }
         public DateTime CreatedAt { get; set; }
+        public TimeSpan UpdatedAt { get; set; }
+        public TimeSpan CompletedAt { get; set; }
     }
 
     public class QueueVMList
@@ -14,7 +16,7 @@ namespace Queue_Management_System.Models
         [Display(Name = "Queue Id Number")]
         public int Id { get; set; }
         public int? ServicePointCount { get; set; }
-        public QueueVM MyCurrentServingCustomerId { get; set; }
+        public QueueVM MyCurrentServingCustomerDetails { get; set; }
         public IEnumerable<QueueVM> WaitingCustomers { get; set; }
         public IEnumerable<ServicePointVM> Services { get; set; }
 
