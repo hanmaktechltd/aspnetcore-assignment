@@ -18,7 +18,7 @@ namespace Queue_Management_System.Controllers
         {
             _identity = new ClaimsIdentity(User.Claims);
             var userServingPointId = _identity.HasClaim(claim => claim.Type == "ServicePointId")
-               ? _identity.Claims.First(claim => claim.Type == "ServicePointId").Value
+               ? _identity.Claims.FirstOrDefault(claim => claim.Type == "ServicePointId").Value
                : null;
             return Convert.ToInt32(userServingPointId);
         }
