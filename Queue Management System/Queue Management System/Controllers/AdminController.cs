@@ -5,7 +5,7 @@ using Queue_Management_System.Models;
 
 namespace Queue_Management_System.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "Admin")]
     public class AdminController : Controller
     {
         private readonly IAdminRepository _adminRepository;
