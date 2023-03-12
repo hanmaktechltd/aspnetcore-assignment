@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Queue_Management_System.Models.ViewModels.TicketViewModel>
+﻿@model Queue_Management_System.Models.Customers
 
 @{
     ViewData["Title"] = "WaitingPage";
@@ -6,9 +6,6 @@
 
 <h1>WaitingPage</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -18,42 +15,26 @@
             <th>
                 @Html.DisplayNameFor(model => model.TicketNumber)
             </th>
+            
             <th>
-                @Html.DisplayNameFor(model => model.Message)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CustomersInQueue)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.servicePoint)
+                @Html.DisplayNameFor(model => model.ServicePoint.Name)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => modelItem.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TicketNumber)
+                @Html.DisplayFor(modelItem => modelItem.TicketNumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Message)
+                @Html.DisplayFor(modelItem => modelItem.ServicePoint.Name)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CustomersInQueue)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.servicePoint)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+            
         </tr>
-}
+
     </tbody>
 </table>

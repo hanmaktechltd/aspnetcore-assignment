@@ -1,5 +1,6 @@
 ﻿using FastReport;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -63,19 +64,22 @@ namespace Queue_Management_System.Controllers
                 Name = checkInRequest.Name,
                 TicketNumber = TicketNumber,
                 CustomersInQueue = customersInQueue,
-                Message = "Wewe ni Bazu"
+                Message = "It is a pleasure serving you"
             };
             tickets.Add(ticket);
             var pdf=_queueService.GenerateTicket(tickets);
+            HttpContext.Session.SetString("TicketNumber", TicketNumber);
             return File(pdf, "application/pdf","myreport.pdf");
             //return View("WaitingPage", tickets);
         }
-
+     
 
         [HttpGet]
-        public IActionResult WaitingPage(List<TicketViewModel> tickets)
+        public IActionResult WaitingPage()
         {
-            return View(tickets);
+            var ticketNumber = HttpContext.Session.GetString("TicketNumber");
+            var customers = _repository.RecallCustomer(ticketNumber);
+            return View(customers);
         }
 
 
@@ -109,8 +113,11 @@ namespace Queue_Management_System.Controllers
         public IActionResult EditStatus(Customers customer)
         {
             _repository.updateCustomerStatus(customer);
-            var customers = _repository.GetCustomersinQueueByServicePoint(3);
-            return View("ServicePoint", customers);
+            var servicePointId = HttpContext.Session.GetInt32("ServicePointId");
+            var customers = _repository.GetCustomersinQueueByServicePoint(servicePointId);
+            var CurrentCustomer = _repository.GetCurrentCustomer(servicePointId);
+            var CustomerQueue = Tuple.Create(customers, CurrentCustomer);
+            return View("ServicePoint", CustomerQueue);
         }
 
         public IActionResult TransferCustomer(int Id)
@@ -134,10 +141,22 @@ namespace Queue_Management_System.Controllers
         public IActionResult TransferCustomer(Customers customer)
         {
             _repository.TransferCustomerStatus(customer);
-            var customers = _repository.GetCustomersinQueueByServicePoint(3);
-            return View("ServicePoint", customers);
+            var servicePointId = HttpContext.Session.GetInt32("ServicePointId");
+            var customers = _repository.GetCustomersinQueueByServicePoint(servicePointId);
+            var CurrentCustomer = _repository.GetCurrentCustomer(servicePointId);
+            var CustomerQueue = Tuple.Create(customers, CurrentCustomer);
+            return View("ServicePoint", CustomerQueue);
         }
-
+        [HttpPost]
+        public IActionResult RecallCustomer(string TicketNumber)
+        {
+            
+            var servicePointId = HttpContext.Session.GetInt32("ServicePointId");
+            var customers = _repository.GetCustomersinQueueByServicePoint(servicePointId);
+            var CurrentCustomer = _repository.RecallCustomer(TicketNumber);
+            var CustomerQueue = Tuple.Create(customers, CurrentCustomer);
+            return View("ServicePoint", CustomerQueue);
+        }
 
     }
 }

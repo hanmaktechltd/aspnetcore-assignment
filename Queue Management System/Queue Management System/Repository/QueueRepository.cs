@@ -4,6 +4,7 @@ using Queue_Management_System.Data;
 using Queue_Management_System.Migrations;
 using Queue_Management_System.Models;
 using System.Data.Entity.Core.Objects;
+using System.Net;
 
 namespace Queue_Management_System.Repository
 {
@@ -63,13 +64,18 @@ namespace Queue_Management_System.Repository
             var result = await _context.customers.AddAsync(customer);
             return null;
         }
-        public List<Customers> GetCustomersinQueueByServicePoint(int servicePointId)
+        public List<Customers> GetCustomersinQueueByServicePoint(int? servicePointId)
         {
             return _context.customers.Where(c => c.ServicePoint.Id == servicePointId && c.Status.ToUpper()=="WAITING").ToList();
         }
-        public Customers GetCurrentCustomer(int servicePointId)
+        public Customers GetCurrentCustomer(int? servicePointId)
         {
-            return _context.customers.FirstOrDefault(c => c.ServicePoint.Id == servicePointId && c.Status.ToUpper() == "WAITING");
+            var CurrentCustomer = _context.customers.FirstOrDefault(c => c.ServicePoint.Id == servicePointId && c.Status.ToUpper() == "WAITING");
+            if (CurrentCustomer == null)
+            {
+                CurrentCustomer = new Customers { Name = "There are no customers waiting in the Queue" };
+            }
+            return CurrentCustomer;
         }
         public Customers GetCustomerById(int Id)
         {
@@ -94,16 +100,23 @@ namespace Queue_Management_System.Repository
                 _context.SaveChanges();
             }
         }
+        public Customers RecallCustomer(string TicketNumber)
+        {
+            var CurrentCustomer = _context.customers.FirstOrDefault(c => c.TicketNumber == TicketNumber);
+            if (CurrentCustomer == null)
+            {
+                CurrentCustomer = new Customers { Name = "There are no customers waiting in the Queue" };
+            }
+            return CurrentCustomer;
+        }
         public int CountServedCustomersByServicePoint(int servicePointId)
         {
             return _context.customers.Count(c => c.ServicePoint.Id == servicePointId && c.Status.ToUpper() != "WAITING");
         }
-        public int? CalculateAverageWaitTime(int servicePointId)
+        public double CalculateAverageWaitTime(int servicePointId)
         {
-            return _context.customers
-        .Select(c => EntityFunctions.DiffSeconds(c.TimeIn, c.TimeOut))
-        .DefaultIfEmpty(0)
-        .Sum();
+            return _context.customers.Where(c=>c.Status.ToUpper()!="WAITING")
+        .Sum(c => (c.TimeOut - c.TimeIn).TotalMinutes);
         }
     }
 }

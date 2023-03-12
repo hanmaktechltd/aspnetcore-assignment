@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" TextQuality="Regular" ReportInfo.Name="Simple List" ReportInfo.Author="Fast Reports Inc" ReportInfo.Description="Demonstrates a simple list report. To create it:&#13;&#10;- go to &quot;Data&quot; menu and select &quot;Choose Report Data...&quot; item to select a datasource;&#13;&#10;- go to &quot;Report|Configure Bands...&quot; menu to create the band structure;&#13;&#10;- return to the report page, doubleclick the data band to show its editor;&#13;&#10;- choose the datasource;&#13;&#10;- drag data from the Data Dictionary window to the band." ReportInfo.Created="01/17/2008 03:05:57" ReportInfo.Modified="03/10/2023 21:51:09" ReportInfo.CreatorVersion="2023.1.13.0">
+<Report ScriptLanguage="CSharp" TextQuality="Regular" ReportInfo.Name="Simple List" ReportInfo.Author="Fast Reports Inc" ReportInfo.Description="Demonstrates a simple list report. To create it:&#13;&#10;- go to &quot;Data&quot; menu and select &quot;Choose Report Data...&quot; item to select a datasource;&#13;&#10;- go to &quot;Report|Configure Bands...&quot; menu to create the band structure;&#13;&#10;- return to the report page, doubleclick the data band to show its editor;&#13;&#10;- choose the datasource;&#13;&#10;- drag data from the Data Dictionary window to the band." ReportInfo.Created="01/17/2008 03:05:57" ReportInfo.Modified="03/12/2023 13:12:23" ReportInfo.CreatorVersion="2023.1.13.0">
   <Dictionary>
     <BusinessObjectDataSource Name="AnalyticsReport" ReferenceName="analytics" DataType="System.Int32" Enabled="true">
       <Column Name="CustomersServed" DataType="System.Int32"/>
@@ -16,7 +16,7 @@
     <DataBand Name="Data1" Top="90.38" Width="718.2" Height="219.24" Border.Lines="All" Border.Color="Maroon" CanGrow="true">
       <TextObject Name="Text13" Left="122.85" Top="47.25" Width="463.05" Height="18.9" Text="The total Customers Served is: [AnalyticsReport.CustomersServed]" Format="Date" Format.Format="d" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 9pt"/>
       <TextObject Name="Text19" Left="122.85" Top="75.6" Width="463.05" Height="28.35" Text="The Average Wait Time was [AnalyticsReport.AverageWaitTime]" Format="Date" Format.Format="d" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 9pt"/>
-      <TextObject Name="Text22" Left="122.85" Top="122.85" Width="463.05" Height="28.35" Text="The Average Service Time was: [AnalyticsReport.AverageServiceTime]" Format="Date" Format.Format="d" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text22" Left="122.85" Top="122.85" Width="463.05" Height="28.35" Text="The Average Service Time was: [AnalyticsReport.AverageServiceTime] Minutes" Format="Date" Format.Format="d" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 9pt"/>
       <ChildBand Name="Child1" Top="312.29" Width="718.2" Height="18.9"/>
     </DataBand>
     <PageFooterBand Name="PageFooter1" Top="333.86" Width="718.2" Height="28.35" Fill.Color="WhiteSmoke" CanGrow="true">

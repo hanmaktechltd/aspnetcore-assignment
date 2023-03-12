@@ -6,6 +6,21 @@
 
 <h1>ServicePoint</h1>
 
+<form method="post" enctype="multipart/form-data" asp-controller="Queue" asp-action="RecallCustomer">
+    <table>
+        <tr>
+            <td>Enter Ticket Number to recall: </td>
+            <td><input type="text" id="ticketNumber" name="ticketNumber" /></td>
+        </tr>
+       
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Submit" /></td>
+        </tr>
+    </table>
+    <hr />
+</form>
+
 <p>
     Currently Serving: 
 </p>

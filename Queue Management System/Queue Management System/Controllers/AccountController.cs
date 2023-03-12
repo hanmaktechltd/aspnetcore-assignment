@@ -165,6 +165,7 @@ namespace Queue_Management_System.Controllers
         [HttpPost]
         public async Task<IActionResult> SelectServicePoint(CheckInViewModel service)
         {
+            HttpContext.Session.SetInt32("ServicePointId", service.ServiceId);
             return RedirectToAction("ServicePoint", "Queue", new { servicePointId = service.ServiceId });
         }
         public async Task<IActionResult> AddUserToRole(RegisterViewModel registerDetails)
