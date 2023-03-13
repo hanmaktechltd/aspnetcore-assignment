@@ -181,6 +181,11 @@ namespace Queue_Management_System.Controllers
             }
             return Ok();
         }
+        public IActionResult AccessDenied()
+        {
+           
+            return View();
+        }
 
     }
 }

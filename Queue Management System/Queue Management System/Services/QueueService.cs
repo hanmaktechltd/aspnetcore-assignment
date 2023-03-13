@@ -63,7 +63,7 @@ namespace Queue_Management_System.Services
         }
         public string GetAverageWaitTimeByServicePoint(FilterModel filterModel)
         {
-            var averageWaitTime = _repository.CalculateAverageWaitTime(filterModel.ServicePointId);
+            var averageWaitTime = _repository.CalculateAverageWaitTime(filterModel);
             return averageWaitTime.ToString();
         }
         public MemoryStream GenerateAnalyticsReport(List<ReportModel> reportModel)

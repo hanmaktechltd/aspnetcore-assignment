@@ -40,17 +40,15 @@ namespace Queue_Management_System.Controllers
         {
             return View();
         }
+        [AllowAnonymous]
         public async Task<IActionResult> addRoles()
         {
             return View();
         }
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> addRoles(RoleViewModel role)
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                // User is authenticated, do something...
-            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(new { error = "Validation error occured" });
@@ -89,6 +87,14 @@ namespace Queue_Management_System.Controllers
         }
         public async Task<IActionResult> getReport()
         {
+            var servicePoints = _repository.getServicePoints();
+            List<SelectListItem> servicePointListItems = servicePoints.Select(sp => new SelectListItem
+            {
+                Value = sp.Id.ToString(),
+                Text = sp.Name
+            }).ToList();
+
+            ViewBag.ServicePoints = servicePointListItems;
             return View();
         }
         [HttpPost]

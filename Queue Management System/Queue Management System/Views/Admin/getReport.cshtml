@@ -12,10 +12,9 @@
     <div class="col-md-4">
         <form asp-action="getReport">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+           <div class="form-group">
                 <label asp-for="ServicePointId" class="control-label"></label>
-                <input asp-for="ServicePointId" class="form-control" />
-                <span asp-validation-for="ServicePointId" class="text-danger"></span>
+                <select asp-for="ServicePointId" class="form-control" asp-items="@ViewBag.ServicePoints"></select>
             </div>
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>

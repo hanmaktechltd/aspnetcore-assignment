@@ -113,9 +113,9 @@ namespace Queue_Management_System.Repository
         {
             return _context.customers.Count(c => c.ServicePoint.Id == servicePointId && c.Status.ToUpper() != "WAITING");
         }
-        public double CalculateAverageWaitTime(int servicePointId)
+        public double CalculateAverageWaitTime(FilterModel filter)
         {
-            return _context.customers.Where(c=>c.Status.ToUpper()!="WAITING")
+            return _context.customers.Where(c=>c.Status.ToUpper()!="WAITING" && c.ServicePoint.Id==filter.ServicePointId && (c.TimeIn>filter.StartDate.ToUniversalTime() && c.TimeIn<filter.EndDate.ToUniversalTime()))
         .Sum(c => (c.TimeOut - c.TimeIn).TotalMinutes);
         }
     }
