@@ -1,0 +1,116 @@
+﻿@model Tuple<List<Queue_Management_System.Models.Customers>,Queue_Management_System.Models.Customers >
+
+@{
+    ViewData["Title"] = "ServicePoint";
+}
+
+<h1>ServicePoint</h1>
+
+<form method="post" enctype="multipart/form-data" asp-controller="Queue" asp-action="RecallCustomer">
+    <table>
+        <tr>
+            <td>Enter Ticket Number to recall: </td>
+            <td><input type="text" id="ticketNumber" name="ticketNumber" /></td>
+        </tr>
+       
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Submit" /></td>
+        </tr>
+    </table>
+    <hr />
+</form>
+
+<p>
+    Currently Serving: 
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Item2.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Item2.TimeIn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Item2.TimeOut)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Item2.TicketNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Item2.Status)
+            </th>
+            <th> Action</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>
+                @Html.DisplayFor(modelItem => modelItem.Item2.Name)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => modelItem.Item2.TimeIn)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => modelItem.Item2.TimeOut)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => modelItem.Item2.TicketNumber)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => modelItem.Item2.Status)
+                </td>
+                <td>
+                    <a asp-action="EditStatus" asp-route-id="@Model.Item2.Id">Edit Status</a>
+                    <a asp-action="TransferCustomer" asp-route-id="@Model.Item2.Id">Transfer</a>
+                </td>
+            </tr>
+      
+    </tbody>
+</table>
+<h1>Queue</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Item2.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Item2.TimeIn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Item2.TimeOut)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Item2.TicketNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Item2.Status)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Item1) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimeIn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimeOut)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TicketNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            
+        </tr>
+}
+    </tbody>
+</table>
