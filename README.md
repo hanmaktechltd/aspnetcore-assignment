@@ -61,12 +61,15 @@ Ensure you create these two Roles:
  
  select the service point to transfer to
  
- ## customer check in 
+ ## Customer check in 
  
  enter the customer name
  
  select service point that you want. 
  
  on the waiting page, click on print Ticket to generate PDF ticket.
+ 
+ ## Recall Customer
+ While loged in as a ServiceProvider, enter the Ticket number of the customer to recall
 
 
