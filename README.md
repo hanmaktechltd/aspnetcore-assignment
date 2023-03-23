@@ -48,3 +48,35 @@ Create a simple Queue Management System with the following pages:
 - If you don't want to create a public repository please invite (@hanmaktechltd) to your working repository.
 - Please include a brief description of how to run your solution and also include a copy of the database schema.
 - If you have any questions contact us (<hr@hanmak.co.ke>)
+
+
+
+# To Configure For Local Use
+
+1. Clone repository to local computer
+2. Create new postgres database 
+3. Import sql file located at "Data" folder of this repository 
+4. Set up User Secrets
+- right-click the project and choose "Manage User Secrets"
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/manageUserSecrets.PNG)
+- This opens an editor for a secrets.json file in which you can store your configuration
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/secretJson.PNG)
+
+5. When completed, run the website in Visual Studio
+- Login as Admin using Name: Admin | Password Admin@123
+- Login as service provider using Name as Nurse1, Nurse2, Nurse3, Nurse4 or Nurse5 and Password as Nurse1@123, Nurse2@123, Nurse3@123, Nurse4@123 or Nurse5@123 respectively.
+
+
+## Screenshots
+1. Check-In page
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Check-In%20page.PNG)
+
+
+2. Waiting page
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Waiting%20Page.PNG)
+
+3. Service point
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Service%20point.PNG)
+
+4. Admin dashboard
+![App Screenshot](https://github.com/mikemathu/aspnetcore-assignment/blob/main/Queue%20Management%20System/Queue%20Management%20System/wwwroot/Screenshots/Admin%20Page.PNG)
