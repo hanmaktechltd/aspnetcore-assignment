@@ -1,0 +1,56 @@
+@model IEnumerable<CustomerTicket>
+
+<h2>Current Queue Status</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ticket Number</th>
+            <th>Checkin Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customerTicket in Model)
+        {
+            <tr>
+                <td>@customerTicket.Id</td>
+                <td>@customerTicket.CheckInTime</td>
+                <td>@customerTicket.Status</td>
+                <td>
+                    @if (customerTicket.Status == "In Progress")
+                    {
+                        <form method="post" asp-action="RecallNumber" class="w-12 btn-group">
+                            <input type="hidden" name="Id" value="@customerTicket.Id" />
+                            <button type="submit" class="btn btn-primary">Recall</button>
+                        </form>
+                        <form method="post" asp-action="MarkAsNoShow" class="w-12 btn-group">
+                            <input type="hidden" name="Id" value="@customerTicket.Id" />
+                            <button type="submit" class="btn btn-danger">No Show</button>
+                        </form>
+                        <form method="post" asp-action="MarkAsFinished" class="w-12 btn-group">
+                            <input type="hidden" name="Id" value="@customerTicket.Id" />
+                            <button type="submit" class="btn btn-success">Finished</button>
+                        </form>
+                        <form method="post" asp-action="TransferNumber" class="w-12 btn-group">
+                            <input type="hidden" name="Id" value="@customerTicket.Id" />
+                            <button type="submit" class="btn btn-warning">Transfer</button>
+                        </form>
+                    }
+                    else if (customerTicket.Status == "Waiting")
+                    {
+                        <form method="post" asp-action="MarkAsNoShow" class="w-12 btn-group">
+                            <input type="hidden" name="Id" value="@customerTicket.Id" />
+                            <button type="submit" class="btn btn-danger">No Show</button>
+                        </form>
+                        <form method="post" asp-action="TransferNumber" class="w-12 btn-group">
+                            <input type="hidden" name="Id" value="@customerTicket.Id" />
+                            <button type="submit" class="btn btn-warning">Transfer</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
