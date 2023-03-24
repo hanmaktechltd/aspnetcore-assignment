@@ -1,0 +1,34 @@
+@model List<ServicePoint>
+
+@{
+    Layout = "_LayoutAdminLoggedIn";
+}
+
+<h2>Service Points</h2>
+
+<table class="table table-bordered table-hover table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Location</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var servicePoint in Model)
+        {
+            <tr>
+                <td width="20%">@servicePoint.Id</td>
+                <td width="20%">@servicePoint.Name</td>
+                <td width="20%">@servicePoint.Description</td>
+                <td width="30%">
+                    <a class="btn btn-primary mx-1" href="@Url.Action("EditServicePoint", new { id = servicePoint.Id })">Edit</a> |
+                    <a class="btn btn-prdanger" href="@Url.Action("DeleteServicePoint", new { id = servicePoint.Id })">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary mx-1" href="@Url.Action("AddServicePoint")">Add Service Point</a>

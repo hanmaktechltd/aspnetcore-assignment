@@ -1,0 +1,21 @@
+@model ServiceProvider
+
+<h2>Delete Service Provider</h2>
+
+<p>Are you sure you want to delete this service provider?</p>
+
+<form asp-action="DeleteServiceProvider" method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" disabled/>
+    </div>
+    <div class="form-group">
+        <label asp-for="ServicePointId"></label>
+        <input asp-for="ServicePointId" class="form-control" disabled/>
+    </div>
+
+    <div class="w-12 btn-group" role="group">
+        <input type="submit" class="btn btn-primary mx-1" value="Delete" />
+        <a asp-action="Index" class="btn btn-danger mx-1">Back</a>
+    </div>
+</form>
