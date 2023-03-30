@@ -24,7 +24,7 @@
                 <td width="20%">@servicePoint.Description</td>
                 <td width="30%">
                     <a class="btn btn-primary mx-1" href="@Url.Action("EditServicePoint", new { id = servicePoint.Id })">Edit</a> |
-                    <a class="btn btn-prdanger" href="@Url.Action("DeleteServicePoint", new { id = servicePoint.Id })">Delete</a>
+                    <a class="btn btn-danger" href="@Url.Action("DeleteServicePoint", new { id = servicePoint.Id })">Delete</a>
                 </td>
             </tr>
         }

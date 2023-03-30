@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FastReport;
+using FastReport.Export.PdfSimple;
+using Microsoft.AspNetCore.Mvc;
 using Queue_Management_System.Models;
 using Queue_Management_System.Models.Data;
+using System.Data;
 using System.Diagnostics;
 
 namespace Queue_Management_System.Controllers
@@ -141,6 +144,66 @@ namespace Queue_Management_System.Controllers
             _dbContext.ServicePoints.Remove(servicePoint);
             _dbContext.SaveChanges();
             return RedirectToAction("ServicePoints");
+        }
+
+        public IActionResult AnalyticalReports()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> CustomersServedAsync()
+        {
+            // Load the report file
+            var report = new Report();
+            report.Load("Reports/CustomersServed.frx");
+
+            // Create a dataset with the report data
+            var dataSet = new DataSet();
+            var dataTable = new DataTable("Customers");
+            dataSet.Tables.Add(dataTable);
+            // ... fill the dataset with the required data
+
+            // Register the dataset with the report
+            report.RegisterData(dataSet, "MyDataSet");
+
+            // Render the report to a memory stream
+            var stream = new MemoryStream();
+            report.Prepare();
+            report.Export(new PDFSimpleExport(), stream);
+
+            // Set the response headers
+            Response.Clear();
+            Response.ContentType = "application/pdf";
+            Response.Headers.Add("content-disposition", "inline; filename=MyReport.pdf");
+
+            // Write the report to the response stream
+            stream.Seek(0, SeekOrigin.Begin);
+            await stream.CopyToAsync(Response.Body);
+
+            return new EmptyResult();
+            // // Load the FastReport.Net template file dynamically
+            // string templatePath = $"Reports/CustomersServed.frx";
+            // var webHostEnvironment = HttpContext.RequestServices.GetService<IWebHostEnvironment>();
+            // var physicalPath = Path.Combine(webHostEnvironment.ContentRootPath, templatePath);
+            // Report report = new Report();
+            // report.Load(physicalPath);
+
+            // // Display the generated ticket on the Check-In page
+            // MemoryStream stream = new MemoryStream();
+            // report.Prepare();
+
+            // var export = new PDFSimpleExport();
+            // // export.Compressed = true;
+
+            // export.Export(report, stream);
+
+            // var pdfBytes = stream.ToArray();
+            // // Response.ContentType = "application/pdf";
+            // // Response.Body.WriteAsync(pdfBytes, 0, pdfBytes.Length);
+
+            // stream.Flush();
+            // stream.Position = 0;
+            // return File(pdfBytes, "application/pdf", $"CustomersServed.pdf");
         }
 
     }
