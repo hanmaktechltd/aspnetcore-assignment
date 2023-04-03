@@ -4,16 +4,21 @@
 
 <form asp-action="AddServicePoint" method="post">
     <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
+        <div class="col-4">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+        </div>
+
+        <div class="col-4">
+            <label asp-for="Description"></label>
+            <input asp-for="Description" class="form-control" />
+        </div>
+
+        <div class="w-12 btn-group" role="group">
+        <input type="submit" class="btn btn-primary mx-1" value="Add" />
+        <a asp-action="ServicePoints" class="btn btn-danger mx-1">Back</a>
     </div>
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <input asp-for="Description" class="form-control" />
     </div>
 
-    <div class="w-12 btn-group" role="group">
-        <input type="submit" class="btn btn-primary mx-1" value="Add" />
-        <a asp-action="Index" class="btn btn-danger mx-1">Back</a>
-    </div>
+    
 </form>

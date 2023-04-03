@@ -4,20 +4,24 @@
 
 <form asp-action="AddServiceProvider" method="post">
     <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="ServicePointId"></label>
-        <input asp-for="ServicePointId" class="form-control" />
-    </div>
+        <div class="col-4">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+        </div>
 
-    <div class="w-12 btn-group" role="group">
-        <input type="submit" class="btn btn-primary mx-1" value="Add" />
-        <a asp-action="Index" class="btn btn-danger mx-1">Back</a>
-    </div>
+        <div class="col-4">
+            <label asp-for="Password"></label>
+            <input asp-for="Password" class="form-control" />
+        </div>
+
+        <div class="col-4">
+            <label asp-for="ServicePointId"></label>
+            <input asp-for="ServicePointId" class="form-control" />
+        </div>
+
+        <div class="w-12 btn-group" role="group">
+            <input type="submit" class="btn btn-primary mx-1" value="Add" />
+            <a asp-action="ServiceProviders" class="btn btn-danger mx-1">Back</a>
+        </div>
+    </div>  
 </form>

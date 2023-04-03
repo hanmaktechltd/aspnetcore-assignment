@@ -6,19 +6,19 @@
     Layout = "_LayoutAdminLoggedIn";
 }
 
-<table class="table table-bordered table-hover table-striped" style="width:100%">
+<table class="table">
     <thead>
         <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>ServicePointId</th>
+            <th scope="row">Id</th>
+            <th scope="row">Name</th>
+            <th scope="row">ServicePointId</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var serviceProvider in Model)
         {
-            <tr>
+            <tr class="table-dark">
                 <td width="20%">@serviceProvider.Id</td>
                 <td width="20%">@serviceProvider.Name</td>
                 <td width="20%">@serviceProvider.ServicePointId</td>
@@ -31,4 +31,6 @@
     </tbody>
 </table>
 
-<a class="btn btn-primary mx-1" href="@Url.Action("AddServiceProvider")">Add Service Provider</a>
+<button type="button" class="btn btn-primary">
+    <a style="color: white; text-decoration: none;" href="@Url.Action("AddServiceProvider")">Add Service Provider</a>
+</button>

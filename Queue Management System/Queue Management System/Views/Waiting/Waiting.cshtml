@@ -5,16 +5,16 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Ticket Number</th>
-            <th>Destination</th>
+            <th scope="col" style="color: black;">Ticket Number</th>
+            <th scope="col" style="color: black;">Destination</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var customerTicket in Model)
         {
-            <tr>
-                <td>@customerTicket.Id</td>
-                <td>Room: @customerTicket.ServicePointId</td>
+            <tr class="table-light">
+                <th style="color: black;" scope="row">@customerTicket.Id</th>
+                <td style="color: black;">Room: @customerTicket.ServicePointId</td>
             </tr>
         }
     </tbody>

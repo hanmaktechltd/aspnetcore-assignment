@@ -17,7 +17,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(
     builder.Configuration.GetConnectionString("DefaultConnection")  // configures our sql server
     ));
-
+builder.Services.AddRazorPages();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

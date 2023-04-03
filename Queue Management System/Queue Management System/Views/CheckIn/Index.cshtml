@@ -1,28 +1,26 @@
 ﻿@model IEnumerable<ServicePoint>
 
-<h2>Check In</h2>
-
-<p>Please select the type of service you require:</p>
+<h2>Please select the type of service you require:</h2>
 
 
-<table class="table table-bordered table-hover table-striped" style="width:100%">
+<table class="table table-hover">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Description</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var servicePoint in Model)
         {
-            <tr>
-                <td width="20%">@servicePoint.Name</td>
-                <td width="20%">@servicePoint.Description</td>
+            <tr class="table-active">
+                <th scope="row">@servicePoint.Name</th>
+                <td>@servicePoint.Description</td>
                 <td>
                     <form method="post" asp-action="checkin">
                         <input type="hidden" name="servicePointId" value="@servicePoint.Id" />
-                        <button type="submit" class="btn btn-primary">Select This Service</button>
+                        <button type="button" class="btn btn-dark">Select This Service</button>
                     </form>
                 </td>
             </tr>

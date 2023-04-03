@@ -6,23 +6,23 @@
 
 <h2>Service Points</h2>
 
-<table class="table table-bordered table-hover table-striped" style="width:100%">
+<table class="table">
     <thead>
         <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Location</th>
+            <th scope="row">Id</th>
+            <th scope="row">Name</th>
+            <th scope="row">Location</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var servicePoint in Model)
         {
-            <tr>
-                <td width="20%">@servicePoint.Id</td>
-                <td width="20%">@servicePoint.Name</td>
-                <td width="20%">@servicePoint.Description</td>
-                <td width="30%">
+            <tr class="table-dark">
+                <td>@servicePoint.Id</td>
+                <td>@servicePoint.Name</td>
+                <td>@servicePoint.Description</td>
+                <td>
                     <a class="btn btn-primary mx-1" href="@Url.Action("EditServicePoint", new { id = servicePoint.Id })">Edit</a> |
                     <a class="btn btn-danger" href="@Url.Action("DeleteServicePoint", new { id = servicePoint.Id })">Delete</a>
                 </td>
@@ -31,4 +31,6 @@
     </tbody>
 </table>
 
-<a class="btn btn-primary mx-1" href="@Url.Action("AddServicePoint")">Add Service Point</a>
+<button type="button" class="btn btn-primary">
+    <a style="color: white; text-decoration: none;" href="@Url.Action("AddServicePoint")">Add Service Point</a>
+</button>
