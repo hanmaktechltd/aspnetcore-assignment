@@ -28,19 +28,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Item2.Name)
+                @Html.DisplayNameFor(model => model.Item2.name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Item2.TimeIn)
+                @Html.DisplayNameFor(model => model.Item2.timein)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Item2.TimeOut)
+                @Html.DisplayNameFor(model => model.Item2.timeout)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Item2.TicketNumber)
+                @Html.DisplayNameFor(model => model.Item2.ticketnumber)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Item2.Status)
+                @Html.DisplayNameFor(model => model.Item2.status)
             </th>
             <th> Action</th>
         </tr>
@@ -48,23 +48,23 @@
     <tbody>
             <tr>
                 <td>
-                @Html.DisplayFor(modelItem => modelItem.Item2.Name)
+                @Html.DisplayFor(modelItem => modelItem.Item2.name)
                 </td>
                 <td>
-                @Html.DisplayFor(modelItem => modelItem.Item2.TimeIn)
+                @Html.DisplayFor(modelItem => modelItem.Item2.timein)
                 </td>
                 <td>
-                @Html.DisplayFor(modelItem => modelItem.Item2.TimeOut)
+                @Html.DisplayFor(modelItem => modelItem.Item2.timeout)
                 </td>
                 <td>
-                @Html.DisplayFor(modelItem => modelItem.Item2.TicketNumber)
+                @Html.DisplayFor(modelItem => modelItem.Item2.ticketnumber)
                 </td>
                 <td>
-                @Html.DisplayFor(modelItem => modelItem.Item2.Status)
+                @Html.DisplayFor(modelItem => modelItem.Item2.status)
                 </td>
                 <td>
-                    <a asp-action="EditStatus" asp-route-id="@Model.Item2.Id">Edit Status</a>
-                    <a asp-action="TransferCustomer" asp-route-id="@Model.Item2.Id">Transfer</a>
+                    <a asp-action="EditStatus" asp-route-id="@Model.Item2.id">Edit Status</a>
+                    <a asp-action="TransferCustomer" asp-route-id="@Model.Item2.id">Transfer</a>
                 </td>
             </tr>
       
@@ -75,19 +75,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Item2.Name)
+                @Html.DisplayNameFor(model => model.Item2.name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Item2.TimeIn)
+                @Html.DisplayNameFor(model => model.Item2.timein)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Item2.TimeOut)
+                @Html.DisplayNameFor(model => model.Item2.timeout)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Item2.TicketNumber)
+                @Html.DisplayNameFor(model => model.Item2.ticketnumber)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Item2.Status)
+                @Html.DisplayNameFor(model => model.Item2.status)
             </th>
         </tr>
     </thead>
@@ -95,19 +95,19 @@
 @foreach (var item in Model.Item1) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TimeIn)
+                @Html.DisplayFor(modelItem => item.timein)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TimeOut)
+                @Html.DisplayFor(modelItem => item.timeout)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TicketNumber)
+                @Html.DisplayFor(modelItem => item.ticketnumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
+                @Html.DisplayFor(modelItem => item.status)
             </td>
             
         </tr>

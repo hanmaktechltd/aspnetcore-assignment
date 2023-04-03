@@ -75,13 +75,10 @@ namespace Queue_Management_System.Controllers
         [HttpPost]
         public async Task<IActionResult> addServices(ServicePointModel servicePoint)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new { error = "Validation error occured" });
-            }
-            servicePoint.DateCreated= DateTime.Now.ToUniversalTime();
+            servicePoint.datecreated= DateTime.Now.ToUniversalTime();
+            servicePoint.createdby = HttpContext.Session.GetString("userName");
             var result= await  _repository.CreateServicePoint(servicePoint);
-            await _repository.SaveChanges();
+            TempData["Message"] = "Added successfully";
             return View();
             
         }
@@ -90,8 +87,8 @@ namespace Queue_Management_System.Controllers
             var servicePoints = _repository.getServicePoints();
             List<SelectListItem> servicePointListItems = servicePoints.Select(sp => new SelectListItem
             {
-                Value = sp.Id.ToString(),
-                Text = sp.Name
+                Value = sp.id.ToString(),
+                Text = sp.name
             }).ToList();
 
             ViewBag.ServicePoints = servicePointListItems;
@@ -104,7 +101,7 @@ namespace Queue_Management_System.Controllers
             ReportModel reportModel = new ReportModel();
             reportModel.CustomersServed = _queueService.GetServedCustomersByServicePoint(filterModel);
             reportModel.AverageServiceTime = _queueService.GetAverageWaitTimeByServicePoint(filterModel);
-            reportModel.AverageWaitTime = "90";
+            reportModel.AverageWaitTime = _queueService.GetAverageServiceTimeByServicePoint(filterModel);
             report.Add(reportModel);
             
             var pdf = _queueService.GenerateAnalyticsReport(report);

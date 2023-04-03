@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Queue_Management_System.Data;
@@ -11,9 +12,11 @@ using Queue_Management_System.Data;
 namespace Queue_Management_System.Migrations
 {
     [DbContext(typeof(QueueDBContext))]
-    partial class QueueDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230403122101_timeservicestarted")]
+    partial class timeservicestarted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

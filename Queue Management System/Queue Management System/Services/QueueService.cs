@@ -58,12 +58,17 @@ namespace Queue_Management_System.Services
         }
         public int GetServedCustomersByServicePoint(FilterModel filterModel) 
         {
-            var servedCustomers = _repository.CountServedCustomersByServicePoint(filterModel.ServicePointId);
+            var servedCustomers = _repository.CountServedCustomersByServicePoint(filterModel);
             return servedCustomers;
         }
         public string GetAverageWaitTimeByServicePoint(FilterModel filterModel)
         {
             var averageWaitTime = _repository.CalculateAverageWaitTime(filterModel);
+            return averageWaitTime.ToString();
+        }
+        public string GetAverageServiceTimeByServicePoint(FilterModel filterModel)
+        {
+            var averageWaitTime = _repository.CalculateAverageServiceTime(filterModel);
             return averageWaitTime.ToString();
         }
         public MemoryStream GenerateAnalyticsReport(List<ReportModel> reportModel)

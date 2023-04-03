@@ -30,8 +30,8 @@ namespace Queue_Management_System.Controllers
             var servicePoints = _repository.getServicePoints();
             List<SelectListItem> servicePointListItems = servicePoints.Select(sp => new SelectListItem
             {
-                Value = sp.Id.ToString(),
-                Text = sp.Name
+                Value = sp.id.ToString(),
+                Text = sp.name
             }).ToList();
 
             ViewBag.ServicePoints = servicePointListItems;
@@ -48,15 +48,15 @@ namespace Queue_Management_System.Controllers
             //add customer to queue
             Customers customer = new Customers
             {
-                Name = checkInRequest.Name,
-                ServicePoint = selectedServicePoint,
-                Status="WAITING",
-                TicketNumber= TicketNumber,
-                TimeIn = DateTime.Now.ToUniversalTime(),
+                name = checkInRequest.Name,
+                servicepoint = selectedServicePoint,
+                status="WAITING",
+                ticketnumber= TicketNumber,
+                timein = DateTime.Now.ToUniversalTime(),
+                timeservicestarted= DateTime.Now.ToUniversalTime(), //will be updated accordingly for subsquent customers
             };
 
             await _repository.CreateCustomer(customer);
-            await _repository.SaveChanges();
 
             List<TicketViewModel> tickets = new List<TicketViewModel>();
             TicketViewModel ticket = new TicketViewModel
@@ -122,19 +122,18 @@ namespace Queue_Management_System.Controllers
 
         public IActionResult TransferCustomer(int Id)
         {
-           
 
+            var customer = _repository.GetCustomerById(Id);
             var servicePoints = _repository.getServicePoints();
             List<SelectListItem> servicePointListItems = servicePoints.Select(sp => new SelectListItem
             {
-                Value = sp.Id.ToString(),
-                Text = sp.Name,
-                Selected = sp.Id == 3
+                Value = sp.id.ToString(),
+                Text = sp.name,
+                Selected = sp.id == customer.servicepoint.id
             }).ToList();
 
             ViewBag.ServicePoints = servicePointListItems;
 
-            var customer = _repository.GetCustomerById(Id);
             return View(customer);
         }
         [HttpPost]

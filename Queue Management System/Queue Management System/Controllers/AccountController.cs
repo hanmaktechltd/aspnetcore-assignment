@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol.Core.Types;
 using Queue_Management_System.Data;
 using Queue_Management_System.Models.ViewModels;
@@ -55,10 +56,10 @@ namespace Queue_Management_System.Controllers
                     var result = await _signInManager.PasswordSignInAsync(loginDetails.Email, loginDetails.Password, loginDetails.RememberMe, lockoutOnFailure: false);
                     if (result.Succeeded)
                     {
-                        var user= _userManager.Users.SingleOrDefault(r => r.Email == loginDetails.Email);
-                        var roles = _userManager.GetRolesAsync(user);
+                        var user= await _userManager.Users.SingleOrDefaultAsync(r => r.Email == loginDetails.Email);
+                        var roles = await _userManager.GetRolesAsync(user);
                         var claims = await _userManager.GetClaimsAsync(user);
-                        foreach (var role in roles.Result)
+                        foreach (var role in roles)
                         {
                             claims.Add(new Claim(ClaimTypes.Role, role));
                         }
@@ -70,16 +71,19 @@ namespace Queue_Management_System.Controllers
                         //SignInAsync is a Extension method for Sign in a principal for the specified scheme.
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                             principal, new AuthenticationProperties() { IsPersistent = loginDetails.RememberMe });
-                        if(await _userManager.IsInRoleAsync(user, "Admin"))
-                        {
-                            return RedirectToAction("Dashboard", "Admin");
-                        }
-                        if (await _userManager.IsInRoleAsync(user, "ServiceProvider"))
-                        {
-                            return RedirectToAction("SelectServicePoint", "Account");
-                        }
+
+                        HttpContext.Session.SetString("userName", loginDetails.Email);
+
                         if (returnUrl == null)
                         {
+                            if (await _userManager.IsInRoleAsync(user, "Admin"))
+                            {
+                                return RedirectToAction("Dashboard", "Admin");
+                            }
+                            if (await _userManager.IsInRoleAsync(user, "ServiceProvider"))
+                            {
+                                return RedirectToAction("SelectServicePoint", "Account");
+                            }
                             return RedirectToAction("Checkinpage", "Queue");
                         }
                         return Redirect(returnUrl);
@@ -155,8 +159,8 @@ namespace Queue_Management_System.Controllers
             var servicePoints = _repository.getServicePoints();
             List<SelectListItem> servicePointListItems = servicePoints.Select(sp => new SelectListItem
             {
-                Value = sp.Id.ToString(),
-                Text = sp.Name
+                Value = sp.id.ToString(),
+                Text = sp.name
             }).ToList();
 
             ViewBag.ServicePoints = servicePointListItems;

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Queue_Management_System.Data;
@@ -11,9 +12,11 @@ using Queue_Management_System.Data;
 namespace Queue_Management_System.Migrations
 {
     [DbContext(typeof(QueueDBContext))]
-    partial class QueueDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230402153646_nocap")]
+    partial class nocap
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,11 +223,11 @@ namespace Queue_Management_System.Migrations
 
             modelBuilder.Entity("Queue_Management_System.Models.Customers", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("name")
                         .IsRequired()
@@ -247,10 +250,7 @@ namespace Queue_Management_System.Migrations
                     b.Property<DateTime>("timeout")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("timeservicestarted")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.HasIndex("servicepointid");
 

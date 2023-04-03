@@ -1,13 +1,17 @@
-﻿namespace Queue_Management_System.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Queue_Management_System.Models
 {
     public class Customers
     {
-        public int Id { get; set; } 
-        public string Name { get; set; }
-        public ServicePointModel ServicePoint { get; set; }
-        public DateTime TimeIn { get; set; }
-        public DateTime TimeOut { get; set; }
-        public string TicketNumber { get; set; }
-        public string Status { get; set; }
+        [Key]
+        public int id { get; set; } 
+        public string name { get; set; }
+        public ServicePointModel servicepoint { get; set; }
+        public DateTime timein { get; set; }
+        public DateTime timeservicestarted { get; set; }
+        public DateTime timeout { get; set; }
+        public string ticketnumber { get; set; }
+        public string status { get; set; }
     }
 }

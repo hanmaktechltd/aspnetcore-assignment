@@ -12,9 +12,8 @@ namespace Queue_Management_System.Data
         {
 
         }
-        public DbSet<ServicePointModel> servicePoints { get; set; }
+        public DbSet<ServicePointModel> servicepoints { get; set; }
         public DbSet<Customers> customers { get; set; }
-        public DbSet<Queue_Management_System.Models.ViewModels.CheckInViewModel> CheckInViewModel { get; set; }
 
     }
 }
