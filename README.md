@@ -9,7 +9,7 @@ open appsettings.json and edit the DefaultConnection connection string to point 
 
 open pgAdmin and create the database above.
 
-Copy the contents of the queue file and execute on pgAdmin to create the required tables.
+Copy the contents of the queuedb file and execute on pgAdmin to create the required tables.
 
 
 
