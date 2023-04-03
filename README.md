@@ -7,9 +7,10 @@
 
 open appsettings.json and edit the DefaultConnection connection string to point to the Postgres database you want to use.
 
-open the project on visual studio and run the command update-database.
+open pgAdmin and create the database above.
 
-Database called QueueDB should now be available on your PGAdmin. 
+Copy the contents of the queue file and execute on pgAdmin to create the required tables.
+
 
 
 ## Add Roles
