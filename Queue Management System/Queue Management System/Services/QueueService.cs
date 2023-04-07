@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Queue_Management_System.Models;
 using Queue_Management_System.Models.ViewModels;
 using Queue_Management_System.Repository;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Queue_Management_System.Services
 {
@@ -94,6 +96,23 @@ namespace Queue_Management_System.Services
                 return pdfStream;
             }
             return null;
+        }
+        public async Task<string> HashPassword(string password)
+        {
+            string saltString = "queueforreal";
+            byte[] salt = Encoding.UTF8.GetBytes(saltString);
+
+            using var sha256 = SHA256.Create();
+
+            // Combine password and salt
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+            byte[] passwordAndSaltBytes = new byte[passwordBytes.Length + salt.Length];
+            Array.Copy(passwordBytes, passwordAndSaltBytes, passwordBytes.Length);
+            Array.Copy(salt, 0, passwordAndSaltBytes, passwordBytes.Length, salt.Length);
+
+            // Hash the password and salt
+            byte[] hash = sha256.ComputeHash(passwordAndSaltBytes);
+            return Convert.ToBase64String(hash);
         }
     }
 }

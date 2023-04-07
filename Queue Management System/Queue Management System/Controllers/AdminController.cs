@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Core.Types;
-using Queue_Management_System.Data;
 using Queue_Management_System.Models;
 using Queue_Management_System.Models.ViewModels;
 using Queue_Management_System.Repository;
@@ -13,25 +10,17 @@ using System.Data;
 
 namespace Queue_Management_System.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles  = "Admin")]
     public class AdminController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly QueueRepository _repository;
         private readonly QueueService _queueService;
 
-        public AdminController(
-            RoleManager<IdentityRole> roleManager, QueueRepository repository, QueueService queueService, UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager
+        public AdminController( QueueRepository repository, QueueService queueService
             )
         {
-            _roleManager = roleManager;
             _repository = repository;
             _queueService = queueService;
-            _userManager = userManager;
-            _signInManager = signInManager;
         }
 
 
@@ -51,20 +40,24 @@ namespace Queue_Management_System.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new { error = "Validation error occured" });
+                ModelState.AddModelError(string.Empty, $"Validation error occured");
+
+                return View();
             }
             IdentityRole identityRole = new IdentityRole
             {
                 Name = role.Name,
             };
-            var result = await _roleManager.CreateAsync(identityRole);
-            if (result.Succeeded)
+            var result = await _repository.AddRole(identityRole);
+            if (result)
             {
-                return Ok(result);
+                ModelState.AddModelError(string.Empty, $"Added Successfully");
+                return View();
             }
             else
             {
-                return BadRequest(new { result });
+                ModelState.AddModelError(string.Empty, $"Failed to add role");
+                return View();
             }
         }
         //add services
@@ -100,8 +93,8 @@ namespace Queue_Management_System.Controllers
             List<ReportModel> report = new List<ReportModel>();
             ReportModel reportModel = new ReportModel();
             reportModel.CustomersServed = _queueService.GetServedCustomersByServicePoint(filterModel);
-            reportModel.AverageServiceTime = _queueService.GetAverageWaitTimeByServicePoint(filterModel);
-            reportModel.AverageWaitTime = _queueService.GetAverageServiceTimeByServicePoint(filterModel);
+            reportModel.AverageWaitTime = _queueService.GetAverageWaitTimeByServicePoint(filterModel);
+            reportModel.AverageServiceTime = _queueService.GetAverageServiceTimeByServicePoint(filterModel);
             report.Add(reportModel);
             
             var pdf = _queueService.GenerateAnalyticsReport(report);
@@ -109,12 +102,12 @@ namespace Queue_Management_System.Controllers
 
         }
         [HttpGet]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
-            var roles = _roleManager.Roles.ToList();
+            var roles = await _repository.getRoles();
             List<SelectListItem> RolesItems = roles.Select(role => new SelectListItem
             {
-                Value = role.Name,
+                Value = role.Id,
                 Text = role.Name
             }).ToList();
 
@@ -129,48 +122,54 @@ namespace Queue_Management_System.Controllers
                 if (ModelState.IsValid)
                 {
                     DateTime date = DateTime.Now;
-                    var user = new IdentityUser
-                    {
-                        UserName = registerDetails.Email,
-                        Email = registerDetails.Email
-                    };
 
-                    var result = await _userManager.CreateAsync(user, registerDetails.Password);
-
-                    if (result.Succeeded)
+                    var user = await _repository.getUserByEmail(registerDetails.Email);
+                    if (user.Email == null)
                     {
-                        await _signInManager.SignInAsync(user, false);
-                        //assign role
-                        await AddUserToRole(registerDetails);
-                        return CreatedAtAction("Register", new { Id = user.Id });
+                        registerDetails.Password = await _queueService.HashPassword(registerDetails.Password);
+                        var result = await _repository.createUser(registerDetails);
+                        if (result)
+                        {
+                            //assign role
+                            await _repository.AddUserToRole(registerDetails.Email, registerDetails.Role);
+                            return RedirectToAction("Dashboard");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Could not create user. please try again");
+                        }
                     }
                     else
                     {
-                        var err = result.Errors.First().Description;
-                        return BadRequest(err);
+                        ModelState.AddModelError(string.Empty, $"User with email {registerDetails.Email} already exists");
+
                     }
+
+
                 }
-                return BadRequest(ModelState);
+                var roles = await _repository.getRoles();
+                List<SelectListItem> RoleItems = roles.Select(role => new SelectListItem
+                {
+                    Value = role.Id.ToString(),
+                    Text = role.Name
+                }).ToList();
+                ViewBag.roles = RoleItems;
+                return View();
             }
             catch (Exception ex)
             {
-                var dsfsd = ex.Message;
-                return BadRequest(ModelState);
-            }
-        }
-        public async Task<IActionResult> AddUserToRole(RegisterViewModel registerDetails)
-        {
-            var user = _userManager.Users.SingleOrDefault(r => r.Email == registerDetails.Email);
-            if (!await _userManager.IsInRoleAsync(user, registerDetails.Role))
-            {
-                IdentityResult result = await _userManager.AddToRoleAsync(user, registerDetails.Role);
-                if (result.Succeeded)
+                var roles = await _repository.getRoles();
+                List<SelectListItem> RoleItems = roles.Select(role => new SelectListItem
                 {
-                }
-
+                    Value = role.Id.ToString(),
+                    Text = role.Name
+                }).ToList();
+                ViewBag.roles = RoleItems;
+                var dsfsd = ex.Message;
+                return View();
             }
-            return Ok();
         }
+ 
 
     }
 }

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Queue_Management_System.Data;
 using Queue_Management_System.Repository;
 using Queue_Management_System.Services;
 
@@ -10,15 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<QueueDBContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-{
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 6;
-    options.Password.RequireDigit = false;
-}).AddEntityFrameworkStores<QueueDBContext>()
-    .AddDefaultTokenProviders();
 builder.Services.AddScoped<QueueRepository>();
 builder.Services.AddTransient<QueueService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

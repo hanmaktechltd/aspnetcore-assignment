@@ -1,33 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using FastReport.Utils;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using NuGet.Common;
-using Queue_Management_System.Data;
-using Queue_Management_System.Migrations;
 using Queue_Management_System.Models;
+using Queue_Management_System.Models.ViewModels;
+using Queue_Management_System.Services;
 using System.Data;
 using System.Data.Entity.Core.Objects;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Queue_Management_System.Repository
 {
     public class QueueRepository
     {
-        private readonly QueueDBContext _context;
         private readonly string conString;
 
-        public QueueRepository(QueueDBContext context, IConfiguration configuration)
+        public QueueRepository( IConfiguration configuration)
         {
-            _context = context;
             conString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        //savechanges
-
-        public async Task<int> SaveChanges()
-        {
-            return (await _context.SaveChangesAsync());
-        }
 
         //servicePoints
         public async Task<IActionResult> CreateServicePoint(ServicePointModel servicePoint)
@@ -389,5 +384,196 @@ namespace Queue_Management_System.Repository
             return averageWaitTime;
 
         }
+        public async Task<bool> checkPassword(LoginViewModel loginDetails)
+        {
+            using (var connection = new NpgsqlConnection(conString))
+            {
+                await connection.OpenAsync();
+                
+                using (var command = new NpgsqlCommand("SELECT \"PasswordHash\" FROM \"AspNetUsers\" WHERE \"Email\" = @Email", connection))
+                {
+                    command.Parameters.AddWithValue("@Email", loginDetails.Email);
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            var passwordHash = reader.GetString(0);
+                            if (loginDetails.Password == passwordHash)
+                            {
+                                // Password matches, sign in the user
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                }
+
+            }
+        }
+        public async Task<bool> createUser(RegisterViewModel registerDetails)
+        {
+            using (var conn = new NpgsqlConnection(conString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand("INSERT INTO \"AspNetUsers\" (\"Id\", \"UserName\", \"Email\", \"PasswordHash\", \"EmailConfirmed\", \"PhoneNumberConfirmed\", \"LockoutEnabled\", \"TwoFactorEnabled\", \"AccessFailedCount\") VALUES (@Id, @username,  @email,@passwordhash, false, false, false, false,0)", conn))
+                {
+                    cmd.Parameters.AddWithValue("@Id", Guid.NewGuid());
+                    cmd.Parameters.AddWithValue("@username", registerDetails.Email);
+                    cmd.Parameters.AddWithValue("@email", registerDetails.Email);
+                    cmd.Parameters.AddWithValue("@passwordhash", registerDetails.Password);
+                    cmd.ExecuteNonQuery();
+                };
+                conn.Close();
+                return true;
+            }
+        }
+        public async Task<IdentityUser> getUserByEmail(string Email)
+        {
+            var user = new IdentityUser();
+            using (var connection = new NpgsqlConnection(conString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM \"AspNetUsers\" where \"Email\"=@email", connection))
+                {
+                    cmd.Parameters.AddWithValue("@email", Email);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            user.UserName = reader["UserName"].ToString();
+                            user.Email = reader["Email"].ToString();
+                            user.Id = reader["Id"].ToString();
+                        }
+                       
+                    }
+                }
+            }
+            return user;
+        }
+        public async Task<bool> AddRole(IdentityRole role)
+        {
+            using (var conn = new NpgsqlConnection(conString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand("INSERT INTO \"AspNetRoles\" (\"Id\",\"Name\", \"NormalizedName\",\"ConcurrencyStamp\" ) VALUES (@Id, @name, @normalizedName, @concurrencyStamp)", conn))
+                {
+                    cmd.Parameters.AddWithValue("@Id", role.Id);
+                    cmd.Parameters.AddWithValue("@name", role.Name);
+                    cmd.Parameters.AddWithValue("@normalizedName", role.Name.ToUpper());
+                    cmd.Parameters.AddWithValue("@concurrencyStamp", role.ConcurrencyStamp);
+
+                    cmd.ExecuteNonQuery();
+                };
+                conn.Close();
+                return true;
+            }
+        }
+        public async Task<List<IdentityRole>> getUserRoles(IdentityUser user)
+        {
+            var roles = new List<IdentityRole>();
+            using (var connection = new NpgsqlConnection(conString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM \"AspNetUserRoles\" where \"UserId\"=@UserId", connection))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", user.Id);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var role = await getRoleById(reader["RoleId"].ToString());
+                            roles.Add(role);
+                        }
+
+                    }
+                }
+            }
+            return roles;
+        }
+        public async Task<bool> userIsInRole(IdentityUser user, string roleId)
+        {
+            using (var conn = new NpgsqlConnection(conString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM   \"AspNetUserRoles\" WHERE \"UserId\"=@userid AND \"RoleId\"=@roleid", conn))
+                {
+                    cmd.Parameters.AddWithValue("@userid", user.Id);
+                    cmd.Parameters.AddWithValue("@roleid", roleId);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
+                };
+            }
+        }
+        public async Task<bool> AddUserToRole(string Email, string roleId)
+        {
+            var user = await getUserByEmail(Email);
+            using (var conn = new NpgsqlConnection(conString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand("INSERT INTO \"AspNetUserRoles\" (\"UserId\", \"RoleId\") VALUES (@userid, @roleid)", conn))
+                {
+                    cmd.Parameters.AddWithValue("@userid", user.Id);
+                    cmd.Parameters.AddWithValue("@roleid", roleId);
+                    cmd.ExecuteNonQuery();
+                };
+                conn.Close();
+                return true;
+            }
+        }
+        public async Task<List<IdentityRole>> getRoles()
+        {
+            var roles = new List<IdentityRole>();
+            using (var conn = new NpgsqlConnection(conString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM   \"AspNetRoles\" ", conn))
+                {
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var role = new IdentityRole
+                            {
+                                Id = reader["Id"].ToString(),
+                                Name = reader["Name"].ToString(),
+                            };
+                            roles.Add(role);
+                        }
+                    }
+                }
+            }
+            return roles;
+        }
+        public async Task<IdentityRole> getRoleById(string RoleId)
+        {var role= new IdentityRole();
+            using (var conn = new NpgsqlConnection(conString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM   \"AspNetRoles\" WHERE \"Id\"=@id", conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", RoleId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            role.Id = reader["Id"].ToString();
+                            role.Name = reader["Name"].ToString();
+                 
+                        }
+                    }
+                }
+            }
+            return role;
+        }
+
     }
 }
