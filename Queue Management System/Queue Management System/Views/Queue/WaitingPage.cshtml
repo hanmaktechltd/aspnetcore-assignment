@@ -1,0 +1,40 @@
+﻿@model Queue_Management_System.Models.Customers
+
+@{
+    ViewData["Title"] = "WaitingPage";
+}
+
+<h1>WaitingPage</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ticketnumber)
+            </th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.servicepoint.name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.ticketnumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.servicepoint.name)
+            </td>
+            
+        </tr>
+
+    </tbody>
+</table>

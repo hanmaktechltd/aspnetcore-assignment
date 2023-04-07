@@ -1,50 +1,76 @@
 # ASP.Net Core Developer Assignment: Queue Management System
 
-The assignment involves the creation of a Queue Management System using ASP.NET Core. Please use the following libraries/tools and the stated versions:
-
-- ASP.NET Core 5+
-- PostgreSQL 11+
-- FastReport.Net
-- Npgsql 6.0.0+
 
 ## Queue Management System
 
-Create a simple Queue Management System with the following pages:
+## Database installation
 
-1. Check-In page. This page should allow customers to select the kind of service they're receiving and should support kiosk mode with the following in mind:
-   - Use descriptive text.
-   - Buttons should be large enough.
-   - Ability to print tickets. Design the ticket using FastReport.Net.
-2. Waiting page. This page should simply display the called customer's ticket number and the service point they should head to.
-3. Service point. This page should allow the service provider to:
-   - Authenticate and select their service point.
-   - Get next number.
-   - Recall number.
-   - Mark number as no show.
-   - Mark number as finished.
-   - Transfer number.
-   - View their queue.
-4. Admin dashboard. This page should have the following:
-   - Ability to configure service points.
-   - Ability to configure service providers.
-   - Ability to generate an analytical report, using **FastReport.Net**, displaying the following information:
-     - Number of customers served.
-     - Average waiting time per service point/provider.
-     - Average service time per service point/provider.
+open appsettings.json and edit the DefaultConnection connection string to point to the Postgres database you want to use.
 
-## Database modelling
+open pgAdmin and create the database above.
 
-- Use PostgreSQL as the database of choice.
-- Ensure that the database tables are properly mapped to your project's POCO models.
-- **DO NOT** use existing ORMs i.e. Entity Framework for modelling. Instead, write your own CRUD methods.
+Copy the contents of the queuedb file and execute on pgAdmin to create the required tables.
 
-## How to work on the assignment
 
-- Fork this repository.
-- Clone your forked repository.
-- Start working on the assignment.
-- Ensure to do periodic commits with meaningful commit messages.
-- Once you are done, push your work to your forked repository and finally submit a pull request to the upstream repository.
-- If you don't want to create a public repository please invite (@hanmaktechltd) to your working repository.
-- Please include a brief description of how to run your solution and also include a copy of the database schema.
-- If you have any questions contact us (<hr@hanmak.co.ke>)
+
+## Add Roles
+Click on Add Roles from the nav bar. (Although this Action should require authorization, it allows anonymous access for this case to enable testers to create the Admin role)
+
+Ensure you create these two Roles:
+
+   i. Admin
+   
+   ii. ServiceProvider
+   
+ ##  Register Admin Account 
+ Click on Self-register 
+ 
+ Enter the Admin email, password
+ 
+ On Role, Enter Admin.
+ 
+ ## Register Service Providers
+ 
+ Login in using Admin account
+ 
+ Select Register User
+ 
+ Enter Email and Password
+ 
+ select ServiceProvider Role from the dropdown of roles
+ 
+ ## Add service Points
+ Logged in as admin, Click add service point from the nav Menu
+ 
+ enter the name and the other details as required. 
+ 
+ ## Log in as a service Provider
+ Use the email and password provided by the Admin. 
+ 
+ select the service point you will operate from the drop down of service points
+ 
+ ## Mark as no show/ finished
+ select the customer you are current serving. 
+ 
+ select the edit status button.
+ 
+ Update to No show/ finished respectively.
+ 
+ 
+ ## Transfer client
+ select Transfer. 
+ 
+ select the service point to transfer to
+ 
+ ## Customer check in 
+ 
+ enter the customer name
+ 
+ select service point that you want. 
+ 
+ on the waiting page, click on print Ticket to generate PDF ticket.
+ 
+ ## Recall Customer
+ While loged in as a ServiceProvider, enter the Ticket number of the customer to recall
+
+
