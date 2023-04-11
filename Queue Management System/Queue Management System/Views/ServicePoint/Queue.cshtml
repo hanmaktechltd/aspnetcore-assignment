@@ -1,8 +1,18 @@
 @model IEnumerable<CustomerTicket>
 
-<h2>Current Queue Status</h2>
+@{
+    Layout = "_LayoutServiceProvider";
+}
+<partial name="_Notification" />
+<h2 class="mt-4">Current Queue Status</h2>
 
-<table class="table">
+@* <form asp-controller="ServicePoint" asp-action="GetNextNumber" method="post" class="btn btn-primary mt-1">
+    <button type="submit" class="btn btn-primary">Get Next Number</button>
+</form> *@
+<a asp-action="GetNextNumber" class="btn btn-primary mt-1">GetNextNumber</a>
+<a asp-action="SelectService" class="btn btn-danger mt-1">Back</a>
+
+<table class="table mt-2">
     <thead>
         <tr>
             <th>Ticket Number</th>

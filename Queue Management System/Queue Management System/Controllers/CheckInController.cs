@@ -66,13 +66,13 @@ namespace Queue_Management_System.Controllers
             // export.Compressed = true;
 
             export.Export(report, stream);
-
             var pdfBytes = stream.ToArray();
             // Response.ContentType = "application/pdf";
             // Response.Body.WriteAsync(pdfBytes, 0, pdfBytes.Length);
 
             stream.Flush();
             stream.Position = 0;
+            TempData["success"] = "Ticket Generated Successfully";
             return File(pdfBytes, "application/pdf", $"Ticket-{ticket.Id}.pdf");
         }
 

@@ -2011,7 +2011,7 @@ progress {
   color: #fff;
   background-color: transparent;
   background-clip: padding-box;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.904);
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -2032,7 +2032,7 @@ progress {
 .form-control:focus {
   color: #fff;
   background-color: transparent;
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.89);
   outline: 0;
   box-shadow: none;
 }

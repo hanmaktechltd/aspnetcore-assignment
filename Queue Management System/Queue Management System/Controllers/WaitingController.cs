@@ -20,7 +20,7 @@ public class WaitingController : Controller
 
         if (waitingCustomers == null)
         {
-            return View("Empty");
+            TempData["error"] = "No customers currently on the queue";
         }
 
         return View(waitingCustomers);

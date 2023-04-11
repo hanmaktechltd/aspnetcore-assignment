@@ -41,14 +41,22 @@ namespace Queue_Management_System.Controllers
 
                 if (UserCheck == null)
                 {
+                    TempData["error"] = "Invalid Login. User not found";
                     ViewBag.LoginStatus = "Invalid Login. User not found";
                 }
                 else
                 {
+                    TempData["success"] = "Login Successfull";
                     return RedirectToAction("Authenticated");
                 }
             }
             return View();
+        }
+
+        public IActionResult Logout()
+        {
+            TempData["success"] = "Logout Successfull";
+            return RedirectToAction("Login");
         }
         public IActionResult ServicePoints()
         {
@@ -78,6 +86,7 @@ namespace Queue_Management_System.Controllers
         {
             _dbContext.ServicePoints.Add(servicePoint);
             _dbContext.SaveChanges();
+            TempData["success"] = "Service Point Added Successfully";
             return RedirectToAction("ServicePoints");
         }
 
@@ -96,6 +105,7 @@ namespace Queue_Management_System.Controllers
         {
             _dbContext.ServicePoints.Update(servicePoint);
             _dbContext.SaveChanges();
+            TempData["success"] = "Service Point Edited Successfully";
             return RedirectToAction("ServicePoints");
         }
 
@@ -108,6 +118,7 @@ namespace Queue_Management_System.Controllers
             }
             _dbContext.ServicePoints.Remove(servicePoint);
             _dbContext.SaveChanges();
+            TempData["success"] = "Service Point Deleted Successfully";
             return RedirectToAction("ServicePoints");
         }
 
@@ -116,6 +127,7 @@ namespace Queue_Management_System.Controllers
         {
             _dbContext.ServiceProviders.Add(serviceProvider);
             _dbContext.SaveChanges();
+            TempData["success"] = "Service Point Added Successfully";
             return RedirectToAction("ServiceProviders");
         }
 
@@ -137,6 +149,7 @@ namespace Queue_Management_System.Controllers
                 _dbContext.ServiceProviders.Update(serviceProvider);
                 _dbContext.SaveChanges();
             }
+            TempData["success"] = "Service Provider Mofified Successfully";
             return RedirectToAction("ServicePoints");
         }
 
@@ -149,6 +162,7 @@ namespace Queue_Management_System.Controllers
             }
             _dbContext.ServicePoints.Remove(servicePoint);
             _dbContext.SaveChanges();
+            TempData["success"] = "Service Provider Deleted Successfully";
             return RedirectToAction("ServicePoints");
         }
 

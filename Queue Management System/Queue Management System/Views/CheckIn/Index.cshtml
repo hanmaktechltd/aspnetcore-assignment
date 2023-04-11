@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<ServicePoint>
 
-<h2>Please select the type of service you require:</h2>
+<partial name="_Notification" />
+<h2 class="mt-5">Please select the type of service you require:</h2>
 
 
 <table class="table table-hover">
@@ -18,9 +19,9 @@
                 <th scope="row">@servicePoint.Name</th>
                 <td>@servicePoint.Description</td>
                 <td>
-                    <form method="post" asp-action="checkin">
+                    <form method="post" asp-action="CheckIn">
                         <input type="hidden" name="servicePointId" value="@servicePoint.Id" />
-                        <button type="button" class="btn btn-dark">Select This Service</button>
+                        <button type="button submit" class="btn btn-dark">Select This Service</button>
                     </form>
                 </td>
             </tr>

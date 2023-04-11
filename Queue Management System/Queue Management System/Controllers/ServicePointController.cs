@@ -14,10 +14,6 @@ namespace Queue_Management_System.Controllers
         {
             _dbContext = dbContext;
         }
-        public IActionResult Index()
-        {
-            return View("Authenticate");
-        }
 
         public IActionResult Login(string Name, string Password)
         {
@@ -32,15 +28,22 @@ namespace Queue_Management_System.Controllers
 
                 if (UserCheck == null)
                 {
-                    ViewBag.LoginStatus = "Invalid Login. User not found";
+                    TempData["Failure"] = "Invalid Login Credentials";
                 }
                 else
                 {
                     HttpContext.Session.SetInt32("ServicePointId", UserCheck.ServicePointId);
+                    TempData["success"] = "Login Successfully";
                     return RedirectToAction("SelectService", new { Id = UserCheck.Id });
                 }
             }
             return View();
+        }
+
+        public IActionResult Logout()
+        {
+            TempData["success"] = "Logout successfull";
+            return RedirectToAction("Login");
         }
 
         public IActionResult SelectServicePoint()
@@ -87,8 +90,8 @@ namespace Queue_Management_System.Controllers
             // If there is no next customer, display a message to the service provider
             if (nextCustomer == null)
             {
-                ViewData["Message"] = "There are no customers in the queue.";
-                return View();
+                TempData["error"] = "No Customers queued to Your room";
+                return RedirectToAction("Queue");
             }
 
             // Update the customer's status to "in progress"
@@ -96,14 +99,14 @@ namespace Queue_Management_System.Controllers
             nextCustomer.StartServiceTime = DateTime.Today.ToUniversalTime().Add(DateTime.Now.TimeOfDay);
             nextCustomer.CallTime = DateTime.Now.ToUniversalTime();
             nextCustomer.IsCalled = true;
+            TempData["success"] = "Next Customer called Successfully";
             _dbContext.SaveChanges();
+            return RedirectToAction("Queue");
 
             // Pass the customer's ticket number to the view
-            ViewData["TicketNumber"] = nextCustomer.Id;
-            // HttpContext.Session.SetInt32("Id", nextCustomer.Id);
+            // ViewData["TicketNumber"] = nextCustomer.Id;
 
-            // Display the view with the customer's ticket number
-            return View(new { Id = servicePointId });
+            // return View(new { Id = servicePointId });
         }
 
         [HttpPost]
@@ -117,15 +120,14 @@ namespace Queue_Management_System.Controllers
             {
                 // Update the customer's status to "waiting"
                 customer.Status = "Waiting";
+                TempData["success"] = "Customer Recalled Successfully";
                 _dbContext.SaveChanges();
-
-                // Display the customer's ticket number on the screen
-                ViewBag.Message = "Recalled customer with ticket number: " + customer.Id;
             }
             else
             {
                 // Display a message indicating that there are no customers currently being served
-                ViewBag.Message = "No customers currently being served at this service point.";
+                // ViewBag.Message = "No customers currently being served at this service point.";
+                TempData["error"] = "No customers currently being served at this service point";
             }
             return RedirectToAction("Queue", new { Id = servicePointId });
         }
@@ -141,7 +143,8 @@ namespace Queue_Management_System.Controllers
             if (customer == null)
             {
                 // If no customer is currently being served, display an error message
-                ViewBag.Message = "No customer currently being served.";
+                TempData["error"] = "The Customer is currently not being served.";
+                // ViewBag.Message = "No customer currently being served.";
                 return View("Index");
             }
 
@@ -149,11 +152,12 @@ namespace Queue_Management_System.Controllers
             customer.Status = "No Show";
             customer.NoShow = true;
             // _dbContext.Customers.Remove(customer);
+            TempData["success"] = "Customer Marked As No Show Successfully";
             _dbContext.SaveChanges();
 
             // Display a success message with the customer's ticket number
             ViewBag.Message = "Customer " + customer.Id + " marked as no show.";
-            return RedirectToAction("SelectService");
+            return RedirectToAction("Queue");
         }
 
         [HttpPost]
@@ -171,16 +175,17 @@ namespace Queue_Management_System.Controllers
                 customer.EndServiceTime = DateTime.Today.ToUniversalTime().Add(DateTime.Now.TimeOfDay);
                 customer.Status = "Finished";
                 customer.Completed = true;
+                TempData["success"] = "Customer Marked As Finished Successfully";
                 _dbContext.SaveChanges();
 
                 // Remove the customer from the queue
                 // _dbContext.Customers.Remove(customer);
                 // _dbContext.SaveChanges();
 
-                return RedirectToAction("SelectService");
+                return RedirectToAction("Queue");
             }
 
-            return RedirectToAction("SelectService");
+            return RedirectToAction("Queue");
         }
 
         // Controller action to handle transfer request
