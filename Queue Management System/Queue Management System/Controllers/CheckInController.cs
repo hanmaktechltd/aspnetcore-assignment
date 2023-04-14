@@ -29,7 +29,7 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult CheckIn(int servicePointId)
+        public IActionResult CheckIn(int servicePointId, [FromServices] IWebHostEnvironment webHostEnvironment)
         {
             // Create a new customer ticket
             var ticket = new CustomerTicket
@@ -49,7 +49,6 @@ namespace Queue_Management_System.Controllers
 
             // Load the FastReport.Net template file dynamically
             string templatePath = $"Reports/Ticket.frx";
-            var webHostEnvironment = HttpContext.RequestServices.GetService<IWebHostEnvironment>();
             var physicalPath = Path.Combine(webHostEnvironment.ContentRootPath, templatePath);
             Report report = new Report();
             report.Load(physicalPath);
@@ -60,7 +59,7 @@ namespace Queue_Management_System.Controllers
             report.SetParameterValue("ServicePointName", ticket.ServicePointId);
 
             // Display the generated ticket on the Check-In page
-            MemoryStream stream = new MemoryStream();
+            using MemoryStream stream = new MemoryStream();
             report.Prepare();
 
             var export = new PDFSimpleExport();

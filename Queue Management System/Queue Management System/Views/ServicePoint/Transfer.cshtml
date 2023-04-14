@@ -8,12 +8,23 @@
 <form method="post" asp-action="Transfer">
     <div class="form-group">
         <label for="servicePointId">Service Point:</label>
+<<<<<<< HEAD
+        <div class="col-4">
+            <select class="form-control" id="servicePointId" name="servicePointId">
+                @foreach (var servicePoint in Model.ServicePoints)
+                {
+                    <option class="form-control" value="@servicePoint.Id" name="servicePointId" style="color: black; width: 40%;">@servicePoint.Name</option>
+                }
+            </select>
+        </div>
+=======
         <select class="form-control" id="servicePointId" name="servicePointId">
             @foreach (var servicePoint in Model.ServicePoints)
             {
                 <option class="form-control" value="@servicePoint.Id" name="servicePointId" style="color: black; width: 40%;">@servicePoint.Name</option>
             }
         </select>
+>>>>>>> 635351cdd42beb59d081e31a917949f52645e3df
     </div>
 
     <button type="submit" class="btn btn-primary">Transfer</button>

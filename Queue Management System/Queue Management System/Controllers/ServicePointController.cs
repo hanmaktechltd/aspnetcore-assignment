@@ -77,7 +77,7 @@ namespace Queue_Management_System.Controllers
 
             // Query the database to retrieve the list of customers with the selected service point ID
             var customers = _dbContext.Customers
-                .Where(q => q.ServicePointId == servicePointId && q.Completed == false)
+                .Where(q => q.ServicePointId == servicePointId && !q.Completed)
                 .ToList();
 
             // Pass the list of customers to the view
@@ -102,8 +102,8 @@ namespace Queue_Management_System.Controllers
 
             // Update the customer's status to "in progress"
             nextCustomer.Status = "In Progress";
-            nextCustomer.StartServiceTime = DateTime.Today.ToUniversalTime().Add(DateTime.Now.TimeOfDay);
-            nextCustomer.CallTime = DateTime.Now.ToUniversalTime();
+            nextCustomer.StartServiceTime = DateTime.UtcNow.Add(DateTime.Now.TimeOfDay);
+            nextCustomer.CallTime = DateTime.UtcNow;
             nextCustomer.IsCalled = true;
             TempData["success"] = "Next Customer called Successfully";
             _dbContext.SaveChanges();
@@ -121,7 +121,7 @@ namespace Queue_Management_System.Controllers
 
             var customer = _dbContext.Customers.FirstOrDefault(q => q.Id == Id || q.Status == "In Progress");
 
-            if (customer != null)
+            if (customer is not null)
             {
                 // Update the customer's status to "waiting"
                 customer.Status = "Waiting";
@@ -141,8 +141,7 @@ namespace Queue_Management_System.Controllers
             var servicePointId = HttpContext.Session.GetInt32("ServicePointId");
             // Get the next customer in the queue for the selected service point with status "in progress"
             var customer = _dbContext.Customers
-                .Where(q => q.Id == Id)
-                .FirstOrDefault();
+                .FirstOrDefault(q => q.Id == Id);
 
             if (customer == null)
             {
@@ -227,6 +226,7 @@ namespace Queue_Management_System.Controllers
                 return RedirectToAction("Queue");
             }
 
+            return NotFound();
             // If customer is not found, return to queue view
             TempData["error"] = "Transferred Failed";
             return RedirectToAction("Queue");

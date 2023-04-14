@@ -3,6 +3,7 @@ using FastReport.Export.PdfSimple;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Queue_Management_System.Models;
 using Queue_Management_System.Models.Data;
@@ -34,7 +35,11 @@ namespace Queue_Management_System.Controllers
         {
             if (ModelState.IsValid)
             {
+<<<<<<< HEAD
+                var UserCheck = await _dbContext.Administrator.LastOrDefaultAsync
+=======
                 var UserCheck = _dbContext.Administrator.FirstOrDefault
+>>>>>>> 635351cdd42beb59d081e31a917949f52645e3df
                     (a => a.EmailAddress == EmailAddress && a.Password == Password);
 
                 if (UserCheck == null)
@@ -78,9 +83,13 @@ namespace Queue_Management_System.Controllers
 
         // Fetching all service points and passing them down to the view
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
+<<<<<<< HEAD
+        public async Task<IActionResult> ServicePoints()
+=======
         public IActionResult ServicePoints()
+>>>>>>> 635351cdd42beb59d081e31a917949f52645e3df
         {
-            var servicePoints = _dbContext.ServicePoints.ToList();
+            var servicePoints = await _dbContext.ServicePoints.ToListAsync();
             return View(servicePoints);
         }
 
@@ -168,7 +177,11 @@ namespace Queue_Management_System.Controllers
             if (serviceProvider == null)
             {
                 TempData["error"] = "An error occurred please try again later";
+<<<<<<< HEAD
+                return RedirectToAction("ServiceProviders");
+=======
                 return RedirectToAction("serviceProviders");
+>>>>>>> 635351cdd42beb59d081e31a917949f52645e3df
             }
             return View(serviceProvider);
         }
@@ -179,7 +192,11 @@ namespace Queue_Management_System.Controllers
             _dbContext.ServiceProviders.Update(serviceProvider);
             _dbContext.SaveChanges();
             TempData["success"] = "Service Provider Modified Successfully";
+<<<<<<< HEAD
+            return RedirectToAction("ServiceProviders");
+=======
             return RedirectToAction("ServiceProvider");
+>>>>>>> 635351cdd42beb59d081e31a917949f52645e3df
         }
 
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
@@ -189,12 +206,20 @@ namespace Queue_Management_System.Controllers
             if (serviceProvider == null)
             {
                 TempData["error"] = "An error occured while deleting the selected Service Provider";
+<<<<<<< HEAD
+                return RedirectToAction("ServiceProviders");
+=======
                 return RedirectToAction("ServiceProvider");
+>>>>>>> 635351cdd42beb59d081e31a917949f52645e3df
             }
             _dbContext.ServiceProviders.Remove(serviceProvider);
             _dbContext.SaveChanges();
             TempData["success"] = "Service Provider Deleted Successfully";
+<<<<<<< HEAD
+            return RedirectToAction("ServiceProviders");
+=======
             return RedirectToAction("ServiceProvider");
+>>>>>>> 635351cdd42beb59d081e31a917949f52645e3df
         }
 
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
@@ -215,7 +240,11 @@ namespace Queue_Management_System.Controllers
 
 
             // Set up the data connection
+<<<<<<< HEAD
+            var connectionString = "Host=localhost;Username=postgres;Password=coxmusyoki1233;Database=DBQueue";
+=======
             var connectionString = "Host=localhost;Username=postgres;Password=coxmusyoki1233;Database=Queue";
+>>>>>>> 635351cdd42beb59d081e31a917949f52645e3df
             using var connection = new NpgsqlConnection(connectionString);
             connection.Open();
 
@@ -254,7 +283,11 @@ namespace Queue_Management_System.Controllers
 
 
             // Set up the data connection
+<<<<<<< HEAD
+            var connectionString = "Host=localhost;Username=postgres;Password=coxmusyoki1233;Database=DBQueue";
+=======
             var connectionString = "Host=localhost;Username=postgres;Password=coxmusyoki1233;Database=Queue";
+>>>>>>> 635351cdd42beb59d081e31a917949f52645e3df
             using var connection = new NpgsqlConnection(connectionString);
             connection.Open();
 
