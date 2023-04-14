@@ -31,33 +31,21 @@
                 <td>
                     @if (customerTicket.Status == "In Progress")
                     {
-                        <form method="post" asp-action="RecallNumber" class="w-12 btn-group">
-                            <input type="hidden" name="Id" value="@customerTicket.Id" />
-                            <button type="submit" class="btn btn-primary">Recall</button>
-                        </form>
-                        <form method="post" asp-action="MarkAsNoShow" class="w-12 btn-group">
-                            <input type="hidden" name="Id" value="@customerTicket.Id" />
-                            <button type="submit" class="btn btn-danger">No Show</button>
-                        </form>
-                        <form method="post" asp-action="MarkAsFinished" class="w-12 btn-group">
-                            <input type="hidden" name="Id" value="@customerTicket.Id" />
-                            <button type="submit" class="btn btn-success">Finished</button>
-                        </form>
-                        <form method="post" asp-action="TransferNumber" class="w-12 btn-group">
-                            <input type="hidden" name="Id" value="@customerTicket.Id" />
-                            <button type="submit" class="btn btn-warning">Transfer</button>
-                        </form>
+                        <a asp-action="RecallNumber" asp-route-Id="@customerTicket.Id" class="btn btn-primary">Recall</a>
+                        <a asp-action="MarkAsNoShow" asp-route-Id="@customerTicket.Id" class="btn btn-danger">Mark As No Show</a>
+                        <a asp-action="MarkAsFinished" asp-route-Id="@customerTicket.Id" class="btn btn-success">Finished</a>
+                        <a asp-controller="ServicePoint" asp-action="Transfer" asp-route-Id="@customerTicket.Id" class="btn btn-warning">Transfer</a>
+
                     }
                     else if (customerTicket.Status == "Waiting")
                     {
-                        <form method="post" asp-action="MarkAsNoShow" class="w-12 btn-group">
-                            <input type="hidden" name="Id" value="@customerTicket.Id" />
-                            <button type="submit" class="btn btn-danger">No Show</button>
-                        </form>
-                        <form method="post" asp-action="TransferNumber" class="w-12 btn-group">
-                            <input type="hidden" name="Id" value="@customerTicket.Id" />
-                            <button type="submit" class="btn btn-warning">Transfer</button>
-                        </form>
+                        <a asp-action="RecallNumber" asp-route-Id="@customerTicket.Id" class="btn btn-primary">Recall</a>
+                        <a asp-action="MarkAsNoShow" asp-route-Id="@customerTicket.Id" class="btn btn-danger">Mark As No Show</a>
+                        <a asp-controller="ServicePoint" asp-action="Transfer" asp-route-Id="@customerTicket.Id" class="btn btn-warning">Transfer</a>
+                    }
+                    else if(customerTicket.Status == "No Show")
+                    {
+                        <a asp-action="RecallNumber" asp-route-Id="@customerTicket.Id" class="btn btn-primary">Recall</a>
                     }
                 </td>
             </tr>

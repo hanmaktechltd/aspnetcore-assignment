@@ -57,6 +57,7 @@ namespace Queue_Management_System.Controllers
             // Populate the template with customer information
             report.SetParameterValue("TicketNumber", ticket.Id);
             report.SetParameterValue("CheckInTime", ticket.CheckInTime.ToString("g"));
+            report.SetParameterValue("ServicePointName", ticket.ServicePointId);
 
             // Display the generated ticket on the Check-In page
             MemoryStream stream = new MemoryStream();

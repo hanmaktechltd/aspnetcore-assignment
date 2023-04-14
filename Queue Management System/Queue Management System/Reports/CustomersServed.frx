@@ -1,28 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="03/09/2023 10:19:50" ReportInfo.Modified="03/30/2023 15:17:13" ReportInfo.CreatorVersion="2023.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="03/09/2023 10:19:50" ReportInfo.Modified="04/12/2023 13:17:35" ReportInfo.CreatorVersion="2023.2.0.0">
   <Dictionary>
-    <PostgresDataConnection Name="Connection1" ConnectionString="rijcmlq8ZkN6qUj4G/zvKvLeJ9DDB6WCp22J48oQEWWvz8/J/NksAmbO8W8oeq8qgeas2icQDEAfi2OWjvjKl3icG5ziQim9R5/Z6hqJHVS6Xem/5o=">
-      <TableDataSource Name="Table" Alias="CustomersServed" DataType="System.Int32" Enabled="true" SelectCommand="SELECT COUNT(*) as num_customers&#13;&#10;FROM public.&quot;Customers&quot;&#13;&#10;WHERE public.&quot;Customers&quot;.&quot;Status&quot; = 'Finished';">
-        <Column Name="num_customers" DataType="System.Int64"/>
-      </TableDataSource>
-      <TableDataSource Name="Table1" Alias="CustomersServed2" DataType="System.Int32" Enabled="true" SelectCommand="SELECT &quot;Customers&quot;.&quot;Id&quot; as ticket_Number&#13;&#10;FROM public.&quot;Customers&quot;&#13;&#10;WHERE &quot;Customers&quot;.&quot;Status&quot; = 'Finished';">
-        <Column Name="ticket_number" DataType="System.Int32"/>
-      </TableDataSource>
-    </PostgresDataConnection>
-    <Parameter Name="TicketNumber" DataType="System.String" AsString=""/>
-    <Parameter Name="ServicePointName" DataType="System.String" AsString=""/>
-    <Parameter Name="CheckInTime" DataType="System.TimeSpan" AsString=""/>
+    <Parameter Name="num_customers" DataType="System.String" AsString=""/>
   </Dictionary>
   <ReportPage Name="Page1" Guides="718.2" Watermark.Font="Arial, 60pt">
-    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="406.35" Fill.Color="Gold">
-      <TextObject Name="Text1" Left="189" Top="18.9" Width="330.75" Height="18.9" Text="NUMBER OF CUSTOMERS SERVED" Font="Arial, 13pt, style=Bold"/>
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="406.35">
+      <ContainerObject Name="Container1" Left="-9.45" Width="727.65" Height="75.6" Fill.Color="112, 173, 216, 230"/>
+      <TextObject Name="Text1" Left="198.45" Top="37.8" Width="330.75" Height="18.9" Text="NUMBER OF CUSTOMERS SERVED" Font="Arial, 13pt, style=Bold"/>
       <TextObject Name="Text8" Left="595.35" Top="9.45" Width="94.5" Height="18.9" Text="[Date]" Font="Arial, 10pt"/>
-      <TextObject Name="Text13" Left="236.25" Top="75.6" Width="198.45" Height="47.25" Fill.Color="WhiteSmoke" Text="[CustomersServed.num_customers] Customers Served Today" Font="Arial, 14pt"/>
-      <TextObject Name="Text14" Left="226.8" Top="170.1" Width="226.8" Height="28.35" Text="Tickets Numbers Served:" Font="Arial, 12pt, style=Bold"/>
-      <TextObject Name="Text15" Left="453.6" Top="170.1" Width="122.85" Height="217.35" Text="[CustomersServed2.ticket_number]" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text13" Left="28.35" Top="94.5" Width="670.95" Height="122.85" Fill.Color="189, 240, 255, 255" Text="&#13;&#10;[num_customers] Customers Served Today" HorzAlign="Center" Font="Arial, 14pt"/>
+      <LineObject Name="Line1" Top="75.6" Width="718.2"/>
+      <LineObject Name="Line2" Top="359.1" Width="718.2"/>
     </ReportTitleBand>
-    <PageHeaderBand Name="PageHeader1" Top="410.35" Width="718.2" Height="18.9" Fill.Color="WhiteSmoke"/>
-    <DataBand Name="Data1" Top="433.25" Width="718.2" Height="9.45" Fill.Color="WhiteSmoke"/>
+    <PageHeaderBand Name="PageHeader1" Top="410.35" Width="718.2" Height="18.9" Fill.Color="112, 173, 216, 230"/>
+    <DataBand Name="Data1" Top="433.25" Width="718.2" Height="9.45" Fill.Color="112, 173, 216, 230"/>
     <PageFooterBand Name="PageFooter1" Top="446.7" Width="718.2" Height="28.35">
       <TextObject Name="Text9" Left="652.05" Width="94.5" Height="18.9" Text="[Page]" Font="Arial, 10pt"/>
     </PageFooterBand>

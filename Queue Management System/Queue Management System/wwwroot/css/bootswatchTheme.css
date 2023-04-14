@@ -2011,7 +2011,7 @@ progress {
   color: #fff;
   background-color: transparent;
   background-clip: padding-box;
-  border: 2px solid rgba(255, 255, 255, 0.904);
+  border: 1px solid rgba(255, 255, 255, 0.63);
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;

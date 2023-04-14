@@ -1,12 +1,12 @@
 ﻿using FastReport;
 using FastReport.Export.PdfSimple;
-using FastReport.Web;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using Queue_Management_System.Models;
 using Queue_Management_System.Models.Data;
-using System.Data;
-using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Queue_Management_System.Controllers
 {
@@ -23,29 +23,45 @@ namespace Queue_Management_System.Controllers
             _hostEnvironment = hostEnvironment;
         }
 
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         public IActionResult Authenticated()
         {
             return View();
         }
 
-        public IActionResult Login(string EmailAddress, string Password)
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginAsync(string EmailAddress, string Password)
         {
-            ViewBag.LoginStatus = "";
-
             if (ModelState.IsValid)
             {
-                ViewBag.LoginStatus = "";
-
                 var UserCheck = _dbContext.Administrator.FirstOrDefault
                     (a => a.EmailAddress == EmailAddress && a.Password == Password);
 
                 if (UserCheck == null)
                 {
                     TempData["error"] = "Invalid Login. User not found";
-                    ViewBag.LoginStatus = "Invalid Login. User not found";
                 }
                 else
                 {
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, UserCheck.EmailAddress),
+                        new Claim(ClaimTypes.Role, "admin")
+                    };
+
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, "AdminAuthentication");
+
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true
+                    };
+
+                    await HttpContext.SignInAsync(
+                        "AdminAuthentication",
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+
                     TempData["success"] = "Login Successfull";
                     return RedirectToAction("Authenticated");
                 }
@@ -53,34 +69,44 @@ namespace Queue_Management_System.Controllers
             return View();
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> LogoutAsync()
         {
+            await HttpContext.SignOutAsync("AdminAuthentication");
             TempData["success"] = "Logout Successfull";
             return RedirectToAction("Login");
         }
+
+        // Fetching all service points and passing them down to the view
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         public IActionResult ServicePoints()
         {
             var servicePoints = _dbContext.ServicePoints.ToList();
             return View(servicePoints);
         }
 
+        // Fetching all service providers and passing them down to the view
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         public IActionResult ServiceProviders()
         {
             var serviceProviders = _dbContext.ServiceProviders.ToList();
             return View(serviceProviders);
         }
 
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
+        // AddServiceProvider View
         public IActionResult AddServiceProvider()
         {
             return View();
         }
 
-
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
+        // AddServicePoint View
         public IActionResult AddServicePoint()
         {
             return View();
         }
 
+        // Saving the new service point to the db
         [HttpPost]
         public IActionResult AddServicePoint(ServicePoint servicePoint)
         {
@@ -90,12 +116,13 @@ namespace Queue_Management_System.Controllers
             return RedirectToAction("ServicePoints");
         }
 
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         public IActionResult EditServicePoint(int id)
         {
             var servicePoint = _dbContext.ServicePoints.Find(id);
             if (servicePoint == null)
             {
-                return NotFound();
+                TempData["error"] = "Error while editing service Point";
             }
             return View(servicePoint);
         }
@@ -109,12 +136,14 @@ namespace Queue_Management_System.Controllers
             return RedirectToAction("ServicePoints");
         }
 
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         public IActionResult DeleteServicePoint(int id)
         {
             var servicePoint = _dbContext.ServicePoints.Find(id);
             if (servicePoint == null)
             {
-                return NotFound();
+                TempData["error"] = "Error while Deleting the service Point";
+                return RedirectToAction("ServicePoints");
             }
             _dbContext.ServicePoints.Remove(servicePoint);
             _dbContext.SaveChanges();
@@ -122,117 +151,135 @@ namespace Queue_Management_System.Controllers
             return RedirectToAction("ServicePoints");
         }
 
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         [HttpPost]
         public IActionResult AddServiceProvider(Models.ServiceProvider serviceProvider)
         {
             _dbContext.ServiceProviders.Add(serviceProvider);
             _dbContext.SaveChanges();
-            TempData["success"] = "Service Point Added Successfully";
+            TempData["success"] = "Service Provider Added Successfully";
             return RedirectToAction("ServiceProviders");
         }
 
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         public IActionResult EditServiceProvider(int id)
         {
-            var servicePoint = _dbContext.ServicePoints.Find(id);
-            if (servicePoint == null)
+            var serviceProvider = _dbContext.ServiceProviders.Find(id);
+            if (serviceProvider == null)
             {
-                return NotFound();
+                TempData["error"] = "An error occurred please try again later";
+                return RedirectToAction("serviceProviders");
             }
-            return View(servicePoint);
+            return View(serviceProvider);
         }
 
         [HttpPost]
         public IActionResult EditServiceProvider(Models.ServiceProvider serviceProvider)
         {
-            if (ModelState.IsValid)
-            {
-                _dbContext.ServiceProviders.Update(serviceProvider);
-                _dbContext.SaveChanges();
-            }
-            TempData["success"] = "Service Provider Mofified Successfully";
-            return RedirectToAction("ServicePoints");
+            _dbContext.ServiceProviders.Update(serviceProvider);
+            _dbContext.SaveChanges();
+            TempData["success"] = "Service Provider Modified Successfully";
+            return RedirectToAction("ServiceProvider");
         }
 
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         public IActionResult DeleteServiceProvider(int id)
         {
-            var servicePoint = _dbContext.ServicePoints.Find(id);
-            if (servicePoint == null)
+            var serviceProvider = _dbContext.ServiceProviders.Find(id);
+            if (serviceProvider == null)
             {
-                return NotFound();
+                TempData["error"] = "An error occured while deleting the selected Service Provider";
+                return RedirectToAction("ServiceProvider");
             }
-            _dbContext.ServicePoints.Remove(servicePoint);
+            _dbContext.ServiceProviders.Remove(serviceProvider);
             _dbContext.SaveChanges();
             TempData["success"] = "Service Provider Deleted Successfully";
-            return RedirectToAction("ServicePoints");
+            return RedirectToAction("ServiceProvider");
         }
 
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         public IActionResult AnalyticalReports()
         {
             return View();
         }
 
-        // public async Task<IActionResult> CustomersServedAsync()
-        // {
-        //     // Load the report file
-        //     var report = new Report();
-        //     report.Load("Reports/CustomersServed.frx");
-
-        //     // Create a dataset with the report data
-        //     var dataSet = new DataSet();
-        //     var dataTable = new DataTable("Customers");
-        //     dataSet.Tables.Add(dataTable);
-        //     // ... fill the dataset with the required data
-
-        //     // Register the dataset with the report
-        //     report.RegisterData(dataSet, "MyDataSet");
-
-        //     // Render the report to a memory stream
-        //     var stream = new MemoryStream();
-        //     report.Prepare();
-        //     report.Export(new PDFSimpleExport(), stream);
-
-        //     // Set the response headers
-        //     Response.Clear();
-        //     Response.ContentType = "application/pdf";
-        //     Response.Headers.Add("content-disposition", "inline; filename=MyReport.pdf");
-
-        //     // Write the report to the response stream
-        //     stream.Seek(0, SeekOrigin.Begin);
-        //     await stream.CopyToAsync(Response.Body);
-
-        //     return new EmptyResult();
-        // // Load the FastReport.Net template file dynamically
-        // string templatePath = $"Reports/CustomersServed.frx";
-        // var webHostEnvironment = HttpContext.RequestServices.GetService<IWebHostEnvironment>();
-        // var physicalPath = Path.Combine(webHostEnvironment.ContentRootPath, templatePath);
-        // Report report = new Report();
-        // report.Load(physicalPath);
-
-        // // Display the generated ticket on the Check-In page
-        // MemoryStream stream = new MemoryStream();
-        // report.Prepare();
-
-        // var export = new PDFSimpleExport();
-        // // export.Compressed = true;
-
-        // export.Export(report, stream);
-
-        // var pdfBytes = stream.ToArray();
-        // // Response.ContentType = "application/pdf";
-        // // Response.Body.WriteAsync(pdfBytes, 0, pdfBytes.Length);
-
-        // stream.Flush();
-        // stream.Position = 0;
-        // return File(pdfBytes, "application/pdf", $"CustomersServed.pdf");
-
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         public IActionResult CustomersServed()
         {
-            var webReport = new WebReport();
-            var connectionString = _configuration.GetConnectionString("NorthWindConnection");
-            var connection = new NpgsqlConnection(connectionString);
-            webReport.Report.RegisterData(_dbContext.Customers.ToList(), "Customers", 1);
-            webReport.Report.Load(Path.Combine(_hostEnvironment.ContentRootPath, "reports", "CustomersServed.frx"));
-            return View(webReport);
+            // Load the report file
+            string templatePath = $"Reports/CustomersServed.frx";
+            var webHostEnvironment = HttpContext.RequestServices.GetService<IWebHostEnvironment>();
+            string reportPath = Path.Combine(webHostEnvironment.ContentRootPath, templatePath);
+            Report report = new Report();
+            report.Load(reportPath);
+
+
+            // Set up the data connection
+            var connectionString = "Host=localhost;Username=postgres;Password=coxmusyoki1233;Database=Queue";
+            using var connection = new NpgsqlConnection(connectionString);
+            connection.Open();
+
+            var sql = "SELECT COUNT(*) as num_customers FROM public.\"Customers\" WHERE public.\"Customers\".\"Status\" = 'Finished';";
+            using var command = new NpgsqlCommand(sql, connection);
+            using var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                report.SetParameterValue("num_customers", reader.GetInt64(0));
+            }
+
+            // Prepare the report data
+            MemoryStream stream = new MemoryStream();
+            report.Prepare();
+
+            var export = new PDFSimpleExport();
+            // export.Compressed = true;
+
+            export.Export(report, stream);
+            var pdfBytes = stream.ToArray();
+            // Return the report as a file
+            return File(pdfBytes, "application/pdf", "CustomersServed.pdf");
+
+        }
+
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
+        public IActionResult AvgWaitingTime()
+        {
+            // Load the report file
+            string templatePath = $"Reports/AverageWaiting.frx";
+            var webHostEnvironment = HttpContext.RequestServices.GetService<IWebHostEnvironment>();
+            string reportPath = Path.Combine(webHostEnvironment.ContentRootPath, templatePath);
+            Report report = new Report();
+            report.Load(reportPath);
+
+
+            // Set up the data connection
+            var connectionString = "Host=localhost;Username=postgres;Password=coxmusyoki1233;Database=Queue";
+            using var connection = new NpgsqlConnection(connectionString);
+            connection.Open();
+
+            var sql = "SELECT AVG(EXTRACT(EPOCH FROM (\"Customers\".\"CallTime\" - \"Customers\".\"CheckInTime\"))) / 60 as avg_waiting_time, AVG(EXTRACT(EPOCH FROM (\"Customers\".\"EndServiceTime\" - \"Customers\".\"StartServiceTime\"))) / 60 as avg_service_time, \"Customers\".\"ServicePointId\" FROM public.\"Customers\" WHERE \"Customers\".\"Status\" = 'Finished' GROUP BY \"Customers\".\"ServicePointId\";";
+            using var command = new NpgsqlCommand(sql, connection);
+            using var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                // report.SetParameterValue("service_point", reader.GetDouble(0));
+                report.SetParameterValue("avg_waiting_time", Math.Round(reader.GetDouble(0)));
+                report.SetParameterValue("avg_service_time", Math.Round(reader.GetDouble(1)));
+            }
+
+            // Prepare the report data
+            MemoryStream stream = new MemoryStream();
+            report.Prepare();
+
+            var export = new PDFSimpleExport();
+            // export.Compressed = true;
+
+            export.Export(report, stream);
+            var pdfBytes = stream.ToArray();
+            // Return the report as a file
+            return File(pdfBytes, "application/pdf", "WaitingTime.pdf");
         }
     }
 }

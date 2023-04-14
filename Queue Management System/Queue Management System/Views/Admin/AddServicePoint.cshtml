@@ -2,7 +2,7 @@
 
 <h2 class="mt-5">Add Service Point</h2>
 
-<form asp-action="AddServicePoint" method="post" class="mt-5">
+<form asp-action="AddServicePoint" method="post">
     <div class="form-group">
         <div class="col-4">
             <label asp-for="Name"></label>
@@ -14,11 +14,9 @@
             <input asp-for="Description" class="form-control" />
         </div>
 
-        <div class="w-12 btn-group" role="group">
-        <input type="submit" class="btn btn-primary mx-1" value="Add" />
-        <a asp-action="ServicePoints" class="btn btn-danger mx-1">Back</a>
+        <div class="mt-2">
+            <button type="submit" class="btn btn-primary">Add</button>
+            <a asp-action="ServicePoints" class="btn btn-danger mx-1">Back</a>
+        </div>
     </div>
-    </div>
-
-    
 </form>

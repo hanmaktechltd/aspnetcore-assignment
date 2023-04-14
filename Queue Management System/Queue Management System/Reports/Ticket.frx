@@ -1,25 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="03/09/2023 10:19:50" ReportInfo.Modified="04/06/2023 16:46:00" ReportInfo.CreatorVersion="2023.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="03/09/2023 10:19:50" ReportInfo.Modified="04/12/2023 13:02:24" ReportInfo.CreatorVersion="2023.2.0.0">
   <Dictionary>
     <Parameter Name="TicketNumber" DataType="System.String" AsString=""/>
     <Parameter Name="ServicePointName" DataType="System.String" AsString=""/>
     <Parameter Name="CheckInTime" DataType="System.TimeSpan" AsString=""/>
   </Dictionary>
-  <ReportPage Name="Page1" Guides="718.2" Watermark.Font="Arial, 60pt">
-    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="236.25" Fill.Color="LightSkyBlue">
+  <ReportPage Name="Page1" Guides="699.3" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="236.25">
+      <ContainerObject Name="Container1" Width="699.3" Height="113.4" Fill.Color="138, 176, 224, 230"/>
       <TextObject Name="Text1" Left="264.6" Top="18.9" Width="170.1" Height="18.9" Text="TICKET REPORT" Font="Arial, 13pt, style=Bold"/>
       <TextObject Name="Text8" Left="595.35" Top="9.45" Width="94.5" Height="18.9" Text="[Date]" Font="Arial, 10pt"/>
-      <TextObject Name="Text11" Left="9.45" Top="151.2" Width="151.2" Height="28.35" Fill.Color="WhiteSmoke" Text="[TicketNumber]" Font="Arial, 10pt"/>
-      <TextObject Name="Text12" Left="9.45" Top="85.05" Width="103.95" Height="18.9" Text="Ticket Number" Font="Arial, 10pt"/>
-      <TextObject Name="Text13" Left="236.25" Top="151.2" Width="141.75" Height="28.35" Fill.Color="WhiteSmoke" Text="[ServicePointName]" Font="Arial, 10pt"/>
-      <TextObject Name="Text14" Left="226.8" Top="85.05" Width="160.65" Height="18.9" Text="Destination ServicePoint" Font="Arial, 10pt"/>
-      <TextObject Name="Text15" Left="491.4" Top="151.2" Width="103.95" Height="28.35" Fill.Color="WhiteSmoke" Text="[CheckInTime]" Font="Arial, 10pt"/>
-      <TextObject Name="Text16" Left="491.4" Top="85.05" Width="94.5" Height="18.9" Text="CheckIn Time" Font="Arial, 10pt"/>
-      <LineObject Name="Line1" Left="9.45" Top="113.4" Width="642.6"/>
+      <TextObject Name="Text11" Left="9.45" Top="132.3" Width="151.2" Height="28.35" Fill.Color="26, 173, 216, 230" Text="[TicketNumber]" Font="Arial, 12pt"/>
+      <TextObject Name="Text12" Left="28.35" Top="85.05" Width="103.95" Height="18.9" Text="Ticket Number" Font="Arial, 10pt"/>
+      <TextObject Name="Text13" Left="274.05" Top="132.3" Width="141.75" Height="28.35" Fill.Color="32, 173, 216, 230" Text="Room [ServicePointName]" Font="Arial, 12pt"/>
+      <TextObject Name="Text14" Left="264.6" Top="85.05" Width="160.65" Height="18.9" Text="Destination ServicePoint" Font="Arial, 10pt"/>
+      <TextObject Name="Text15" Left="548.1" Top="132.3" Width="103.95" Height="28.35" Fill.Color="20, 173, 216, 230" Text="[CheckInTime]" Font="Arial, 12pt"/>
+      <TextObject Name="Text16" Left="538.65" Top="85.05" Width="94.5" Height="18.9" Text="CheckIn Time" Font="Arial, 10pt"/>
+      <LineObject Name="Line1" Top="113.4" Width="699.3"/>
     </ReportTitleBand>
-    <PageHeaderBand Name="PageHeader1" Top="240.25" Width="718.2" Height="18.9" Fill.Color="WhiteSmoke"/>
-    <DataBand Name="Data1" Top="263.15" Width="718.2" Height="9.45" Fill.Color="WhiteSmoke"/>
-    <PageFooterBand Name="PageFooter1" Top="276.6" Width="718.2" Height="18.9">
+    <PageHeaderBand Name="PageHeader1" Top="240.25" Width="718.2" Height="37.8" Fill.Color="WhiteSmoke">
+      <ContainerObject Name="Container2" Width="699.3" Height="37.8" Fill.Color="149, 173, 216, 230"/>
+    </PageHeaderBand>
+    <PageFooterBand Name="PageFooter1" Top="282.05" Width="718.2" Height="18.9">
       <TextObject Name="Text9" Left="652.05" Width="94.5" Height="18.9" Text="[Page]" Font="Arial, 10pt"/>
     </PageFooterBand>
   </ReportPage>

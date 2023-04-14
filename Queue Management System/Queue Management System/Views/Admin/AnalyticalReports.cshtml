@@ -1,7 +1,8 @@
+@{
+    Layout = "_LayoutAdminLoggedIn";
+}
+
 <h1 class="mt-3">Select the Type of report</h1>
 
 <a asp-controller="Admin" asp-action="CustomersServed" class="btn btn-primary mt-2">Customers Served</a>
-<a asp-controller="Admin" asp-action="AverageWaitingTime" class="btn btn-primary mt-2">Average Waiting Time</a>
-@* <form asp-controller="Admin" asp-action="AverageWaitingTime" method="post" class="w-12 btn-group mt-2">
-    <button type="submit" class="btn btn-primary">Average Waiting Time</button>
-</form> *@
+<a asp-controller="Admin" asp-action="AvgWaitingTime" class="btn btn-primary mt-2">Average Waiting Time</a>

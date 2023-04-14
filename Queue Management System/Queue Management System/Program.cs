@@ -1,7 +1,38 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Queue_Management_System.Models.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie("ServicePointAuthentication", options =>
+{
+    options.LoginPath = "/ServicePoint/Login";
+    options.LogoutPath = "/ServicePoint/Logout";
+})
+.AddCookie("AdminAuthentication", options =>
+{
+    options.LoginPath = "/Admin/Login";
+    options.LogoutPath = "/Admin/Logout";
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("admin");
+    });
+    options.AddPolicy("ServiceProvider", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("serviceProvider");
+    });
+});
+
 
 // Add session middleware
 builder.Services.AddSession(options =>
@@ -36,7 +67,24 @@ app.UseRouting();
 // Use session middleware
 app.UseSession();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "admin",
+        pattern: "/Admin/Authenticated",
+        defaults: new { controller = "Admin", action = "Authenticated" })
+        .RequireAuthorization("AdminPolicy");
+
+    endpoints.MapControllerRoute(
+        name: "servicePoint",
+        pattern: "/ServicePoint/SelectService",
+        defaults: new { controller = "ServicePoint", action = "SelectService" })
+        .RequireAuthorization("ServiceProvider");
+});
+
 
 app.MapControllerRoute(
     name: "default",

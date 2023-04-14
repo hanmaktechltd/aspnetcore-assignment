@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Queue_Management_System.Models;
 using Queue_Management_System.Models.Data;
 using ServiceProvider = Queue_Management_System.Models.ServiceProvider;
@@ -15,23 +16,39 @@ namespace Queue_Management_System.Controllers
             _dbContext = dbContext;
         }
 
-        public IActionResult Login(string Name, string Password)
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginAsync(string Name, string Password)
         {
-            ViewBag.LoginStatus = "";
-
             if (ModelState.IsValid)
             {
-                ViewBag.LoginStatus = "";
-
                 var UserCheck = _dbContext.ServiceProviders.FirstOrDefault
                     (a => a.Name == Name && a.Password == Password);
 
                 if (UserCheck == null)
                 {
-                    TempData["Failure"] = "Invalid Login Credentials";
+                    TempData["error"] = "Invalid Login Credentials";
                 }
                 else
                 {
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, UserCheck.Password),
+                        new Claim(ClaimTypes.Role, "serviceProvider")
+                    };
+
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, "ServicePointAuthentication");
+
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true
+                    };
+
+                    await HttpContext.SignInAsync(
+                        "ServicePointAuthentication",
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+
                     HttpContext.Session.SetInt32("ServicePointId", UserCheck.ServicePointId);
                     TempData["success"] = "Login Successfully";
                     return RedirectToAction("SelectService", new { Id = UserCheck.Id });
@@ -40,25 +57,14 @@ namespace Queue_Management_System.Controllers
             return View();
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> LogoutAsync()
         {
+            await HttpContext.SignOutAsync("ServicePointAuthentication");
             TempData["success"] = "Logout successfull";
             return RedirectToAction("Login");
         }
 
-        public IActionResult SelectServicePoint()
-        {
-            IEnumerable<SelectListItem> getExpenseCategoryList =
-                _dbContext.ServicePoints.Select(i => new SelectListItem
-                {
-                    Text = i.Name,
-                    Value = i.Id.ToString()
-                });
-
-            ViewBag.PopulateServicePoint = getExpenseCategoryList;
-            return View();
-        }
-
+        [Authorize(AuthenticationSchemes = "ServicePointAuthentication")]
         public IActionResult SelectService()
         {
             return View("Menu");
@@ -109,12 +115,11 @@ namespace Queue_Management_System.Controllers
             // return View(new { Id = servicePointId });
         }
 
-        [HttpPost]
         public IActionResult RecallNumber(int Id)
         {
             var servicePointId = HttpContext.Session.GetInt32("ServicePointId");
 
-            var customer = _dbContext.Customers.FirstOrDefault(q => q.Id == Id && q.Status == "In Progress");
+            var customer = _dbContext.Customers.FirstOrDefault(q => q.Id == Id || q.Status == "In Progress");
 
             if (customer != null)
             {
@@ -126,7 +131,6 @@ namespace Queue_Management_System.Controllers
             else
             {
                 // Display a message indicating that there are no customers currently being served
-                // ViewBag.Message = "No customers currently being served at this service point.";
                 TempData["error"] = "No customers currently being served at this service point";
             }
             return RedirectToAction("Queue", new { Id = servicePointId });
@@ -144,23 +148,17 @@ namespace Queue_Management_System.Controllers
             {
                 // If no customer is currently being served, display an error message
                 TempData["error"] = "The Customer is currently not being served.";
-                // ViewBag.Message = "No customer currently being served.";
                 return View("Index");
             }
 
             // Update the customer's status to "no show" and remove them from the queue
             customer.Status = "No Show";
             customer.NoShow = true;
-            // _dbContext.Customers.Remove(customer);
+            // Display a success message with the customer's ticket number
             TempData["success"] = "Customer Marked As No Show Successfully";
             _dbContext.SaveChanges();
-
-            // Display a success message with the customer's ticket number
-            ViewBag.Message = "Customer " + customer.Id + " marked as no show.";
             return RedirectToAction("Queue");
         }
-
-        [HttpPost]
         public IActionResult MarkAsFinished(int Id)
         {
             var servicePointId = HttpContext.Session.GetInt32("ServicePointId");
@@ -177,11 +175,6 @@ namespace Queue_Management_System.Controllers
                 customer.Completed = true;
                 TempData["success"] = "Customer Marked As Finished Successfully";
                 _dbContext.SaveChanges();
-
-                // Remove the customer from the queue
-                // _dbContext.Customers.Remove(customer);
-                // _dbContext.SaveChanges();
-
                 return RedirectToAction("Queue");
             }
 
@@ -189,39 +182,37 @@ namespace Queue_Management_System.Controllers
         }
 
         // Controller action to handle transfer request
+        [HttpGet]
         public IActionResult Transfer(int Id)
         {
+            var servicePointId = HttpContext.Session.GetInt32("ServicePointId");
             // Query for the customer with the given ID
-            var customer = _dbContext.Customers.FirstOrDefault(c => c.Id == Id);
+            var customer = _dbContext.Customers
+                .Where(c => c.Id == Id)
+                .FirstOrDefault();
 
-            if (customer != null)
+            if (customer == null)
             {
-                // Query for all available service points
-                var servicePoints = _dbContext.ServicePoints.ToList();
-
-                // Create a list of select items for the dropdown list
-                var servicePointSelectList = new SelectList(servicePoints, "Id", "Name");
-
-                // Add a "Select Service Point" option at the top of the list
-                servicePointSelectList = new SelectList(servicePointSelectList.Items, "Value", "Text", null);
-
-                // Pass the customer and service point select list to the view
-                ViewData["Customer"] = customer;
-                ViewData["ServicePointSelectList"] = servicePointSelectList;
-
-                return View();
+                // If customer is not found, return to queue view
+                TempData["error"] = "Error while transferring customer";
+                return RedirectToAction("Queue");
             }
-
-            // If customer is not found, return to queue view
-            return RedirectToAction("Queue");
+            // Retrieve the list of available service points (excluding the current service point)
+            var servicePoints = _dbContext.ServicePoints.Where(sp => sp.Id != servicePointId).ToList();
+            var model = new TransferView
+            {
+                Customers = customer,
+                ServicePoints = servicePoints
+            };
+            return View(model);
         }
 
         // Controller action to handle transfer form submission
         [HttpPost]
-        public IActionResult Transfer(int customerId, int servicePointId)
+        public IActionResult Transfer(int Id, int servicePointId)
         {
             // Query for the customer with the given ID
-            var customer = _dbContext.Customers.FirstOrDefault(c => c.Id == customerId);
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.Id == Id);
 
             if (customer != null)
             {
@@ -229,6 +220,7 @@ namespace Queue_Management_System.Controllers
                 customer.ServicePointId = servicePointId;
                 customer.Status = "Waiting";
                 _dbContext.Customers.Update(customer);
+                TempData["success"] = "Customer transfered successfully";
                 _dbContext.SaveChanges();
 
                 // Redirect back to the queue view for the original service point
@@ -236,6 +228,7 @@ namespace Queue_Management_System.Controllers
             }
 
             // If customer is not found, return to queue view
+            TempData["error"] = "Transferred Failed";
             return RedirectToAction("Queue");
         }
 
