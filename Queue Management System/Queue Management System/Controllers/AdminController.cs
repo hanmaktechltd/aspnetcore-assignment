@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Queue_Management_System.Models;
+using Queue_Management_System.Services;
 using Queue_Management_System.Models.Data;
 using System.Security.Claims;
 
@@ -16,12 +17,14 @@ namespace Queue_Management_System.Controllers
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _dbContext;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IAdminRepository _adminRepository;
 
-        public AdminController(IConfiguration configuration, ApplicationDbContext dbContext, IWebHostEnvironment hostEnvironment)
+        public AdminController(IConfiguration configuration, ApplicationDbContext dbContext, IWebHostEnvironment hostEnvironment, IAdminRepository adminRepository)
         {
             _dbContext = dbContext;
             _configuration = configuration;
             _hostEnvironment = hostEnvironment;
+            _adminRepository = adminRepository;
         }
 
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
@@ -35,10 +38,15 @@ namespace Queue_Management_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                var UserCheck = await _dbContext.Administrator.FirstOrDefaultAsync
-                    (a => a.EmailAddress == EmailAddress && a.Password == Password);
+                var query = $"SELECT * FROM public.\"Administrator\" WHERE public.\"Administrator\".\"EmailAddress\" = @EmailAddress AND public.\"Administrator\".\"Password\" = @Password";
 
-                if (UserCheck == null)
+                var parameters = new List<NpgsqlParameter>
+                {
+                    new NpgsqlParameter("@EmailAddress", EmailAddress),
+                    new NpgsqlParameter("@Password", Password),
+                };
+                Admin administrator = AuthenticateAdministrator(query, parameters);
+                if (administrator == null)
                 {
                     TempData["error"] = "Invalid Login. User not found";
                 }
@@ -46,7 +54,7 @@ namespace Queue_Management_System.Controllers
                 {
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.Name, UserCheck.EmailAddress),
+                        new Claim(ClaimTypes.Name, administrator.EmailAddress),
                         new Claim(ClaimTypes.Role, "admin")
                     };
 
@@ -70,6 +78,43 @@ namespace Queue_Management_System.Controllers
             return View();
         }
 
+        public Admin? AuthenticateAdministrator(string query, List<NpgsqlParameter> parameters)
+        {
+            Admin administrator = null;
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            {
+                // Prep command object.
+                NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+                foreach (var parameter in parameters)
+                {
+                    command.Parameters.Add(parameter);
+                }
+
+                connection.Open();
+
+                // Obtain a data reader via ExecuteReader()
+                using (NpgsqlDataReader dataReader = command.ExecuteReader())
+                {
+                    if (dataReader.Read())
+                    {
+                        administrator = new Admin
+                        {
+                            Name = dataReader["Name"].ToString(),
+                            EmailAddress = dataReader["EmailAddress"].ToString()
+                        };
+                    }
+                    dataReader.Close();
+                }
+            }
+            if (administrator == null)
+                return null;
+            return administrator;
+        }
+
         public async Task<IActionResult> LogoutAsync()
         {
             await HttpContext.SignOutAsync("AdminAuthentication");
@@ -79,17 +124,17 @@ namespace Queue_Management_System.Controllers
 
         // Fetching all service points and passing them down to the view
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
-        public async Task<IActionResult> ServicePoints()
+        public async Task<IActionResult> ServicePointsAsync()
         {
-            var servicePoints = await _dbContext.ServicePoints.ToListAsync();
+            var servicePoints = await _adminRepository.GetAllServicePoints();
             return View(servicePoints);
         }
 
         // Fetching all service providers and passing them down to the view
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
-        public IActionResult ServiceProviders()
+        public async Task<IActionResult> ServiceProvidersAsync()
         {
-            var serviceProviders = _dbContext.ServiceProviders.ToList();
+            var serviceProviders = await _adminRepository.GetAllServiceProviders();
             return View(serviceProviders);
         }
 
@@ -109,63 +154,54 @@ namespace Queue_Management_System.Controllers
 
         // Saving the new service point to the db
         [HttpPost]
-        public IActionResult AddServicePoint(ServicePoint servicePoint)
+        public async Task<IActionResult> AddServicePoint(ServicePoint servicePoint)
         {
-            _dbContext.ServicePoints.Add(servicePoint);
-            _dbContext.SaveChanges();
+            await _adminRepository.CreateServicePoint(servicePoint);
             TempData["success"] = "Service Point Added Successfully";
             return RedirectToAction("ServicePoints");
         }
 
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
-        public IActionResult EditServicePoint(int id)
+        public async Task<IActionResult> EditServicePoint(int Id)
         {
-            var servicePoint = _dbContext.ServicePoints.Find(id);
+            var servicePoint = await _adminRepository.GetServicePointById(Id);
             if (servicePoint == null)
             {
+                return NotFound();
                 TempData["error"] = "Error while editing service Point";
             }
             return View(servicePoint);
         }
 
         [HttpPost]
-        public IActionResult EditServicePoint(ServicePoint servicePoint)
+        public async Task<IActionResult> EditServicePoint(ServicePoint servicePoint)
         {
-            _dbContext.ServicePoints.Update(servicePoint);
-            _dbContext.SaveChanges();
+            await _adminRepository.UpdateServicePoint(servicePoint);
             TempData["success"] = "Service Point Edited Successfully";
             return RedirectToAction("ServicePoints");
         }
 
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
-        public IActionResult DeleteServicePoint(int id)
+        public async Task<IActionResult> DeleteServicePoint(int id)
         {
-            var servicePoint = _dbContext.ServicePoints.Find(id);
-            if (servicePoint == null)
-            {
-                TempData["error"] = "Error while Deleting the service Point";
-                return RedirectToAction("ServicePoints");
-            }
-            _dbContext.ServicePoints.Remove(servicePoint);
-            _dbContext.SaveChanges();
+            await _adminRepository.DeleteServicePoint(id);
             TempData["success"] = "Service Point Deleted Successfully";
             return RedirectToAction("ServicePoints");
         }
 
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         [HttpPost]
-        public IActionResult AddServiceProvider(Models.ServiceProvider serviceProvider)
+        public async Task<IActionResult> AddServiceProvider(Models.ServiceProvider serviceProvider)
         {
-            _dbContext.ServiceProviders.Add(serviceProvider);
-            _dbContext.SaveChanges();
+            await _adminRepository.CreateServiceProvider(serviceProvider);
             TempData["success"] = "Service Provider Added Successfully";
             return RedirectToAction("ServiceProviders");
         }
 
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
-        public IActionResult EditServiceProvider(int id)
+        public async Task<IActionResult> EditServiceProvider(int id)
         {
-            var serviceProvider = _dbContext.ServiceProviders.Find(id);
+            var serviceProvider = await _adminRepository.GetServiceProviderById(id);
             if (serviceProvider == null)
             {
                 TempData["error"] = "An error occurred please try again later";
@@ -176,10 +212,9 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditServiceProvider(Models.ServiceProvider serviceProvider)
+        public async Task<IActionResult> EditServiceProvider(Models.ServiceProvider serviceProvider)
         {
-            _dbContext.ServiceProviders.Update(serviceProvider);
-            _dbContext.SaveChanges();
+            await _adminRepository.UpdateServiceProvider(serviceProvider);
             TempData["success"] = "Service Provider Modified Successfully";
             return RedirectToAction("ServiceProviders");
 
@@ -188,14 +223,7 @@ namespace Queue_Management_System.Controllers
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         public IActionResult DeleteServiceProvider(int id)
         {
-            var serviceProvider = _dbContext.ServiceProviders.Find(id);
-            if (serviceProvider == null)
-            {
-                TempData["error"] = "An error occured while deleting the selected Service Provider";
-                return RedirectToAction("ServiceProviders");
-            }
-            _dbContext.ServiceProviders.Remove(serviceProvider);
-            _dbContext.SaveChanges();
+            var serviceProvider = _adminRepository.DeleteServiceProvider(id);
             TempData["success"] = "Service Provider Deleted Successfully";
             return RedirectToAction("ServiceProviders");
         }
