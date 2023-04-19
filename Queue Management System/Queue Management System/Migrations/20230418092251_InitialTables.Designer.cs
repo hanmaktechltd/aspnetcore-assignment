@@ -12,7 +12,7 @@ using Queue_Management_System.Models.Data;
 namespace Queue_Management_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230414063707_InitialTables")]
+    [Migration("20230418092251_InitialTables")]
     partial class InitialTables
     {
         /// <inheritdoc />
@@ -167,12 +167,17 @@ namespace Queue_Management_System.Migrations
             modelBuilder.Entity("Queue_Management_System.Models.ServiceProvider", b =>
                 {
                     b.HasOne("Queue_Management_System.Models.ServicePoint", "ServicePoint")
-                        .WithMany()
+                        .WithMany("ServiceProviders")
                         .HasForeignKey("ServicePointId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ServicePoint");
+                });
+
+            modelBuilder.Entity("Queue_Management_System.Models.ServicePoint", b =>
+                {
+                    b.Navigation("ServiceProviders");
                 });
 #pragma warning restore 612, 618
         }

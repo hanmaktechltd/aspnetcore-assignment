@@ -8,5 +8,7 @@ namespace Queue_Management_System.Models
         public string Name { get; set; }
 
         public string Description { get; set; }
+
+        public ICollection<ServiceProvider> ServiceProviders { get; set; }
     }
 }

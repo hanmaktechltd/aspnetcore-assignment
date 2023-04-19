@@ -15,7 +15,7 @@ public class WaitingController : Controller
     public IActionResult Waiting(int servicePointId)
     {
         var waitingCustomers = _dbContext.Customers
-                .Where(c => !c.IsCalled && c.Status == "Waiting")
+                .Where(c => c.IsCalled && c.Status == "In Progress")
                 .ToList();
 
         if (waitingCustomers == null)

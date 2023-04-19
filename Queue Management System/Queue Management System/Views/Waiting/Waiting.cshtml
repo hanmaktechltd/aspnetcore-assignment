@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CustomerTicket>
+﻿@* @model IEnumerable<CustomerTicket>
 
 <partial name="_Notification" />
 <h2 class="mt-4">Waiting Customers Currently On the Queue</h2>
@@ -19,4 +19,26 @@
             </tr>
         }
     </tbody>
-</table>
+</table> *@
+
+@model IEnumerable<CustomerTicket>
+
+<partial name="_Notification" />
+<h2 class="mt-4">Next Customer On the Queue</h2>
+
+@if (Model != null)
+{
+    @foreach (var customerTicket in Model)
+    {
+        <div class="card mt-4" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Ticket Number: @customerTicket.Id</h5>
+                <p class="card-text">Please proceed to Room: @customerTicket.ServicePointId</p>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p>No customer is currently on the queue.</p>
+}

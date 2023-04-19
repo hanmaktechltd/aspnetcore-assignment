@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Queue_Management_System.Hubs;
 using Queue_Management_System.Models.Data;
 using Queue_Management_System.Repositories;
 using Queue_Management_System.Services;
@@ -7,6 +8,7 @@ using Queue_Management_System.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IAdminRepository, AdminRepository>();
+builder.Services.AddSingleton<IServicePointRepository, ServicePointRepository>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -52,6 +54,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
     builder.Configuration.GetConnectionString("DefaultConnection")  // configures our sql server
     ));
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -86,11 +90,13 @@ app.UseEndpoints(endpoints =>
         pattern: "/ServicePoint/SelectService",
         defaults: new { controller = "ServicePoint", action = "SelectService" })
         .RequireAuthorization("ServiceProvider");
+
+    endpoints.MapHub<QueueHub>("/queueHub");
 });
 
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=CheckIn}/{action=Index}/{id?}");
 
 app.Run();

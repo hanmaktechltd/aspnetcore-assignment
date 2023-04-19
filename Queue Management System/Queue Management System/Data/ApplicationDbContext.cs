@@ -14,6 +14,15 @@ namespace Queue_Management_System.Models.Data
         public DbSet<ServiceProvider> ServiceProviders { get; set; }
 
         public DbSet<Admin> Administrator { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ServiceProvider>()
+                .HasOne(s => s.ServicePoint)
+                .WithMany(p => p.ServiceProviders)
+                .HasForeignKey(s => s.ServicePointId);
+        }
+
     }
 }
 
