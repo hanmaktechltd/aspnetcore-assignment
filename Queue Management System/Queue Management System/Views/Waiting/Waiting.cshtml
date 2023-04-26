@@ -1,44 +1,23 @@
-﻿@* @model IEnumerable<CustomerTicket>
+﻿@model IEnumerable<CustomerTicket>
 
 <partial name="_Notification" />
-<h2 class="mt-4">Waiting Customers Currently On the Queue</h2>
-
-<table class="table mt-4">
-    <thead>
-        <tr>
-            <th scope="col" style="color: black;">Ticket Number</th>
-            <th scope="col" style="color: black;">Destination</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var customerTicket in Model)
-        {
-            <tr class="table-light">
-                <th style="color: black;" scope="row">@customerTicket.Id</th>
-                <td style="color: black;">Room: @customerTicket.ServicePointId</td>
-            </tr>
-        }
-    </tbody>
-</table> *@
-
-@model IEnumerable<CustomerTicket>
-
-<partial name="_Notification" />
-<h2 class="mt-4">Next Customer On the Queue</h2>
+<h2 class="mt-4">Called Customers</h2>
 
 @if (Model != null)
 {
-    @foreach (var customerTicket in Model)
-    {
-        <div class="card mt-4" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Ticket Number: @customerTicket.Id</h5>
-                <p class="card-text">Please proceed to Room: @customerTicket.ServicePointId</p>
+    <div class="card-container d-flex flex-wrap">
+        @foreach (var customerTicket in Model)
+        {
+            <div class="card mt-4 mx-2" style="width: 25rem;">
+                <div class="card-body">
+                    <h1 class="card-title fs-1">Ticket Number: @customerTicket.Id</h1>
+                    <p class="card-text fs-2">Room @customerTicket.ServicePointId</p>
+                </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 }
 else
 {
-    <p>No customer is currently on the queue.</p>
+    <h4 class="mt-4">No customers Called</h4>
 }

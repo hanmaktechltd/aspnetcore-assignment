@@ -1,20 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="03/09/2023 10:19:50" ReportInfo.Modified="04/12/2023 13:17:35" ReportInfo.CreatorVersion="2023.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="03/09/2023 10:19:50" ReportInfo.Modified="04/26/2023 14:24:32" ReportInfo.CreatorVersion="2023.2.0.0">
   <Dictionary>
-    <Parameter Name="num_customers" DataType="System.String" AsString=""/>
+    <Parameter Name="num_customers_Mike" DataType="System.String" AsString=""/>
+    <Parameter Name="num_customers_John" DataType="System.String" AsString=""/>
+    <Parameter Name="num_customers_Tom" DataType="System.String" AsString=""/>
+    <Parameter Name="num_customers_Dennis" DataType="System.String" AsString=""/>
+    <Parameter Name="num_customers_Jim" DataType="System.String" AsString=""/>
   </Dictionary>
   <ReportPage Name="Page1" Guides="718.2" Watermark.Font="Arial, 60pt">
-    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="406.35">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="652.05">
       <ContainerObject Name="Container1" Left="-9.45" Width="727.65" Height="75.6" Fill.Color="112, 173, 216, 230"/>
       <TextObject Name="Text1" Left="198.45" Top="37.8" Width="330.75" Height="18.9" Text="NUMBER OF CUSTOMERS SERVED" Font="Arial, 13pt, style=Bold"/>
       <TextObject Name="Text8" Left="595.35" Top="9.45" Width="94.5" Height="18.9" Text="[Date]" Font="Arial, 10pt"/>
-      <TextObject Name="Text13" Left="28.35" Top="94.5" Width="670.95" Height="122.85" Fill.Color="189, 240, 255, 255" Text="&#13;&#10;[num_customers] Customers Served Today" HorzAlign="Center" Font="Arial, 14pt"/>
       <LineObject Name="Line1" Top="75.6" Width="718.2"/>
-      <LineObject Name="Line2" Top="359.1" Width="718.2"/>
+      <LineObject Name="Line2" Top="652.05" Width="718.2"/>
+      <TableObject Name="Table1" Left="170.1" Top="122.85" Width="349.7" Height="236.19" Border.Lines="All" GrowToBottom="true" CanBreak="false">
+        <TableColumn Name="Column1" Width="174.85"/>
+        <TableColumn Name="Column2" Width="174.85"/>
+        <TableRow Name="Row1" Height="39.99">
+          <TableCell Name="Cell1" Border.Lines="All" Text="            ServiceProvider" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell2" Text="Number Of Customer served" Font="Times New Roman, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row2" Height="39.99">
+          <TableCell Name="Cell6" Border.Lines="All" Text="Mike" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell7" Border.Lines="All" Text="[num_customers_Mike]" Font="Times New Roman, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row3" Height="39.99">
+          <TableCell Name="Cell11" Border.Lines="All" Text="John" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell12" Border.Lines="All" Text="[num_customers_John]" Font="Times New Roman, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row4" Height="39.99">
+          <TableCell Name="Cell16" Border.Lines="All" Text="Tom" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell17" Border.Lines="All" Text="[num_customers_Tom]" Font="Times New Roman, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row5" Height="39.99">
+          <TableCell Name="Cell21" Border.Lines="All" Text="Dennis" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell22" Border.Lines="All" Text="[num_customers_Dennis]" Font="Times New Roman, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row6" Height="36.24">
+          <TableCell Name="Cell23" Border.Lines="All" Text="Jim" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell24" Text="[num_customers_Jim]" Font="Times New Roman, 12pt"/>
+        </TableRow>
+      </TableObject>
     </ReportTitleBand>
-    <PageHeaderBand Name="PageHeader1" Top="410.35" Width="718.2" Height="18.9" Fill.Color="112, 173, 216, 230"/>
-    <DataBand Name="Data1" Top="433.25" Width="718.2" Height="9.45" Fill.Color="112, 173, 216, 230"/>
-    <PageFooterBand Name="PageFooter1" Top="446.7" Width="718.2" Height="28.35">
+    <PageHeaderBand Name="PageHeader1" Top="656.05" Width="718.2" Height="18.9" Fill.Color="112, 173, 216, 230"/>
+    <DataBand Name="Data1" Top="678.95" Width="718.2" Height="9.45" Fill.Color="112, 173, 216, 230"/>
+    <PageFooterBand Name="PageFooter1" Top="692.4" Width="718.2" Height="28.35">
       <TextObject Name="Text9" Left="652.05" Width="94.5" Height="18.9" Text="[Page]" Font="Arial, 10pt"/>
     </PageFooterBand>
   </ReportPage>

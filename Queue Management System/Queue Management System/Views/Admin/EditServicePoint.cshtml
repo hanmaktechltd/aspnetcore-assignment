@@ -1,4 +1,7 @@
 @model ServicePoint
+@{
+    Layout = "_LayoutAdminLoggedIn";
+}
 
 <partial name="_Notification" />
 
@@ -14,6 +17,10 @@
         <div class="col-4">
             <label asp-for="Description"></label>
             <input asp-for="Description" class="form-control" />
+        </div>
+        <div class="col-4">
+            <label asp-for="ServiceProviderId"></label>
+            <input asp-for="ServiceProviderId" class="form-control" />
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Save</button>

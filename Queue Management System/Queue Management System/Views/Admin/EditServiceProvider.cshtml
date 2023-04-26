@@ -1,5 +1,7 @@
 @model ServiceProvider
-
+@{
+    Layout = "_LayoutAdminLoggedIn";
+}
 <partial name="_Notification" />
 
 <h2>Edit Service Point Provider</h2>
@@ -14,7 +16,7 @@
 
         <div class="col-4">
             <label asp-for="Password"></label>
-            <input asp-for="Password" class="form-control" />
+            <input asp-for="Password" class="form-control" type="password"/>
         </div>
 
         <div class="col-4">
@@ -23,5 +25,5 @@
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="ServicePoints" class="btn btn-danger mx-1">Back</a>
+    <a asp-action="ServiceProviders" class="btn btn-danger mx-1">Back</a>
 </form>

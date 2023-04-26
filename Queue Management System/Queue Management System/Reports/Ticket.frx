@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="03/09/2023 10:19:50" ReportInfo.Modified="04/12/2023 13:02:24" ReportInfo.CreatorVersion="2023.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="03/09/2023 10:19:50" ReportInfo.Modified="04/21/2023 14:19:52" ReportInfo.CreatorVersion="2023.2.0.0">
   <Dictionary>
     <Parameter Name="TicketNumber" DataType="System.String" AsString=""/>
     <Parameter Name="ServicePointName" DataType="System.String" AsString=""/>
@@ -14,7 +14,7 @@
       <TextObject Name="Text12" Left="28.35" Top="85.05" Width="103.95" Height="18.9" Text="Ticket Number" Font="Arial, 10pt"/>
       <TextObject Name="Text13" Left="274.05" Top="132.3" Width="141.75" Height="28.35" Fill.Color="32, 173, 216, 230" Text="Room [ServicePointName]" Font="Arial, 12pt"/>
       <TextObject Name="Text14" Left="264.6" Top="85.05" Width="160.65" Height="18.9" Text="Destination ServicePoint" Font="Arial, 10pt"/>
-      <TextObject Name="Text15" Left="548.1" Top="132.3" Width="103.95" Height="28.35" Fill.Color="20, 173, 216, 230" Text="[CheckInTime]" Font="Arial, 12pt"/>
+      <TextObject Name="Text15" Left="548.1" Top="132.3" Width="103.95" Height="47.25" Fill.Color="20, 173, 216, 230" Text="[CheckInTime]" Font="Arial, 12pt"/>
       <TextObject Name="Text16" Left="538.65" Top="85.05" Width="94.5" Height="18.9" Text="CheckIn Time" Font="Arial, 10pt"/>
       <LineObject Name="Line1" Top="113.4" Width="699.3"/>
     </ReportTitleBand>

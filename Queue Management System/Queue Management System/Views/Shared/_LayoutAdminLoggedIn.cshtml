@@ -30,6 +30,9 @@
                             <a class="nav-link @(path.EndsWith("/AnalyticalReports") ? "active" : "")" asp-area="" asp-controller="Admin" asp-action="AnalyticalReports">Analytical Reports</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link @(path.EndsWith("/AnalyticalReports") ? "active" : "")" asp-area="" asp-controller="Admin" asp-action="Authenticated">Home</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Logout">Logout</a>
                         </li>
                     </ul>

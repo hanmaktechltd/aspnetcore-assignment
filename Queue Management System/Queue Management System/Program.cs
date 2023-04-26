@@ -1,14 +1,16 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Queue_Management_System.Hubs;
-using Queue_Management_System.Models.Data;
 using Queue_Management_System.Repositories;
 using Queue_Management_System.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddSingleton<IAdminRepository, AdminRepository>();
 builder.Services.AddSingleton<IServicePointRepository, ServicePointRepository>();
+builder.Services.AddSingleton<ICheckInRepository, CheckInRepository>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -50,9 +52,9 @@ builder.Services.AddSession(options =>
 builder.Services.AddControllersWithViews();
 
 // telling our application it has to use the Db Context
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(
-    builder.Configuration.GetConnectionString("DefaultConnection")  // configures our sql server
-    ));
+// builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(
+//     builder.Configuration.GetConnectionString("DefaultConnection")  // configures our sql server
+//     ));
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 

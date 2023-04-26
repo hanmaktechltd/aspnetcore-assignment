@@ -1,69 +1,18 @@
-﻿@* @model IEnumerable<ServicePoint>
+﻿@model IEnumerable<ServicePoint>
+
+@{
+    Layout = "_LayoutUser";
+}
 
 <partial name="_Notification" />
-<h2 class="mt-3">Please select the type of service you require:</h2>
-
-
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Description</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var servicePoint in Model)
-        {
-            <tr class="table-active">
-                <th scope="row">@servicePoint.Name</th>
-                <td>@servicePoint.Description</td>
-                <td>
-                    <form method="post" asp-action="CheckIn">
-                        <input type="hidden" name="servicePointId" value="@servicePoint.Id" />
-                        <button type="button submit" class="btn btn-dark">Select This Service</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
- *@
-
- @* @model IEnumerable<ServicePoint>
-
-<partial name="_Notification" />
-<h2 class="mt-3">Please select the type of service you require:</h2>
-
-
-<div class="d-flex flex-wrap justify-content-center">
-    @foreach (var servicePoint in Model)
-    {
-        <form method="post" asp-action="CheckIn" class="mx-3 mb-3">
-            <input type="hidden" name="servicePointId" value="@servicePoint.Id" />
-            <button type="button submit" class="btn btn-lg btn-dark" data-toggle="tooltip" title="@servicePoint.Description">@servicePoint.Name</button>
-        </form>
-    }
-</div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-    </script>
-} *@
-
-@model IEnumerable<ServicePoint>
-
-<partial name="_Notification" />
-<h2 class="mt-3">Please select the type of service you require:</h2>
+<h2 class="d-flex flex-wrap justify-content-center align-items-center mt-5">Please select the type of service you require:</h2>
 
 <div class="d-flex flex-wrap justify-content-center align-items-center mt-4">
     @foreach (var servicePoint in Model)
     {
         <form method="post" asp-action="CheckIn" class="mx-3 mb-3">
             <input type="hidden" name="servicePointId" value="@servicePoint.Id" />
+            <input type="hidden" name="serviceProviderId" value="@servicePoint.ServiceProviderId" />
             <button type="button submit" class="btn btn-lg btn-dark custom-btn" data-toggle="tooltip" title="@servicePoint.Description">@servicePoint.Name</button>
         </form>
     }

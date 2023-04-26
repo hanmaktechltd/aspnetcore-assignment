@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Queue_Management_System.Models;
 using Queue_Management_System.Services;
-using Queue_Management_System.Models.Data;
 using System.Security.Claims;
 
 namespace Queue_Management_System.Controllers
@@ -15,16 +14,23 @@ namespace Queue_Management_System.Controllers
     public class AdminController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly ApplicationDbContext _dbContext;
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IAdminRepository _adminRepository;
+        private NpgsqlConnection _connection;
 
-        public AdminController(IConfiguration configuration, ApplicationDbContext dbContext, IWebHostEnvironment hostEnvironment, IAdminRepository adminRepository)
+        public AdminController(IConfiguration configuration, IWebHostEnvironment hostEnvironment, IAdminRepository adminRepository)
         {
-            _dbContext = dbContext;
             _configuration = configuration;
             _hostEnvironment = hostEnvironment;
             _adminRepository = adminRepository;
+        }
+
+        private void OpenConnection()
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            _connection = new NpgsqlConnection(connectionString);
+            _connection.Open();
         }
 
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
@@ -38,81 +44,15 @@ namespace Queue_Management_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                var query = $"SELECT * FROM public.\"Administrator\" WHERE public.\"Administrator\".\"EmailAddress\" = @EmailAddress AND public.\"Administrator\".\"Password\" = @Password";
-
-                var parameters = new List<NpgsqlParameter>
+                var admin = await _adminRepository.Login(EmailAddress, Password);
+                if (admin is not null)
                 {
-                    new NpgsqlParameter("@EmailAddress", EmailAddress),
-                    new NpgsqlParameter("@Password", Password),
-                };
-                Admin administrator = AuthenticateAdministrator(query, parameters);
-                if (administrator == null)
-                {
-                    TempData["error"] = "Invalid Login. User not found";
-                }
-                else
-                {
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, administrator.EmailAddress),
-                        new Claim(ClaimTypes.Role, "admin")
-                    };
-
-                    var claimsIdentity = new ClaimsIdentity(
-                        claims, "AdminAuthentication");
-
-                    var authProperties = new AuthenticationProperties
-                    {
-                        IsPersistent = true
-                    };
-
-                    await HttpContext.SignInAsync(
-                        "AdminAuthentication",
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
-
-                    TempData["success"] = "Login Successfull";
+                    TempData["success"] = "Login Successfully";
                     return RedirectToAction("Authenticated");
                 }
+                TempData["error"] = "Invalid Login Credentials";
             }
             return View();
-        }
-
-        public Admin? AuthenticateAdministrator(string query, List<NpgsqlParameter> parameters)
-        {
-            Admin administrator = null;
-
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-            {
-                // Prep command object.
-                NpgsqlCommand command = new NpgsqlCommand(query, connection);
-
-                foreach (var parameter in parameters)
-                {
-                    command.Parameters.Add(parameter);
-                }
-
-                connection.Open();
-
-                // Obtain a data reader via ExecuteReader()
-                using (NpgsqlDataReader dataReader = command.ExecuteReader())
-                {
-                    if (dataReader.Read())
-                    {
-                        administrator = new Admin
-                        {
-                            Name = dataReader["Name"].ToString(),
-                            EmailAddress = dataReader["EmailAddress"].ToString()
-                        };
-                    }
-                    dataReader.Close();
-                }
-            }
-            if (administrator == null)
-                return null;
-            return administrator;
         }
 
         public async Task<IActionResult> LogoutAsync()
@@ -120,6 +60,18 @@ namespace Queue_Management_System.Controllers
             await HttpContext.SignOutAsync("AdminAuthentication");
             TempData["success"] = "Logout Successfull";
             return RedirectToAction("Login");
+        }
+
+        // All patients on the Queue
+        public async Task<IActionResult> MainQueue()
+        {
+            var mainQueue = await _adminRepository.MainQueue();
+            if (mainQueue is null)
+            {
+                TempData["error"] = "No customers currently on the queue";
+                return RedirectToAction("Authenticated");
+            }
+            return View(mainQueue);
         }
 
         // Fetching all service points and passing them down to the view
@@ -145,7 +97,7 @@ namespace Queue_Management_System.Controllers
             return View();
         }
 
-        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
+        [HttpGet, Authorize(AuthenticationSchemes = "AdminAuthentication")]
         // AddServicePoint View
         public IActionResult AddServicePoint()
         {
@@ -168,7 +120,6 @@ namespace Queue_Management_System.Controllers
             if (servicePoint == null)
             {
                 return NotFound();
-                TempData["error"] = "Error while editing service Point";
             }
             return View(servicePoint);
         }
@@ -184,8 +135,34 @@ namespace Queue_Management_System.Controllers
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
         public async Task<IActionResult> DeleteServicePoint(int id)
         {
-            await _adminRepository.DeleteServicePoint(id);
-            TempData["success"] = "Service Point Deleted Successfully";
+            var servicePoint = await _adminRepository.GetServicePointById(id);
+            if (servicePoint == null)
+            {
+                TempData["error"] = "An error occurred please try again later";
+
+                return RedirectToAction("ServiceProviders");
+            }
+            return View(servicePoint);
+        }
+
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
+        public async Task<IActionResult> DeleteServicePoint(ServicePoint servicePoint)
+        {
+            try
+            {
+                await _adminRepository.DeleteServicePoint(servicePoint);
+                TempData["success"] = "Service Point Deleted Successfully";
+            }
+            catch (PostgresException ex) when (ex.SqlState == "23503")
+            {
+                TempData["error"] = "Cannot delete this ServicePoint since there are Service Providers Linked to it";
+            }
+            catch (Exception)
+            {
+                TempData["error"] = "An error occurred, please try again later";
+            }
+
             return RedirectToAction("ServicePoints");
         }
 
@@ -221,10 +198,36 @@ namespace Queue_Management_System.Controllers
         }
 
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
-        public IActionResult DeleteServiceProvider(int id)
+        public async Task<IActionResult> DeleteServiceProvider(int id)
         {
-            var serviceProvider = _adminRepository.DeleteServiceProvider(id);
-            TempData["success"] = "Service Provider Deleted Successfully";
+            var serviceProvider = await _adminRepository.GetServiceProviderById(id);
+            if (serviceProvider == null)
+            {
+                TempData["error"] = "An error occurred please try again later";
+
+                return RedirectToAction("ServiceProviders");
+            }
+            return View(serviceProvider);
+        }
+
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = "AdminAuthentication")]
+        public async Task<IActionResult> DeleteServiceProviderAsync(Models.ServiceProvider serviceProvider)
+        {
+            try
+            {
+                await _adminRepository.DeleteServiceProvider(serviceProvider);
+                TempData["success"] = "Service Provider Deleted Successfully";
+            }
+            catch (PostgresException ex) when (ex.SqlState == "23503")
+            {
+                TempData["error"] = "Cannot delete this service provider as he has already served customers";
+            }
+            catch (Exception)
+            {
+                TempData["error"] = "An error occurred, please try again later";
+            }
+
             return RedirectToAction("ServiceProviders");
         }
 
@@ -235,82 +238,97 @@ namespace Queue_Management_System.Controllers
         }
 
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
-        public IActionResult CustomersServed()
+        public async Task<IActionResult> CustomersServedAsync([FromServices] IWebHostEnvironment webHostEnvironment)
         {
             // Load the report file
             string templatePath = $"Reports/CustomersServed.frx";
-            var webHostEnvironment = HttpContext.RequestServices.GetService<IWebHostEnvironment>();
             string reportPath = Path.Combine(webHostEnvironment.ContentRootPath, templatePath);
-            Report report = new Report();
-            report.Load(reportPath);
-
-
-            // Set up the data connection
-            var connectionString = "Host=localhost;Username=postgres;Password=coxmusyoki1233;Database=DBQueue";
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-
-            var sql = "SELECT COUNT(*) as num_customers FROM public.\"Customers\" WHERE public.\"Customers\".\"Status\" = 'Finished';";
-            using var command = new NpgsqlCommand(sql, connection);
-            using var reader = command.ExecuteReader();
-
-            while (reader.Read())
+            using (Report report = new Report())
             {
-                report.SetParameterValue("num_customers", reader.GetInt64(0));
+                report.Load(reportPath);
+
+
+                // Set up the data connection
+                OpenConnection();
+                var sql = "SELECT sp.\"Name\" AS ServiceProviderName, COUNT(DISTINCT ct.\"Id\") AS NumCustomersServed " +
+                    "FROM public.\"Customers\" ct " +
+                    "JOIN public.\"ServiceProviders\" sp ON ct.\"ServiceProviderId\" = sp.\"Id\" " +
+                    "WHERE ct.\"Status\" = 'Finished' " +
+                    "GROUP BY sp.\"Name\"";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, _connection))
+                {
+                    using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var serviceProviderName = reader.GetString(0);
+                            var numCustomersServed = reader.GetInt64(1);
+                            report.SetParameterValue($"num_customers_{serviceProviderName}", numCustomersServed);
+                        }
+                        reader.Close();
+                    }
+                }
+
+                using (var stream = new MemoryStream())
+                using (var export = new PDFSimpleExport())
+                {
+                    // Prepare the report data
+                    report.Prepare();
+                    export.Export(report, stream);
+                    // Set the position of the MemoryStream back to the beginning
+                    stream.Seek(0, SeekOrigin.Begin);
+                    // Create a new MemoryStream and copy the contents of the original stream to it
+                    var outputStream = new MemoryStream(stream.ToArray());
+
+                    return new FileStreamResult(outputStream, "application/pdf");
+                }
             }
-
-            // Prepare the report data
-            MemoryStream stream = new MemoryStream();
-            report.Prepare();
-
-            var export = new PDFSimpleExport();
-            // export.Compressed = true;
-
-            export.Export(report, stream);
-            var pdfBytes = stream.ToArray();
-            // Return the report as a file
-            return File(pdfBytes, "application/pdf", "CustomersServed.pdf");
-
         }
 
         [Authorize(AuthenticationSchemes = "AdminAuthentication")]
-        public IActionResult AvgWaitingTime()
+        public async Task<IActionResult> AvgWaitingTimeAsync([FromServices] IWebHostEnvironment webHostEnvironment)
         {
             // Load the report file
             string templatePath = $"Reports/AverageWaiting.frx";
-            var webHostEnvironment = HttpContext.RequestServices.GetService<IWebHostEnvironment>();
             string reportPath = Path.Combine(webHostEnvironment.ContentRootPath, templatePath);
-            Report report = new Report();
-            report.Load(reportPath);
-
-
-            // Set up the data connection
-            var connectionString = "Host=localhost;Username=postgres;Password=coxmusyoki1233;Database=DBQueue";
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-
-            var sql = "SELECT AVG(EXTRACT(EPOCH FROM (\"Customers\".\"CallTime\" - \"Customers\".\"CheckInTime\"))) / 60 as avg_waiting_time, AVG(EXTRACT(EPOCH FROM (\"Customers\".\"EndServiceTime\" - \"Customers\".\"StartServiceTime\"))) / 60 as avg_service_time, \"Customers\".\"ServicePointId\" FROM public.\"Customers\" WHERE \"Customers\".\"Status\" = 'Finished' GROUP BY \"Customers\".\"ServicePointId\";";
-            using var command = new NpgsqlCommand(sql, connection);
-            using var reader = command.ExecuteReader();
-
-            while (reader.Read())
+            using (Report report = new Report())
             {
-                // report.SetParameterValue("service_point", reader.GetDouble(0));
-                report.SetParameterValue("avg_waiting_time", Math.Round(reader.GetDouble(0)));
-                report.SetParameterValue("avg_service_time", Math.Round(reader.GetDouble(1)));
+                report.Load(reportPath);
+
+                OpenConnection();
+                var sql = "SELECT AVG(EXTRACT(EPOCH FROM (\"Customers\".\"CallTime\" - \"Customers\".\"CheckInTime\"))) / 60 as AvgWaitingTime, AVG(EXTRACT(EPOCH FROM (CASE WHEN \"Customers\".\"EndServiceTime\" >= \"Customers\".\"StartServiceTime\" THEN (\"Customers\".\"EndServiceTime\" - \"Customers\".\"StartServiceTime\") ELSE NULL END ))) / 60 AvgServiceTime, \"ServiceProviders\".\"Name\" as ServiceProviderName FROM public.\"Customers\" JOIN public.\"ServiceProviders\" ON \"Customers\".\"ServiceProviderId\" = \"ServiceProviders\".\"Id\" WHERE \"Customers\".\"Status\" = 'Finished' GROUP BY \"ServiceProviders\".\"Name\";";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, _connection))
+                {
+                    using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var serviceProviderName = reader.GetString(2);
+                            var avgWaitingTime = Math.Round(reader.GetDouble(0));
+                            var avgServiceTime = Math.Round(reader.GetDouble(1));
+
+                            report.SetParameterValue($"avg_waiting_time_{serviceProviderName}", avgWaitingTime);
+                            report.SetParameterValue($"avg_service_time_{serviceProviderName}", avgServiceTime);
+                        }
+                    }
+                }
+
+                using (var stream = new MemoryStream())
+                using (var export = new PDFSimpleExport())
+                {
+                    // Prepare the report data
+                    report.Prepare();
+                    export.Export(report, stream);
+                    // Set the position of the MemoryStream back to the beginning
+                    stream.Seek(0, SeekOrigin.Begin);
+                    // Create a new MemoryStream and copy the contents of the original stream to it
+                    var outputStream = new MemoryStream(stream.ToArray());
+
+                    return new FileStreamResult(outputStream, "application/pdf");
+                }
             }
-
-            // Prepare the report data
-            MemoryStream stream = new MemoryStream();
-            report.Prepare();
-
-            var export = new PDFSimpleExport();
-            // export.Compressed = true;
-
-            export.Export(report, stream);
-            var pdfBytes = stream.ToArray();
-            // Return the report as a file
-            return File(pdfBytes, "application/pdf", "WaitingTime.pdf");
         }
     }
 }

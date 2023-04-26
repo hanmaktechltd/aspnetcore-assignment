@@ -2,25 +2,23 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Queue_Management_System.Models;
-using Queue_Management_System.Models.Data;
+using Queue_Management_System.Services;
 
 public class WaitingController : Controller
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly ICheckInRepository _checkInRepository;
 
-    public WaitingController(ApplicationDbContext dbContext)
+    public WaitingController(ICheckInRepository checkInRepository)
     {
-        _dbContext = dbContext;
+        _checkInRepository = checkInRepository;
     }
-    public IActionResult Waiting(int servicePointId)
+    public async Task<IActionResult> Waiting(int servicePointId)
     {
-        var waitingCustomers = _dbContext.Customers
-                .Where(c => c.IsCalled && c.Status == "In Progress")
-                .ToList();
+        var waitingCustomers = await _checkInRepository.Waiting();
 
-        if (waitingCustomers == null)
+        if (waitingCustomers is null)
         {
-            TempData["error"] = "No customers currently on the queue";
+            TempData["error"] = "No customer called";
         }
 
         return View(waitingCustomers);

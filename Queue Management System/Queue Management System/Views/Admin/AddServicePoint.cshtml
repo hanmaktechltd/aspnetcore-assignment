@@ -1,5 +1,7 @@
 @model ServicePoint
-
+@{
+    Layout = "_LayoutAdminLoggedIn";
+}
 <h2 class="mt-5">Add Service Point</h2>
 
 <form asp-action="AddServicePoint" method="post">
@@ -12,6 +14,11 @@
         <div class="col-4">
             <label asp-for="Description"></label>
             <input asp-for="Description" class="form-control" />
+        </div>
+
+        <div class="col-4">
+            <label asp-for="ServiceProviderId"></label>
+            <input asp-for="ServiceProviderId" class="form-control" />
         </div>
 
         <div class="mt-2">

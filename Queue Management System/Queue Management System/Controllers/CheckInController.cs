@@ -4,76 +4,33 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using FastReport;
 using FastReport.Export.PdfSimple;
 using Microsoft.Extensions.Hosting.Internal;
-using Queue_Management_System.Models.Data;
+using Queue_Management_System.Services;
 
 namespace Queue_Management_System.Controllers
 {
     public class CheckInController : Controller
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ICheckInRepository _checkInRepository;
+        private readonly IAdminRepository _adminRepository;
 
-        public CheckInController(ApplicationDbContext dbContext)
+        public CheckInController(ICheckInRepository checkInRepository, IAdminRepository adminRepository)
         {
-            _dbContext = dbContext;
+            _checkInRepository = checkInRepository;
+            _adminRepository = adminRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var servicePoints = _dbContext.ServicePoints.ToList();
+            var servicePoints = await _adminRepository.GetAllServicePoints();
             return View(servicePoints);
         }
 
-        public IActionResult Ticket()
-        {
-            return View();
-        }
-
         [HttpPost]
-        public IActionResult CheckIn(int servicePointId, [FromServices] IWebHostEnvironment webHostEnvironment)
+        public async Task<IActionResult> CheckInAsync(int servicePointId, int serviceProviderId)
         {
-            // Create a new customer ticket
-            var ticket = new CustomerTicket
-            {
-                ServicePointId = servicePointId,
-                ServiceProviderId = servicePointId,
-                CheckInTime = DateTime.Now.ToUniversalTime(),
-                IsCalled = false,
-                NoShow = false,
-                Status = "Waiting",
-                Completed = false
-            };
 
-            // Add the ticket to the database
-            _dbContext.Customers.Add(ticket);
-            _dbContext.SaveChanges();
-
-            // Load the FastReport.Net template file dynamically
-            string templatePath = $"Reports/Ticket.frx";
-            var physicalPath = Path.Combine(webHostEnvironment.ContentRootPath, templatePath);
-            Report report = new Report();
-            report.Load(physicalPath);
-
-            // Populate the template with customer information
-            report.SetParameterValue("TicketNumber", ticket.Id);
-            report.SetParameterValue("CheckInTime", ticket.CheckInTime.ToString("g"));
-            report.SetParameterValue("ServicePointName", ticket.ServicePointId);
-
-            // Display the generated ticket on the Check-In page
-            using MemoryStream stream = new MemoryStream();
-            report.Prepare();
-
-            var export = new PDFSimpleExport();
-            // export.Compressed = true;
-
-            export.Export(report, stream);
-            var pdfBytes = stream.ToArray();
-            // Response.ContentType = "application/pdf";
-            // Response.Body.WriteAsync(pdfBytes, 0, pdfBytes.Length);
-
-            stream.Flush();
-            stream.Position = 0;
-            TempData["success"] = "Ticket Generated Successfully";
-            return File(pdfBytes, "application/pdf", $"Ticket-{ticket.Id}.pdf");
+            TempData["success"] = "Ticket Generated successfully";
+            return await _checkInRepository.CheckIn(servicePointId, serviceProviderId);
         }
 
     }
