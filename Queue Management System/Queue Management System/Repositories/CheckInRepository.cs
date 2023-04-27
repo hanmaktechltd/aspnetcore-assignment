@@ -91,7 +91,7 @@ namespace Queue_Management_System.Repositories
             connection.Open();
             var customers = new List<CustomerTicket>();
             string query = $"SELECT * FROM public.\"Customers\" WHERE \"IsCalled\" = true AND \"Status\" = 'In Progress'";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                 {

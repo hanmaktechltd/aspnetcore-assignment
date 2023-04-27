@@ -28,7 +28,7 @@ namespace Queue_Management_System.Repositories
             var customers = new List<CustomerTicket>();
             string query = $"SELECT * FROM public.\"Customers\" WHERE public.\"Customers\".\"ServicePointId\" = @ServicePointId AND NOT public.\"Customers\".\"Completed\" AND public.\"Customers\".\"Status\" != 'No Show'";
             // string query = $"SELECT * FROM public.\"Customers\" WHERE public.\"Customers\".\"ServicePointId\" = @ServicePointId";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@servicePointId", servicePointId);
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
@@ -58,7 +58,7 @@ namespace Queue_Management_System.Repositories
             // Query the database to retrieve the next customer in the queue with the selected service point ID and status "waiting"
             CustomerTicket nextCustomer = null;
             string query = "SELECT * FROM public.\"Customers\" WHERE public.\"Customers\".\"ServicePointId\" = @ServicePointId AND public.\"Customers\".\"Status\" = 'Waiting'";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@servicePointId", servicePointId);
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
@@ -83,7 +83,7 @@ namespace Queue_Management_System.Repositories
 
             // Update the customer's status to "in progress"
             string updateQuery = "UPDATE public.\"Customers\" SET \"Status\" = 'In Progress', \"StartServiceTime\" = @startServiceTime, \"CallTime\" = @callTime, \"IsCalled\" = @isCalled WHERE public.\"Customers\".\"Id\" = @customerId";
-            using (NpgsqlCommand command = new NpgsqlCommand(updateQuery, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(updateQuery, connection))
             {
                 command.Parameters.AddWithValue("@startServiceTime", DateTime.UtcNow);
                 command.Parameters.AddWithValue("@callTime", DateTime.UtcNow);
@@ -112,7 +112,7 @@ namespace Queue_Management_System.Repositories
             CustomerTicket customer = null;
             string query = "SELECT * FROM public.\"Customers\" WHERE public.\"Customers\".\"Id\" = @customerId";
             // string query = "SELECT * FROM \"Customers\" WHERE \"Customers\".\"Id\" = @customerId";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@customerId", Id);
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
@@ -131,7 +131,7 @@ namespace Queue_Management_System.Repositories
             }
             // Update the customer's status to "no show" and remove them from the queue
             string updateQuery = "UPDATE public.\"Customers\" SET \"Status\" = 'No Show', \"NoShow\" = @noShow WHERE public.\"Customers\".\"Id\" = @customerId";
-            using (NpgsqlCommand command = new NpgsqlCommand(updateQuery, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(updateQuery, connection))
             {
                 command.Parameters.AddWithValue("@noShow", true);
                 command.Parameters.AddWithValue("@customerId", Id);
@@ -147,7 +147,7 @@ namespace Queue_Management_System.Repositories
             CustomerTicket customer = null;
             string query = "SELECT * FROM public.\"Customers\" WHERE public.\"Customers\".\"Id\" = @customerId";
             // string query = "SELECT * FROM \"Customers\" WHERE \"Customers\".\"Id\" = @customerId";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@customerId", Id);
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
@@ -169,7 +169,7 @@ namespace Queue_Management_System.Repositories
             }
             // Update the customer's status to "no show" and remove them from the queue
             string updateQuery = "UPDATE public.\"Customers\" SET \"Status\" = 'Finished', \"Completed\" = @completed, \"EndServiceTime\" = @endservicetime  WHERE public.\"Customers\".\"Id\" = @customerId";
-            using (NpgsqlCommand command = new NpgsqlCommand(updateQuery, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(updateQuery, connection))
             {
                 command.Parameters.AddWithValue("@completed", true);
                 command.Parameters.AddWithValue("@endservicetime", DateTime.UtcNow);
@@ -185,7 +185,7 @@ namespace Queue_Management_System.Repositories
 
             CustomerTicket customer = null;
             string query = $"SELECT * FROM public.\"Customers\" WHERE public.\"Customers\".\"Id\" = @customerId";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@customerId", Id);
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
@@ -220,7 +220,7 @@ namespace Queue_Management_System.Repositories
 
             CustomerTicket customer = null;
             string query = $"SELECT * FROM public.\"Customers\" WHERE public.\"Customers\".\"Id\" = @customerId";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@customerId", Id);
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
@@ -251,7 +251,7 @@ namespace Queue_Management_System.Repositories
 
             var servicePoints = new List<ServicePoint>();
             string query = $"SELECT * FROM public.\"ServicePoints\" WHERE public.\"ServicePoints\".\"Id\" <> @Id";
-            await using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            await using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@id", servicePointId);
                 await using (var reader = await command.ExecuteReaderAsync())
@@ -279,7 +279,7 @@ namespace Queue_Management_System.Repositories
 
             string query = "UPDATE public.\"Customers\" SET \"ServicePointId\" = @servicePointId, \"Status\" = 'Waiting' WHERE public.\"Customers\".\"Id\" = @Id";
 
-            using (var command = new NpgsqlCommand(query, _connection))
+            using (var command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("servicePointId", servicePointId);
                 command.Parameters.AddWithValue("@Id", Id);

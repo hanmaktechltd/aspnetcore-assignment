@@ -25,7 +25,7 @@ namespace Queue_Management_System.Repositories
             connection.Open();
             var customers = new List<CustomerTicket>();
             string query = $"SELECT * FROM public.\"Customers\" WHERE \"Status\" = 'Waiting' OR \"Status\" = 'In Progress'";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                 {
@@ -53,7 +53,7 @@ namespace Queue_Management_System.Repositories
             connection.Open();
             var servicePoints = new List<ServicePoint>();
             string commandText = $"SELECT * FROM public.\"ServicePoints\"";
-            using (NpgsqlCommand command = new NpgsqlCommand(commandText, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(commandText, connection))
             {
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                 {
@@ -83,7 +83,7 @@ namespace Queue_Management_System.Repositories
             connection.Open();
             ServicePoint servicePoint = null!;
             string query = "SELECT * FROM public.\"ServicePoints\" WHERE public.\"ServicePoints\".\"Id\" =@id";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@id", id);
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
@@ -110,7 +110,7 @@ namespace Queue_Management_System.Repositories
             string query = "INSERT INTO public.\"ServicePoints\" (\"Name\", \"Description\", \"ServiceProviderId\")" +
                             "VALUES(@Name, @Description, @serviceProviderId)";
 
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@Name", servicePoint.Name);
                 command.Parameters.AddWithValue("@Description", servicePoint.Description);
@@ -126,7 +126,7 @@ namespace Queue_Management_System.Repositories
             connection.Open();
             string query = "UPDATE public.\"ServicePoints\" SET \"Name\" = @name, \"Description\" = @description, \"ServiceProviderId\" = @serviceProviderId WHERE public.\"ServicePoints\".\"Id\" = @id";
 
-            using (var command = new NpgsqlCommand(query, _connection))
+            using (var command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@name", servicePoint.Name);
                 command.Parameters.AddWithValue("@description", servicePoint.Description);
@@ -142,7 +142,7 @@ namespace Queue_Management_System.Repositories
             using var connection = new NpgsqlConnection(_config.GetConnectionString("DefaultConnection"));
             connection.Open();
             string query = "DELETE FROM public.\"ServicePoints\" WHERE public.\"ServicePoints\".\"Id\" = @id";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@id", servicePoint.Id);
                 await command.ExecuteNonQueryAsync();
@@ -155,7 +155,7 @@ namespace Queue_Management_System.Repositories
             connection.Open();
             var serviceProviders = new List<Models.ServiceProvider>();
             string query = $"SELECT * FROM public.\"ServiceProviders\"";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                 {
@@ -184,7 +184,7 @@ namespace Queue_Management_System.Repositories
             connection.Open();
             Models.ServiceProvider serviceProvider = null;
             string query = "SELECT * FROM public.\"ServiceProviders\" WHERE public.\"ServiceProviders\".\"Id\" =@id";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@id", id);
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
@@ -213,7 +213,7 @@ namespace Queue_Management_System.Repositories
             string query = "INSERT INTO public.\"ServiceProviders\" (\"Name\", \"Password\", \"ServicePointId\")" +
                             "VALUES(@Name, @Password, @ServicePointId)";
 
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@Name", serviceProvider.Name);
                 command.Parameters.AddWithValue("@Password", passwordHash);
@@ -230,7 +230,7 @@ namespace Queue_Management_System.Repositories
             string passwordHash = BC.HashPassword(serviceProvider.Password);
             string query = "UPDATE public.\"ServiceProviders\" SET \"Name\" = @name, \"Password\" = @Password, \"ServicePointId\" = @ServicePointId WHERE public.\"ServiceProviders\".\"Id\" = @id";
 
-            using (var command = new NpgsqlCommand(query, _connection))
+            using (var command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@Name", serviceProvider.Name);
                 command.Parameters.AddWithValue("@Password", passwordHash);
@@ -246,7 +246,7 @@ namespace Queue_Management_System.Repositories
             using var connection = new NpgsqlConnection(_config.GetConnectionString("DefaultConnection"));
             connection.Open();
             string query = "DELETE FROM public.\"ServiceProviders\" WHERE public.\"ServiceProviders\".\"Id\" = @id";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@id", serviceProvider.Id);
                 await command.ExecuteNonQueryAsync();
