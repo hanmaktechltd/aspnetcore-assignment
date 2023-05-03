@@ -1,0 +1,28 @@
+@model ServicePoint
+@{
+    Layout = "_LayoutAdminLoggedIn";
+}
+
+<partial name="_Notification" />
+
+<h2>Edit Service Point</h2>
+
+<form asp-action="EditServicePoint" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <div class="col-4">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+        </div>
+        <div class="col-4">
+            <label asp-for="Description"></label>
+            <input asp-for="Description" class="form-control" />
+        </div>
+        <div class="col-4">
+            <label asp-for="ServiceProviderId"></label>
+            <input asp-for="ServiceProviderId" class="form-control" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="ServicePoints" class="btn btn-danger mx-1">Back</a>
+</form>

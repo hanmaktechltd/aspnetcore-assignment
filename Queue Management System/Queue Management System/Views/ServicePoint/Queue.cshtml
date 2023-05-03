@@ -1,0 +1,57 @@
+@model IEnumerable<CustomerTicket>
+
+@{
+    Layout = "_LayoutServiceProvider";
+}
+<partial name="_Notification" />
+<h2 class="mt-4">Current Queue Status</h2>
+
+<a asp-action="GetNextNumber" class="btn btn-primary mt-1">Call Next Customer</a>
+<a asp-action="SelectService" class="btn btn-danger mt-1">Back</a>
+
+<table class="table mt-2" style="height: 300px; display:block; overflow-y: scroll; overflow-x: auto; white-space: nowrap;">
+     <colgroup>
+        <col width="20%" />
+        <col width="40%" />
+        <col width="20%" />
+        <col width="20%" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Ticket Number</th>
+            <th>Checkin Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customerTicket in Model)
+        {
+            <tr>
+                <td>@customerTicket.Id</td>
+                <td>@customerTicket.CheckInTime</td>
+                <td>@customerTicket.Status</td>
+                <td>
+                    @if (customerTicket.Status == "In Progress")
+                    {
+                        <a asp-action="RecallNumber" asp-route-Id="@customerTicket.Id" class="btn btn-primary">Recall</a>
+                        <a asp-action="MarkAsNoShow" asp-route-Id="@customerTicket.Id" class="btn btn-danger">Mark As No Show</a>
+                        <a asp-action="MarkAsFinished" asp-route-Id="@customerTicket.Id" class="btn btn-success">Finished</a>
+                        <a asp-controller="ServicePoint" asp-action="Transfer" asp-route-Id="@customerTicket.Id" class="btn btn-warning">Transfer</a>
+
+                    }
+                    else if (customerTicket.Status == "Waiting")
+                    {
+                        <a asp-action="RecallNumber" asp-route-Id="@customerTicket.Id" class="btn btn-primary">Recall</a>
+                        <a asp-action="MarkAsNoShow" asp-route-Id="@customerTicket.Id" class="btn btn-danger">Mark As No Show</a>
+                        <a asp-controller="ServicePoint" asp-action="Transfer" asp-route-Id="@customerTicket.Id" class="btn btn-warning">Transfer</a>
+                    }
+                    else if(customerTicket.Status == "No Show")
+                    {
+                        <a asp-action="RecallNumber" asp-route-Id="@customerTicket.Id" class="btn btn-primary">Recall</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

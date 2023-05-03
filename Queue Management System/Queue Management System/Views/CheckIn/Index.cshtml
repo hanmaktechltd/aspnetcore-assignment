@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ServicePoint>
+
+@{
+    Layout = "_LayoutUser";
+}
+
+<partial name="_Notification" />
+<h2 class="d-flex flex-wrap justify-content-center align-items-center mt-5">Please select the type of service you require:</h2>
+
+<div class="d-flex flex-wrap justify-content-center align-items-center mt-4">
+    @foreach (var servicePoint in Model)
+    {
+        <form method="post" asp-action="CheckIn" class="mx-3 mb-3">
+            <input type="hidden" name="servicePointId" value="@servicePoint.Id" />
+            <input type="hidden" name="serviceProviderId" value="@servicePoint.ServiceProviderId" />
+            <button type="button submit" class="btn btn-lg btn-dark custom-btn" data-toggle="tooltip" title="@servicePoint.Description">@servicePoint.Name</button>
+        </form>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .custom-btn {
+            width: 200px; /* change this value to adjust the width */
+            height: 80px; /* change this value to adjust the height */
+            font-size: 24px; /* change this value to adjust the font size */
+            margin: 10px; /* add margin to create spacing between buttons */
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}
+

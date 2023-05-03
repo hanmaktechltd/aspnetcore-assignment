@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="03/09/2023 10:19:50" ReportInfo.Modified="04/26/2023 14:23:11" ReportInfo.CreatorVersion="2023.2.0.0">
+  <Dictionary>
+    <Parameter Name="service_point" DataType="System.String" AsString=""/>
+    <Parameter Name="avg_waiting_time_Mike" DataType="System.String" AsString=""/>
+    <Parameter Name="avg_service_time_John" DataType="System.String" AsString=""/>
+    <Parameter Name="avg_waiting_time_Tom" DataType="System.String" AsString=""/>
+    <Parameter Name="avg_waiting_time_Dennis" DataType="System.String" AsString=""/>
+    <Parameter Name="avg_waiting_time_Jim" DataType="System.String" AsString=""/>
+    <Parameter Name="avg_service_time_Mike" DataType="System.String" AsString=""/>
+    <Parameter Name="avg_waiting_time_John" DataType="System.String" AsString=""/>
+    <Parameter Name="avg_service_time_Tom" DataType="System.String" AsString=""/>
+    <Parameter Name="avg_service_time_Dennis" DataType="System.String" AsString=""/>
+    <Parameter Name="avg_service_time_Jim" DataType="System.String" AsString=""/>
+  </Dictionary>
+  <ReportPage Name="Page1" Guides="699.3" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="510.3" CanGrow="true">
+      <ContainerObject Name="Container1" Width="699.3" Height="113.4" Fill.Color="138, 176, 224, 230">
+        <TextObject Name="Text1" Left="85.05" Top="47.25" Width="510.3" Height="18.9" Text="AVERAGE WAITING AND SERVICE TIME OF A CUSTOMER" Font="Arial, 13pt, style=Bold"/>
+        <LineObject Name="Line3" Height="519.75"/>
+      </ContainerObject>
+      <TextObject Name="Text8" Left="595.35" Top="9.45" Width="94.5" Height="18.9" Text="[Date]" Font="Arial, 10pt"/>
+      <LineObject Name="Line1" Top="113.4" Width="699.3"/>
+      <TableObject Name="Table1" Left="132.3" Top="160.65" Width="425.25" Height="304.52" Border.Lines="All">
+        <TableColumn Name="Column1" Width="129.15"/>
+        <TableColumn Name="Column2" Width="138.6"/>
+        <TableColumn Name="Column3" Width="157.5"/>
+        <TableRow Name="Row1" Height="42.11">
+          <TableCell Name="Cell1" Border.Lines="All" Text="Service Provider" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell2" Border.Lines="All" Text="Average Waiting Time" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell3" Border.Lines="All" Text="Average ServiceTime" Font="Times New Roman, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row2" Height="42.11">
+          <TableCell Name="Cell6" Border.Lines="All" Text="Mike" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell7" Border.Lines="All" Text="[avg_waiting_time_Mike] Minutes" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell8" Border.Lines="All" Text="[avg_service_time_Mike] Minutes" Font="Times New Roman, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row3" Height="42.11">
+          <TableCell Name="Cell11" Border.Lines="All" Text="John" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell12" Border.Lines="All" Text="[avg_waiting_time_John] Minutes" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell13" Border.Lines="All" Text="[avg_service_time_John] Minutes" Font="Times New Roman, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row4" Height="42.11">
+          <TableCell Name="Cell16" Border.Lines="All" Text="Tom" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell17" Border.Lines="All" Text="[avg_waiting_time_Tom] Minutes" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell18" Border.Lines="All" Text="[avg_service_time_Tom] Minutes" Font="Times New Roman, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row5" Height="42.11">
+          <TableCell Name="Cell21" Border.Lines="All" Text="Dennis" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell22" Border.Lines="All" Text="[avg_waiting_time_Dennis] Minutes" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell23" Border.Lines="All" Text="[avg_service_time_Dennis] Minutes" Font="Times New Roman, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row6" Height="47.77">
+          <TableCell Name="Cell24" Border.Lines="All" Text="Jim" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell25" Border.Lines="All" Text="[avg_waiting_time_Jim] Minutes" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell26" Border.Lines="All" Text="[avg_service_time_Jim] Minutes" Font="Times New Roman, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row7" Height="46.2">
+          <TableCell Name="Cell27" Border.Lines="All" Text="Meshak" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell28" Border.Lines="All" Text="[avg_waiting_time_Meshak] Minutes" Font="Times New Roman, 12pt"/>
+          <TableCell Name="Cell29" Border.Lines="All" Text="[avg_service_time_Meshak] Minutes" Font="Times New Roman, 12pt"/>
+        </TableRow>
+      </TableObject>
+      <LineObject Name="Line2" Left="699.3" Height="510.3"/>
+      <TextObject Name="Text10" Left="18.9" Top="274.05" Width="94.5" Height="18.9" Font="Times New Roman, 12pt"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="514.3" Width="718.2" Height="37.8" Fill.Color="WhiteSmoke">
+      <ContainerObject Name="Container2" Width="699.3" Height="37.8" Fill.Color="149, 173, 216, 230"/>
+    </PageHeaderBand>
+    <PageFooterBand Name="PageFooter1" Top="556.1" Width="718.2" Height="18.9">
+      <TextObject Name="Text9" Left="652.05" Width="94.5" Height="18.9" Text="[Page]" Font="Arial, 10pt"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

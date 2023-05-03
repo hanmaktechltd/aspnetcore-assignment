@@ -1,0 +1,23 @@
+﻿@model IEnumerable<CustomerTicket>
+
+<partial name="_Notification" />
+<h2 class="mt-4">Called Customers</h2>
+
+@if (Model != null)
+{
+    <div class="card-container d-flex flex-wrap">
+        @foreach (var customerTicket in Model)
+        {
+            <div class="card mt-4 mx-2" style="width: 25rem;">
+                <div class="card-body">
+                    <h1 class="card-title fs-1">Ticket Number: @customerTicket.Id</h1>
+                    <p class="card-text fs-2">Room @customerTicket.ServicePointId</p>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <h4 class="mt-4">No customers Called</h4>
+}

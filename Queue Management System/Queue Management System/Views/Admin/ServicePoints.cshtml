@@ -1,0 +1,40 @@
+@model List<ServicePoint>
+
+@{
+    Layout = "_LayoutAdminLoggedIn";
+}
+
+<partial name="_Notification" />
+<h2>Service Points</h2>
+<a asp-action="AddServicePoint" class="btn btn-primary mt-1 mb-2">Add a Service Point</a>
+<a asp-action="Authenticated" class="btn btn-danger mt-1 mb-2">Back</a>
+
+<table class="table" style="height: 350px; display:block; overflow-y: scroll; overflow-x: auto; white-space: nowrap;">
+    <colgroup>
+        <col width="20%" />
+        <col width="40%" />
+        <col width="20%" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th scope="row">Name</th>
+            <th scope="row">Description</th>
+            <th scope="row">Service Provider Id</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var servicePoint in Model)
+        {
+            <tr class="table-dark">
+                <td>@servicePoint.Name</td>
+                <td>@servicePoint.Description</td>
+                <td>@servicePoint.ServiceProviderId</td>
+                <td>
+                    <a class="btn btn-primary mx-1" href="@Url.Action("EditServicePoint", new { id = servicePoint.Id })">Edit</a> |
+                    <a class="btn btn-danger" href="@Url.Action("DeleteServicePoint", new { id = servicePoint.Id })">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

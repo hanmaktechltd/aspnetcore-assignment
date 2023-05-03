@@ -1,0 +1,26 @@
+@model ServiceProvider
+@{
+    Layout = "_LayoutAdminLoggedIn";
+}
+
+<h2>Delete Service Provider</h2>
+
+<p>Are you sure you want to delete this service provider?</p>
+
+<form asp-action="DeleteServiceProvider" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <div class="col-4">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" disabled/>
+        </div>
+        <div class="col-4">
+            <label asp-for="ServicePointId"></label>
+            <input asp-for="ServicePointId" class="form-control" disabled/>
+        </div>
+    </div>
+    <div class="w-12 btn-group" role="group">
+        <button type="submit" class="btn btn-primary mx-1" value="Delete">Delete</button>
+        <a asp-action="ServiceProviders" class="btn btn-danger mx-1">Back</a>
+    </div>
+</form>

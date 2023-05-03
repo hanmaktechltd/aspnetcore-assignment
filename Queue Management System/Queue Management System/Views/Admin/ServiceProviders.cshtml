@@ -1,0 +1,48 @@
+@model List<ServiceProvider>
+@{
+    Layout = "_LayoutAdminLoggedIn";
+}
+
+<partial name="_Notification" />
+
+<h2>Service Providers</h2>
+<a asp-action="AddServiceProvider" class="btn btn-primary mt-1 mb-2">Add a Service Provider</a>
+<a asp-action="Authenticated" class="btn btn-danger mt-1 mb-2">Back</a>
+
+@{
+    Layout = "_LayoutAdminLoggedIn";
+}
+
+<table class="table" style="height: 350px; display:block; overflow-y: scroll; overflow-x: auto; white-space: nowrap;">
+    <colgroup>
+        <col width="20%" />
+        <col width="40%" />
+        <col width="20%" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th scope="row">Id</th>
+            <th scope="row">Name</th>
+            <th scope="row">ServicePointId</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var serviceProvider in Model)
+        {
+            <tr class="table-dark">
+                <td width="20%">@serviceProvider.Id</td>
+                <td width="20%">@serviceProvider.Name</td>
+                <td width="20%">@serviceProvider.ServicePointId</td>
+                <td width="30%">
+                    <a class="btn btn-primary mx-1" href="@Url.Action("EditServiceProvider", new { id = serviceProvider.Id })" >Edit</a> |
+                    <a class="btn btn-danger" href="@Url.Action("DeleteServiceProvider", new { id = serviceProvider.Id })">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@* <button type="button" class="btn btn-primary">
+    <a style="color: white; text-decoration: none;" href="@Url.Action("AddServiceProvider")">Add Service Provider</a>
+</button> *@

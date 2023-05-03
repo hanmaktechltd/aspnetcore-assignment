@@ -1,0 +1,32 @@
+@model IEnumerable<CustomerTicket>
+@{
+    Layout = "_LayoutAdminLoggedIn";
+}
+
+<partial name="_Notification" />
+<h2 class="mt-4">All Customers Currently On the Queue</h2>
+
+<table class="table mt-4" style="height: 300px; display: block; overflow-y: scroll; overflow-x: auto; white-space: nowrap;">
+    <colgroup>
+        <col width="40%" />
+        <col width="60%" />
+        <col width="40%" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th scope="col" style="color: black;">Ticket Number</th>
+            <th scope="col" style="color: black;">Destination</th>
+            <th scope="col" style="color: black;">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customerTicket in Model)
+        {
+            <tr class="table-light">
+                <th style="color: black;" scope="row">@customerTicket.Id</th>
+                <td style="color: black;">Room: @customerTicket.ServicePointId</td>
+                <td style="color: black;">@customerTicket.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
