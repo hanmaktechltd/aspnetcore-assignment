@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Queue_Management_System.Models.ServicePointVM>
+
+@{
+    ViewData["Title"] = "Checkin Page";
+}
+
+
+
+<div class="container text-center my-5">
+    <div class="card">
+        <div class="card-body">
+
+            @if (@Model.Count() == 0)
+            {
+                <h1 style="padding-top: 50px;" class="text-center">Sorry, the System is under maintenance</h1>
+            }
+            else
+            {
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h1 class="card-title" style="font-size:45px">
+                            Welcome to
+                            <span style="font-size: 50px; font-weight: bold; color: #28A745; position: relative;">
+                                QMaster
+                                <span style="position: absolute; width: 10px; height: 10px; background-color: #28A745; border-radius: 50%; margin-right: 10px; animation: bounce 1s infinite alternate;"></span>
+                            </span>
+                        </h1>                        <h5 class="card-subtitle mb-4">Please select the service</h5>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center" style="width: 75vw">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <button style="width: 100%; padding: 20px; border-radius: 10px;" data-id="@item.Id" class="btn btn-primary allocateBtn" type="button"> @Html.DisplayFor(modelItem => item.Name) </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <form id="allocationForm" asp-action="AddCustomerToQueue">
+                <input type="hidden" id="allocateQueueId" name="Id" />
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('.allocateBtn').click(function (e) {
+                swal({
+                    title: "Welcome to Our Services",
+                    text: "Do you want to book this service?",
+                    icon: "success",
+                    buttons: true,
+                    dangerMode: false
+                }).then((confirm) => {
+                    if (confirm) {
+                        var btn = $(this);
+                        var id = btn.data("id");
+                        $('#allocateQueueId').val(id);
+                        $('#allocationForm').submit();
+
+                        // Start printing the FastReport ticket
+                        frPrint(fastReportInstance);
+                    }
+                });
+            });
+        });
+    </script>
+    </script>
+}
