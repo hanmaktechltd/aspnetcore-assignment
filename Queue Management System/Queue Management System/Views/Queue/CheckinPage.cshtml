@@ -1,3 +1,6 @@
+
+@model CheckinViewModel
+
 @{    
 ViewData["Title"] = "Check-In";
 
@@ -5,9 +8,9 @@ ViewData["Title"] = "Check-In";
 
 <h2>Check-In</h2>
 
-<form method="post">
-    <label for="serviceType">Select Service Type:</label>
-    <select id="serviceType" name="serviceType">
+<form asp-action="WaitingPage" method="post">
+    <label asp-for="ServicePointName">Select Service Type:</label>
+    <select asp-for="ServicePointName" name="ServicePointName">
         <option value="1">Service 1</option>
         <option value="2">Service 2</option>
     </select>
