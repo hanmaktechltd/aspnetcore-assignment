@@ -10,5 +10,8 @@ public class Ticket {
 
     public DateTime ServiceTime {get; set;}
 
-    public ServicePoint ServicePoint { get; set; }
+    // public ServicePoint ServicePoint { get; set; }
+    
+    public string ServicePointName {get; set;}
+
 }
