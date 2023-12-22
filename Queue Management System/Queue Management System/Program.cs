@@ -1,9 +1,21 @@
+using Npgsql;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddScoped<ITicketService, TicketService>();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+var initializer = new DatabaseInitializer(connectionString);
+initializer.InitializeDatabase();
+
+
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -25,3 +37,8 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
+
+// await using var conn = new NpgsqlConnection(connString);
+// await conn.OpenAsync();
