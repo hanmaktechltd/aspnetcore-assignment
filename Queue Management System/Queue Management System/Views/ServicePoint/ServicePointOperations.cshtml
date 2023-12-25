@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Service Point Operations";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Queue Management System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Other CSS files -->
+</head>
+<body>
+    <h1>Service Point Operations</h1>
+
+    <!-- Dropdown for Service Point Operations -->
+    <form method="post" id="operationForm">
+        <div class="form-group">
+            <label for="operationDropdown">Select Operation:</label>
+            <select class="form-control" id="operationDropdown" name="selectedOperation">
+                <option value="GetNextNumber">Get Next Number</option>
+                <option value="RecallNumber">Recall Number</option>
+                <option value="MarkAsNoShow">Mark as No Show</option>
+                <option value="MarkAsFinished">Mark as Finished</option>
+                <option value="TransferNumber">Transfer Number</option>
+                <option value="ViewQueue">View Queue</option>
+            </select>
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+        </div>
+    </form>
+
+    <!-- Display area for selected view -->
+    <div id="selectedView">
+        <!-- Selected view content will be loaded here -->
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#operationForm').submit(function (event) {
+                event.preventDefault();
+                var selectedOperation = $('#operationDropdown').val();
+
+                // Load the selected view
+                $('#selectedView').load('/ServicePoint/' + selectedOperation);
+            });
+        });
+    </script>
+</body>
+</html>

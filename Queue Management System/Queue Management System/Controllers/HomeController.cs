@@ -15,7 +15,11 @@ namespace Queue_Management_System.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            //return View("/Views/");
+            // return View("./Views/Home/Index.cshtml");
+            return View("~/Views/Home/Index.cshtml");
+
+
         }
 
         public IActionResult Privacy()

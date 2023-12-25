@@ -1,0 +1,26 @@
+﻿@model Queue_Management_System.Models.WaitingModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Queue Management System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Queue_Management_System.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <h1>Welcome!</h1>
+
+    <!-- Display the ticket number and service point -->
+    <div>
+        <p>Ticket Number: @Model.TicketNumber</p>
+
+        <p>Service Point: @Model.ServicePoint</p>
+    </div>
+
+    <!-- Optionally, add more content or instructions -->
+</body>
+
+</html>

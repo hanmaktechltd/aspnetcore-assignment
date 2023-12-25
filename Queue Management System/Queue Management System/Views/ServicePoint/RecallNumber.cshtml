@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Recall Number";
+}
+
+<h1>Recall Number</h1>
+<!-- Form to input the ticket number to recall -->
+<form asp-action="RecallNumber" method="post">
+    <label for="ticketNumber">Enter Ticket Number to Recall:</label>
+    <input type="number" id="ticketNumber" name="ticketNumber" />
+    <button type="submit" class="btn btn-primary">Recall Number</button>
+</form>

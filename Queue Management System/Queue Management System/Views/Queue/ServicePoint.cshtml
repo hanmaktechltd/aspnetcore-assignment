@@ -1,0 +1,130 @@
+﻿@model Queue_Management_System.Models.QueueEntry
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Queue Management System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Queue_Management_System.styles.css" asp-append-version="true" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <style>
+        /* Style for large buttons */
+        .kiosk-button {
+            display: inline-block;
+            width: 300px;
+            height: 100px;
+            margin: 10px;
+            font-size: 24px;
+            text-align: center;
+            line-height: 100px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .kiosk-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Service Point Operations</h1>
+
+    <div class="row">
+        <!-- Column for buttons -->
+        <div class="col-md-6">
+            <div>
+                <h2>Get Next Number</h2>
+                <!-- Button for getting the next number -->
+                <button type="button" class="kiosk-button" onclick="getNextNumber()">Get Next Number</button>
+            </div>
+
+            <div>
+                <h2>Recall Number</h2>
+                <!-- Button for recalling a number -->
+                <button type="button" class="kiosk-button" onclick="recallNumber()">Recall Number</button>
+            </div>
+
+            <div>
+                <h2>Mark Number as No Show</h2>
+                <!-- Button for marking a number as no show -->
+                <button type="button" class="kiosk-button" onclick="markAsNoShow()">Mark as No Show</button>
+            </div>
+
+            <div>
+                <h2>Mark Number as Finished</h2>
+                <!-- Button for marking a number as finished -->
+                <button type="button" class="kiosk-button" onclick="markAsFinished()">Mark as Finished</button>
+            </div>
+
+            <div>
+                <h2>Transfer Number</h2>
+                <!-- Button for transferring a number -->
+                <button type="button" class="kiosk-button" onclick="transferNumber()">Transfer Number</button>
+            </div>
+
+            <div>
+                <h2>View Queue</h2>
+                <!-- Button to view the queue -->
+                <button type="button" class="kiosk-button" onclick="viewQueue()">View Queue</button>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="current-number vertical-center">
+                <h2>Ticket Details</h2>
+                @if (Model != null)
+                {
+                    <div>
+                        <p>Ticket Number: @Model.TicketNumber</p>
+
+                    </div>
+                }
+                else
+                {
+                    <p>No ticket details available.</p>
+                }
+            </div>
+        </div>
+
+    </div>
+    
+
+
+
+    <!-- Add your JavaScript logic for button actions here -->
+    <script>
+        function getNextNumber() {
+            // Handle logic for getting the next number
+        }
+
+        function recallNumber() {
+            // Handle logic for recalling a number
+        }
+
+        function markAsNoShow() {
+            // Handle logic for marking a number as no show
+        }
+
+        function markAsFinished() {
+            // Handle logic for marking a number as finished
+        }
+
+        function transferNumber() {
+            // Handle logic for transferring a number
+        }
+
+        function viewQueue() {
+            // Handle logic for viewing the queue
+        }
+    </script>
+</body>
+</html>

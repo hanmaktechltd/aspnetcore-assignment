@@ -1,0 +1,36 @@
+﻿@model Queue_Management_System.Models.LoginViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"] - Queue Management System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Queue_Management_System.styles.css" asp-append-version="true" />
+
+    <!-- Your head content here -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div>
+        <h1>Login</h1>
+        <form id="loginForm" asp-action="Login" asp-controller="Account" method="post" >
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div>
+                <label asp-for="UsernameOrEmail"></label>
+                <input asp-for="UsernameOrEmail" class="form-control" />
+                <span asp-validation-for="UsernameOrEmail" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <button id="loginButton" type="submit">Login</button>
+        </form>
+    </div>
+
+   
+</body>
+</html>

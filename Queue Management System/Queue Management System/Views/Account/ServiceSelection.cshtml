@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select Service</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Other CSS links -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <style>
+        /* Your custom styles */
+    </style>
+</head>
+<body>
+    <form id="serviceForm" method="post" action="/Account/SelectService">
+        <div class="container">
+            <main role="main" class="pb-3">
+                <input type="hidden" id="selectedServiceId" name="selectedServiceId" value="" />
+                <h1>Select Your Service Point</h1>
+                <div class="row">
+                    @foreach (var service in Model)
+                    {
+                        <div class="col-md-4 mb-3">
+                            <button type="button" class="btn btn-primary btn-lg btn-block service-button" data-service-id="@service.Id">@service.Name</button>
+                        </div>
+                    }
+                </div>
+            </main>
+        </div>
+    </form>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.service-button').click(function () {
+                var selectedServiceId = $(this).data('service-id');
+                $('#selectedServiceId').val(selectedServiceId);
+                $('#serviceForm').submit(); // Submit the form when a service is selected
+            });
+        });
+    </script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Other script tags -->
+</body>
+</html>

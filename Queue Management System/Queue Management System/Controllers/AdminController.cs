@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Queue_Management_System.Controllers
 {
-    [Authorize]
+   // [Authorize]
     public class AdminController : Controller
     {
 

@@ -1,0 +1,61 @@
+﻿@model List<ServiceTypeModel>
+
+<form method="post" action="/Queue/ProcessSelection">
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="form-group">
+                <label for="customerName">Enter Your Name:</label>
+                <input type="text" class="form-control" id="customerName" name="customerName" placeholder="Your Name" required>
+            </div>
+
+            <!-- Include a hidden input field to store the selected service ID -->
+            <input type="hidden" id="selectedServiceId" name="selectedServiceId" value="" />
+
+            <h1>Select Your Service</h1>
+            <!-- Service Selection using Buttons -->
+            <div class="row">
+                @foreach (var service in Model)
+                {
+                    <div class="col-md-4 mb-3">
+                        <!-- Update the button to set the selected service ID -->
+                        <button type="button" class="btn btn-primary btn-lg btn-block service-button" data-service-id="@service.Id">@service.Name</button>
+                    </div>
+                }
+            </div>
+
+            <!-- Service Selection using Dropdown -->
+            <h2>OR</h2>
+            <div class="form-group">
+                <label for="serviceDropdown">Select Service:</label>
+                <select class="form-control" id="serviceDropdown">
+                    @foreach (var service in Model)
+                    {
+                        <option value="@service.Id">@service.Name</option>
+                    }
+                </select>
+                <button type="button" class="btn btn-primary btn-lg mt-3" id="submitButton">Submit</button>
+            </div>
+        </main>
+    </div>
+</form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Service button click event
+        $(".service-button").click(function () {
+            var serviceId = $(this).data("service-id");
+            $("#selectedServiceId").val(serviceId); // Set the selected service ID in the hidden input
+            console.log("Service selected (button): " + serviceId);
+        });
+
+        // Submit button click event
+        $("#submitButton").click(function () {
+            var selectedServiceId = $("#serviceDropdown").val();
+            $("#selectedServiceId").val(selectedServiceId); // Set the selected service ID in the hidden input
+            console.log("Service selected (dropdown): " + selectedServiceId);
+            $("form").submit(); // Submit the form
+        });
+    });
+</script>
