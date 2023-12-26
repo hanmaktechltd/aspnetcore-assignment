@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System.Data;
@@ -9,13 +8,12 @@ using Queue_Management_System.Models;
 
 namespace Queue_Management_System.Controllers
 {
-    public class AdminController : Controller
+    public class ServicePointProviderController : Controller
     {
-
         private readonly IConfiguration _configuration;
         private readonly DatabaseConnection _databaseConnection;
 
-        public AdminController(IConfiguration configuration, DatabaseConnection databaseConnection)
+        public ServicePointProviderController(IConfiguration configuration, DatabaseConnection databaseConnection)
         {
             _configuration = configuration;
             _databaseConnection = databaseConnection;
@@ -29,21 +27,21 @@ namespace Queue_Management_System.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(Admin admin)
+        public IActionResult Login(ServicePointProvider servicePointProvider)
         {
             using (NpgsqlConnection connection = _databaseConnection.OpenConnection())
             {
-                string sqlquery = "SELECT UserName FROM Admins WHERE UserName = @UserName AND Password = @Password";
+                string sqlquery = "SELECT UserName FROM ServiceProvider WHERE UserName = @UserName AND Password = @Password";
                 using (NpgsqlCommand command = new NpgsqlCommand(sqlquery, connection))
                 {
-                    command.Parameters.AddWithValue("@UserName", admin.UserName);
-                    command.Parameters.AddWithValue("@Password", admin.Password);
+                    command.Parameters.AddWithValue("@UserName", servicePointProvider.UserName);
+                    command.Parameters.AddWithValue("@Password", servicePointProvider.Password);
 
                     using (NpgsqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            HttpContext.Session.SetString("username", admin.UserName);
+                            HttpContext.Session.SetString("username", servicePointProvider.UserName);
                             return RedirectToAction("Welcome");
                         }
                         else
@@ -68,6 +66,5 @@ namespace Queue_Management_System.Controllers
                 return RedirectToAction("Login");
             }
         }
-
     }
 }

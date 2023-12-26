@@ -1,0 +1,32 @@
+﻿@model Queue_Management_System.Models.Customer
+
+@{
+    ViewBag.Title = "GetNextCustomerOnQueue";
+}
+
+<h2>Service Provider - Queue Management</h2>
+
+@if (ViewBag.Message != null)
+{
+    <p>@ViewBag.Message</p>
+}
+else
+{
+    <p>Latest Customer in Queue:</p>
+    <p>Queue Number: @Model.QueueNumber</p>
+
+    <p>Assign to Service Point:</p>
+    <form asp-action="AssignServicePoint">
+        <select asp-for="ServicePointId" asp-items="@((List<SelectListItem>)ViewBag.ServicePoints)">
+            <option value="">Select Service Point</option>
+        </select>
+        <input type="submit" value="Assign" class="btn btn-primary" />
+    </form>
+
+    <p><a asp-action="ViewLatestCustomerQueueInfo" asp-route-customerId="@Model.Id">View Latest Customer Queue Info</a></p>
+
+    <p><a asp-action="Welcome" asp-controller="ServicePointProvider">Back to Service Provider Tasks</a></p>
+}
+
+
+

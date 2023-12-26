@@ -1,0 +1,39 @@
+﻿@model List<Queue_Management_System.Models.ServicePoint>
+
+@{
+    ViewBag.Title = "ListofServicePoints";
+}
+
+<h2>List of Service Points</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.First().ServicePointName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().ServedBy)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var servicePoint in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => servicePoint.ServicePointName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => servicePoint.ServedBy)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = servicePoint.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = servicePoint.Id })
+            </td>
+        </tr>
+    }
+</table>
+
+<p>
+    @Html.ActionLink("Add New Service Point", "CreateServicePoint")
+</p>

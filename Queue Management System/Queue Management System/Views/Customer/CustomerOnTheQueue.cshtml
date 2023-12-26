@@ -1,0 +1,13 @@
+﻿@model Queue_Management_System.Models.Customer
+
+@{
+    ViewBag.Title = "CustomerOnTheQueue";
+}
+
+<h2>Customer - Queue Management</h2>
+
+<p>You have been added to the queue!</p>
+
+<p>Wait a little bit to be given a Service Point!</p>
+
+<p><a asp-action="ViewTicketInfo" asp-route-customerId="@Model.Id">View Ticket Info</a></p>

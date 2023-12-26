@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "Welcome";
+}
+
+@if (Context.Session.GetString("username") != null)
+{
+    <h2>Welcome @Context.Session.GetString("username")</h2>
+}
+
+<div class="container text-center my-5">
+    <h1 class="display-3 fw-bold text-one ">Service Provider Tasks</h1>
+
+    <div>
+        <a href="@Url.Action("GetNextCustomerOnQueue", "ServiceProviderTask")" class="btn btn-lg btn-custom-pink mt-3">Get the next Customer on the Queue</a>
+    </div>
+
+    @*<div>
+        <a href="@Url.Action("ViewCurrentCustomerQueueInfo", "ServiceProviderTaskController")" class="btn btn-lg btn-custom-pink mt-3">View the Customer Ticket Info</a>
+    </div>*@
+
+</div>

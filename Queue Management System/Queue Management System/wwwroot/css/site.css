@@ -16,3 +16,50 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.text-one {
+    color: #a10536;
+    text-shadow: 2px 2px 5px black;
+}
+
+.text-two {
+    color: #a10530;
+    font-size: 30px;
+}
+
+.text-three {
+    font-size: 20px;
+}
+
+
+.btn-custom-pink {
+    background-color: #a10536; /* Replace with your preferred pink color */
+    color: #fff; /* Text color on the button */
+    border-color: #a10536; /* Border color (if needed) */
+}
+
+    .btn-custom-pink:hover {
+        background-color: #056aa1; /* Light Blue color on hover */
+        color: #fff;
+        border-color: #056aa1;
+    }
+
+.waviy {
+    position: relative;
+}
+
+    .waviy span {
+        position: relative;
+        display: inline-block;
+        font-size: 47px;
+        color: #a10536;
+        text-transform: uppercase;
+        animation: flip 2s infinite;
+        animation-delay: calc(.2s * var(--i))
+    }
+
+@keyframes flip {
+    0%,80% {
+        transform: rotateY(360deg)
+    }
+}

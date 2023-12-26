@@ -1,0 +1,20 @@
+﻿@model Queue_Management_System.Models.Customer
+
+<h2>Customer - View Ticket Information</h2>
+
+<p>Queue Number: @Model.QueueNumber</p>
+@if (Model.ServicePoint != null)
+{
+    <p>Service Point: @Model.ServicePoint.ServicePointName</p>
+    <p>Served By: @Model.ServicePoint.ServedBy</p>
+}
+else
+{
+    <p>Service Point: Default Service Point</p>
+}
+
+<div>
+    <button class="btn btn-lg btn-custom-pink mt-3">Print Your Queue Ticket</button>
+</div>
+
+<p><a asp-action="Index" asp-controller="Home">Back to Home</a></p>

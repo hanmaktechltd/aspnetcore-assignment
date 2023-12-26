@@ -1,0 +1,19 @@
+﻿@model Queue_Management_System.Models.Customer
+
+@{
+    ViewBag.Title = "ViewLatestCustomerQueueInfo";
+}
+
+<h2>Service Provider - View Latest Customer Queue Information</h2>
+
+<p>Queue Number: @Model.QueueNumber</p>
+@if (Model.ServicePoint != null)
+{
+    <p>Service Point: @Model.ServicePoint.ServicePointName</p>
+}
+else
+{
+    <p>Service Point: Default Service Point</p>
+}
+
+<p><a asp-action="Welcome" asp-controller="ServicePointProvider">Back to Service Provider Tasks</a></p>
