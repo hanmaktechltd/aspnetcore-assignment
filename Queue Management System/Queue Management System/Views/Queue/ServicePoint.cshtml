@@ -30,9 +30,44 @@
             cursor: pointer;
         }
 
-        .kiosk-button:hover {
-            background-color: #0056b3;
+            .kiosk-button:hover {
+                background-color: #0056b3;
+            }
+
+        /* Vertical center alignment */
+        .vertical-center {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
         }
+
+        /* CSS for the queue table */
+        .queue-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+
+            .queue-table th, .queue-table td {
+                padding: 8px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+
+            .queue-table th {
+                background-color: #f2f2f2;
+            }
+
+            .queue-table tbody tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            .queue-table tbody tr:hover {
+                background-color: #e2e2e2;
+                cursor: pointer;
+            }
+
     </style>
 </head>
 <body>
@@ -41,38 +76,30 @@
     <div class="row">
         <!-- Column for buttons -->
         <div class="col-md-6">
-            <div>
-                <h2>Get Next Number</h2>
-                <!-- Button for getting the next number -->
-                <button type="button" class="kiosk-button" onclick="getNextNumber()">Get Next Number</button>
-            </div>
+           
 
             <div>
-                <h2>Recall Number</h2>
+                
                 <!-- Button for recalling a number -->
                 <button type="button" class="kiosk-button" onclick="recallNumber()">Recall Number</button>
             </div>
 
-            <div>
-                <h2>Mark Number as No Show</h2>
-                <!-- Button for marking a number as no show -->
-                <button type="button" class="kiosk-button" onclick="markAsNoShow()">Mark as No Show</button>
-            </div>
+            
 
             <div>
-                <h2>Mark Number as Finished</h2>
+                
                 <!-- Button for marking a number as finished -->
                 <button type="button" class="kiosk-button" onclick="markAsFinished()">Mark as Finished</button>
             </div>
 
             <div>
-                <h2>Transfer Number</h2>
+                
                 <!-- Button for transferring a number -->
                 <button type="button" class="kiosk-button" onclick="transferNumber()">Transfer Number</button>
             </div>
 
             <div>
-                <h2>View Queue</h2>
+                
                 <!-- Button to view the queue -->
                 <button type="button" class="kiosk-button" onclick="viewQueue()">View Queue</button>
             </div>
@@ -83,9 +110,10 @@
                 <h2>Ticket Details</h2>
                 @if (Model != null)
                 {
-                    <div>
-                        <p>Ticket Number: @Model.TicketNumber</p>
-
+                    
+                    <div id="ticketDetailsContainer">
+                        <!-- Partial view content will be loaded here -->
+                        @await Html.PartialAsync("_TicketDetailsPartial", Model)
                     </div>
                 }
                 else
@@ -94,37 +122,80 @@
                 }
             </div>
         </div>
-
     </div>
-    
 
+    <div id="queueEntriesContainer">
+        <!-- Partial view content for queue entries will be loaded here -->
+    </div>
 
-
-    <!-- Add your JavaScript logic for button actions here -->
     <script>
-        function getNextNumber() {
-            // Handle logic for getting the next number
-        }
+       
 
         function recallNumber() {
-            // Handle logic for recalling a number
+            var ticketNumber = "@Model?.TicketNumber";
+
+            $.ajax({
+                type: "POST",
+                url: "/Queue/UpdateRecallCount",
+                data: { ticketNumber: ticketNumber },
+                success: function (data) {
+                    $('#ticketDetailsContainer').html(data);
+                },
+                error: function () {
+                    // Handle error if needed
+                }
+            });
         }
 
-        function markAsNoShow() {
-            // Handle logic for marking a number as no show
-        }
+
+
 
         function markAsFinished() {
-            // Handle logic for marking a number as finished
+            // Retrieve the ticket number from the Model on the page
+            var ticketNumber = "@Model?.TicketNumber";
+
+            // Make an AJAX POST request to mark the ticket as finished
+            $.ajax({
+                type: "POST",
+                url: "/Queue/MarkFinished",
+                data: { ticketNumber: ticketNumber }, // Send the ticket number as data
+                success: function (data) {
+                    // Update ticket details section with the received partial view
+                    $('#ticketDetailsContainer').html(data);
+                },
+                error: function () {
+                    // Handle error if needed
+                }
+            });
         }
 
         function transferNumber() {
-            // Handle logic for transferring a number
+            $.ajax({
+                type: "GET",
+                url: "/Queue/GetServiceProviders", // Endpoint to fetch the partial view
+                success: function (data) {
+                    // Update the container with the received partial view
+                    $('#ticketDetailsContainer').html(data);
+                },
+                error: function () {
+                    // Handle error if needed
+                }
+            });
         }
 
         function viewQueue() {
-            // Handle logic for viewing the queue
+            $.ajax({
+                type: "GET",
+                url: "/Queue/GetQueueEntries", // Update with your endpoint and service point ID
+                success: function (data) {
+                    $('#queueEntriesContainer').html(data);
+                },
+                error: function () {
+                    $('#queueEntriesContainer').html('<p>Failed to load queue entries.</p>');
+                }
+            });
         }
+        
     </script>
 </body>
 </html>

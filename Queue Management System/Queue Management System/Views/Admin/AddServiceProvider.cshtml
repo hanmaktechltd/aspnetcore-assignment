@@ -1,0 +1,52 @@
+﻿@model Queue_Management_System.Models.ServiceProviderModel
+
+<h2>Add Service Provider</h2>
+<form asp-action="AddServiceProvider" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Username"></label>
+        <input asp-for="Username" class="form-control" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Phone"></label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PasswordHash"></label>
+        <input asp-for="PasswordHash" class="form-control" />
+        <span asp-validation-for="PasswordHash" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RegistrationDate"></label>
+        <input asp-for="RegistrationDate" type="date" class="form-control" />
+        <span asp-validation-for="RegistrationDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ServicePoint"></label>
+        <input asp-for="ServicePoint" class="form-control" />
+        <span asp-validation-for="ServicePoint" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ServiceTypeId"></label>
+        <input asp-for="ServiceTypeId" type="number" class="form-control" />
+        <span asp-validation-for="ServiceTypeId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Add Service Provider" class="btn btn-primary" />
+    </div>
+</form>

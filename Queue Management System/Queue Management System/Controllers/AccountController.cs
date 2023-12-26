@@ -34,7 +34,7 @@ namespace Queue_Management_System.Controllers
                 var user = await _dbOperationsRepository.LoginAsync(model.UsernameOrEmail, model.Password);
                 if (user != null)
                 {
-                    
+
                     // Authentication successful, store user data
                     loggedInUser = user;
 

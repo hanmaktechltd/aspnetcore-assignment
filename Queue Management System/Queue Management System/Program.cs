@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using Queue_Management_System.Models;
 using Queue_Management_System.Repository;
 using Queue_Management_System.ServiceInterface;
 using Queue_Management_System.Services;
@@ -29,6 +32,11 @@ builder.Services.AddScoped<DbOperationsRepository>();
 
 // Register TicketService
 builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IServiceProviderRepository, ServiceProviderRepository>();
+builder.Services.AddScoped<IServicePointOperations, ServicePointOperations>();
+
+
 
 var app = builder.Build();
 

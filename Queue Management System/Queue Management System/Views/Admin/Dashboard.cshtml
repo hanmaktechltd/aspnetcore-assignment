@@ -1,46 +1,84 @@
-﻿<!DOCTYPE html>
+﻿@model IEnumerable<Queue_Management_System.Models.ServedCustomers>
+
+<!DOCTYPE html>
 <html>
 <head>
     <!-- Include necessary CSS and JavaScript libraries -->
     <title>Admin Dashboard</title>
     <!-- Add your CSS styling -->
+    <style>
+        .CustomersTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .CustomersTable th,
+            .CustomersTable td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+            .CustomersTable th {
+                background-color: #f2f2f2;
+            }
+
+            .CustomersTable tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            .CustomersTable tr:hover {
+                background-color: #f2f2f2;
+            }
+    </style>
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav>
         <ul>
-            <li><a href="#servicePoints">Service Points</a></li>
-            <li><a href="#serviceProviders">Service Providers</a></li>
-            <li><a href="#generateReport">Generate Report</a></li>
+            <li><a href="/Views/Admin/ServicePoints">Service Points</a></li>
+            <li><a href="/Admin/ServiceProviders">Service Providers</a></li>
+            <li><a href="/Admin/GenerateReport">Generate Report</a></li>
         </ul>
     </nav>
 
+
     <!-- Main Content Area -->
-    <div class="container">
-        <section id="servicePoints">
-            <h2>Configure Service Points</h2>
-            <!-- Form or section to manage service points -->
-            <!-- Add buttons or links to add, edit, or delete service points -->
-        </section>
+  
+    <div><div>
 
-        <section id="serviceProviders">
-            <h2>Configure Service Providers</h2>
-            <!-- Form or section to manage service providers -->
-            <!-- Add buttons or links to add, edit, or delete service providers -->
-        </section>
-
-        <section id="generateReport">
-            <h2>Generate Analytical Report</h2>
-            <!-- Form or section to input report parameters -->
-            <!-- Button or link to generate the report -->
-        </section>
-
-        <section id="displayReport">
-            <h2>Report Results</h2>
-            <!-- Display the generated report -->
-            <!-- Show the number of customers served -->
-            <!-- Display average waiting time and service time per point/provider -->
-        </section>
+            <!-- Column for displaying served customers -->
+            <div class="col-md-6">
+                <div class="CustomersTable vertical-center">
+                    <h2>Last 50 customers served</h2>
+                    <table class="CustomersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Ticket Number</th>
+                                <th>Service Point</th>
+                                <th>Customer Name</th>
+                                <th>Check-in Time</th>
+                                <th>Time Served</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var queueEntry in Model)
+                            {
+                                <tr>
+                                    <td>@queueEntry.FinishedId</td>
+                                    <td>@queueEntry.TicketNumber</td>
+                                    <td>@queueEntry.ServicePoint</td>
+                                    <td>@queueEntry.CustomerName</td>
+                                    <td>@queueEntry.CheckInTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                    <td>@queueEntry.MarkedTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -1,0 +1,12 @@
+﻿@model Queue_Management_System.Models.QueueEntry
+
+@if (Model != null)
+{
+    <div>
+        <p>Ticket Number: @Model.TicketNumber</p>
+    </div>
+}
+else
+{
+    <p>No ticket details available.</p>
+}

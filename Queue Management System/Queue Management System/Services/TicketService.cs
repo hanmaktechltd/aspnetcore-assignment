@@ -22,9 +22,9 @@ namespace Queue_Management_System.Services
             return await _dbOperationsRepository.GetAvailableServicesAsync();
            
         }
-        public async Task<bool> CheckInAsync(string ticketNumber, string serviceName, string customerName)
+        public async Task<bool> CheckInAsync(string ticketNumber, string serviceName, string customerName, int serviceId)
         {
-            return await _dbOperationsRepository.SaveSelectedService(ticketNumber, serviceName, customerName);
+            return await _dbOperationsRepository.SaveSelectedService(ticketNumber, serviceName, customerName, serviceId);
         }
         public byte[] GenerateTicket(ServiceTypeModel selectedService)
         {

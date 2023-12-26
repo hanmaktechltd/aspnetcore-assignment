@@ -18,44 +18,48 @@
                 {
                     <div class="col-md-4 mb-3">
                         <!-- Update the button to set the selected service ID -->
-                        <button type="button" class="btn btn-primary btn-lg btn-block service-button" data-service-id="@service.Id">@service.Name</button>
+                        <button type="button" class="btn btn-primary btn-lg btn-block service-button"
+                                data-service-id="@service.Id" onclick="handleButtonClick('@service.Id', '@service.Name')">
+                            @service.Name
+                        </button>
                     </div>
                 }
             </div>
 
-            <!-- Service Selection using Dropdown -->
-            <h2>OR</h2>
-            <div class="form-group">
-                <label for="serviceDropdown">Select Service:</label>
-                <select class="form-control" id="serviceDropdown">
-                    @foreach (var service in Model)
-                    {
-                        <option value="@service.Id">@service.Name</option>
-                    }
-                </select>
-                <button type="button" class="btn btn-primary btn-lg mt-3" id="submitButton">Submit</button>
-            </div>
         </main>
     </div>
 </form>
-
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    $(document).ready(function () {
-        // Service button click event
-        $(".service-button").click(function () {
-            var serviceId = $(this).data("service-id");
-            $("#selectedServiceId").val(serviceId); // Set the selected service ID in the hidden input
-            console.log("Service selected (button): " + serviceId);
-        });
+    // Handle button click event
+    function handleButtonClick(serviceId, serviceName) {
+        var customerName = $("#customerName").val(); // Get customer name from the input field
 
-        // Submit button click event
-        $("#submitButton").click(function () {
-            var selectedServiceId = $("#serviceDropdown").val();
-            $("#selectedServiceId").val(selectedServiceId); // Set the selected service ID in the hidden input
-            console.log("Service selected (dropdown): " + selectedServiceId);
-            $("form").submit(); // Submit the form
+        // Prepare data for the AJAX request
+        var requestData = {
+            selectedServiceId: serviceId,
+            customerName: customerName
+        };
+
+        // Make an AJAX POST request to the server-side action
+        $.ajax({
+            url: '/Queue/ProcessSelection',
+            type: 'POST',
+            data: requestData,
+            success: function (response) {
+                // Handle the success response (if needed)
+                console.log("Request successful:", response);
+
+                // Redirect to the waiting page
+                window.location.href = '/Queue/WaitingPage?serviceId=' + serviceId;
+            },
+            error: function (xhr, status, error) {
+                // Handle any errors from the server
+                console.error("Request error:", error);
+                // Optionally, display an error message or take corrective actions
+            }
         });
-    });
+    }
 </script>
+

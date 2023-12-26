@@ -1,0 +1,45 @@
+﻿@model List<(string ServicePoint, int ServiceTypeId)>
+
+<div id="transferNumberContainer">
+    <h2>Transfer Number</h2>
+    @if (Model != null)
+    {
+        <div>
+            <label for="servicePointDropdown">Select Service Point:</label>
+            <select id="servicePointDropdown" class="form-control">
+                @foreach (var servicePoint in ViewBag.ServicePoints)
+                {
+                    <option value="@servicePoint.Id">@servicePoint.Name</option>
+                }
+            </select>
+        </div>
+        <br />
+        <button type="button" class="btn btn-primary" onclick="transferNumber()">Transfer</button>
+    }
+    else
+    {
+        <p>No ticket details available.</p>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Fetch service providers data and populate the dropdown
+        $.ajax({
+            type: "GET",
+            url: "/Queue/GetServiceProviders",
+            success: function (data) {
+                data.forEach(function (provider) {
+                    $('#servicePointDropdown').append($('<option>', {
+                        value: provider.ServiceTypeId,
+                        text: provider.ServicePoint
+                    }));
+                });
+            },
+            error: function () {
+                
+            }
+        });
+    });
+
+</script>

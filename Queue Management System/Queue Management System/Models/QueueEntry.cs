@@ -9,8 +9,5 @@
         public DateTime CheckinTime { get; set; }
     }
 
-    public QueueEntry()
-    {
-       
-    }
+   
 }
