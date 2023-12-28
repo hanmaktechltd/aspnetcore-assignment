@@ -11,7 +11,7 @@ namespace Queue_Management_System.Models
 
         [Required]
         public string Password { get; set; }
-        public string Returnurl { get; set; }
+        public string ReturnUrl { get; set; }
 
     }
 }
