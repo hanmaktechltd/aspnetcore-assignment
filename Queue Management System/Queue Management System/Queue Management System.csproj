@@ -14,10 +14,11 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
-    <Folder Include="Repository\" />
-    <Folder Include="Services\" />
-    <Folder Include="Services\" />
     <Folder Include="Views\Account\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="8.0.1" />
   </ItemGroup>
 
 </Project>

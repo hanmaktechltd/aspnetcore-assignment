@@ -4,9 +4,9 @@ namespace Queue_Management_System.Models
 {
     public class ServiceProviderM
     {
-        
-        
 
+
+        public int Id { get; set; }
         [Required]
         public string Name { get; set; }
 
