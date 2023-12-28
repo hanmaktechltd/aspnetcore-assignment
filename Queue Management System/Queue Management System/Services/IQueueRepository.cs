@@ -8,7 +8,7 @@ namespace Queue_Management_System.Services
         Task AddCustomerToQueue(ServicePointM customer);
         Task<IEnumerable<QueueM>> GetCalledCustomers();
         Task<IEnumerable<QueueM>> GetWaitingCustomers(int servicePointId);
-        Task<QueueM> MyCurrentServingCustomer(int servicePointId);
+        Task<QueueM> CurrentServingCustomer(int servicePointId);
         Task<QueueM> UpdateOutGoingAndIncomingCustomerStatus(int outgoingCustomerId, int servicePointId);
        // Task<QueueM> GetCurentlyCalledNumber(string serviceProviderId);
         Task<QueueM> MarkNumberASNoShow(int servicePointId);

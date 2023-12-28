@@ -5,9 +5,9 @@ namespace Queue_Management_System.Models
 {
     public class QueueM
     {
-        [Display(Name = "Queue Id")]
+        [Display(Name = "Ticket Id")]
         public int? Id { get; set; }
-        public ServicePointM ServicePoint { get; set; }
+        
 
         [Display(Name = "Room Number")]
         public int ServicePointId { get; set; }
@@ -15,6 +15,8 @@ namespace Queue_Management_System.Models
 
         [Display(Name = "Joined Queue At")]
         public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public DateTime CompletedAt { get; set; }
 
     }
 }

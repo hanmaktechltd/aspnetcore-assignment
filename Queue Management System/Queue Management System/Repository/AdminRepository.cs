@@ -7,7 +7,7 @@ namespace Queue_Management_System.Repository
     public class AdminRepository : IAdminRepository
     {
         private const string _serviceProvidersTable = "appusers";
-        private const string _servicePointTable = "servicepoints";
+        private const string _servicePointTable = "ServicePointsTb";
         private IConfiguration _config;
         private NpgsqlConnection _connection;
 

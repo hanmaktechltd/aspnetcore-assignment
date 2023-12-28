@@ -8,8 +8,8 @@ namespace Queue_Management_System.Repository
 {
     public class QueueRepository : IQueueRepository
     {
-        private const string _servicePointsTable = "servicepoints";
-        private const string _queueTable = "queue";
+        private const string _servicePointsTable = "ServicePointsTb";
+        private const string _queueTable = "QueueTb";
         private IConfiguration _config;
         private NpgsqlConnection _connection;
         public QueueRepository(IConfiguration config)
@@ -121,7 +121,7 @@ namespace Queue_Management_System.Repository
             }
             return waitingCustomers;
         }
-        public async Task<QueueM> MyCurrentServingCustomer(int servicePointId)
+        public async Task<QueueM> CurrentServingCustomer(int servicePointId)
         {
             OpenConnection();
             QueueM myCurrentCustomerId = null;
@@ -213,7 +213,7 @@ namespace Queue_Management_System.Repository
         }
         public async Task MarkNumberASNoShow(int servicePointId)
         {
-            QueueM customerIdToMarkAsFinished = await MyCurrentServingCustomer(servicePointId);
+            QueueM customerIdToMarkAsFinished = await CurrentServingCustomer(servicePointId);
             OpenConnection();
 
             //Update the current customer as served            
@@ -227,7 +227,7 @@ namespace Queue_Management_System.Repository
         }
         public async Task MarkNumberASFinished(int servicePointId)
         {
-            QueueM customerIdToMarkAsFinished = await MyCurrentServingCustomer(servicePointId);
+            QueueM customerIdToMarkAsFinished = await CurrentServingCustomer(servicePointId);
 
             OpenConnection();
             //Update the current customer as served            
@@ -241,7 +241,7 @@ namespace Queue_Management_System.Repository
         }
         public async Task TransferNumber(int servicePointId, int servicePointid)
         {
-            QueueM customerIdToMarkAsFinished = await MyCurrentServingCustomer(servicePointId);
+            QueueM customerIdToMarkAsFinished = await CurrentServingCustomer(servicePointId);
 
             OpenConnection();
             //Update the current customer as served 

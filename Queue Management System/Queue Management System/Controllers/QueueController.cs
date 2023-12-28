@@ -1,24 +1,45 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Queue_Management_System.Models;
+using Queue_Management_System.Services;
+using System.Net;
+using System.Security.Claims;
 
 namespace Queue_Management_System.Controllers
 {
     public class QueueController : Controller
     {
+        private readonly IQueueRepository _queueRepository;
+        private ClaimsIdentity _identity;
+        public QueueController(IQueueRepository queueRepository)
+        {
+            _queueRepository = queueRepository;
+        }
 
         [HttpGet]
-        public IActionResult CheckinPage()
+        public async Task<IActionResult> CheckinPage()
         {
-            return View();
+            var services = await _queueRepository.GetServices();
+            return View(services);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddCustomerToQueue(ServicePointM servicePointId)
+        {
+            await _queueRepository.AddCustomerToQueue(servicePointId);
+            return RedirectToAction(nameof(CheckinPage));
         }
 
 
 
+        // GET: Queue/WaitingPage
         [HttpGet]
-        public IActionResult WaitingPage()
+        public async Task<IActionResult> WaitingPage()
         {
-            return View();
+            var calledCustomers = await _queueRepository.GetCalledCustomers();
+            return View(calledCustomers);
         }
+
 
 
 
