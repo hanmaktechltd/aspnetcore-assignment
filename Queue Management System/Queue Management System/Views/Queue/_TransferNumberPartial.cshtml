@@ -2,14 +2,14 @@
 
 <div id="transferNumberContainer">
     <h2>Transfer Number</h2>
-    @if (Model != null)
+    @if (Model != null && Model.Count > 0)
     {
         <div>
             <label for="servicePointDropdown">Select Service Point:</label>
             <select id="servicePointDropdown" class="form-control">
-                @foreach (var servicePoint in ViewBag.ServicePoints)
+                @foreach (var servicePoint in Model)
                 {
-                    <option value="@servicePoint.Id">@servicePoint.Name</option>
+                    <option value="@servicePoint.ServiceTypeId">@servicePoint.ServicePoint</option>
                 }
             </select>
         </div>
@@ -31,15 +31,39 @@
             success: function (data) {
                 data.forEach(function (provider) {
                     $('#servicePointDropdown').append($('<option>', {
-                        value: provider.ServiceTypeId,
-                        text: provider.ServicePoint
+                        value: provider.ServicePoint,
+                        text: provider.ServicePoint // Assuming 'ServicePoint' is the display text
                     }));
                 });
             },
             error: function () {
-                
+                // Handle error if needed
             }
         });
     });
+
+    function handleSelectionChange(dropdown) {
+        var selectedServicePoint = dropdown.value;
+        // Perform actions based on the selectedServicePoint
+        console.log("Selected Service Point:", selectedServicePoint);
+
+        // Example: Make an AJAX request or perform any specific action
+        // based on the selectedServicePoint
+        // For example, you can call another endpoint using AJAX passing this value
+        $.ajax({
+            type: "POST",
+            url: "/Queue/ProcessSelectedService",
+            data: { selectedServicePoint: selectedServicePoint },
+            success: function (response) {
+                // Handle success response if needed
+                console.log("Process selected service success:", response);
+            },
+            error: function (xhr, status, error) {
+                // Handle error if needed
+                console.error("Process selected service error:", error);
+            }
+        });
+    }
+
 
 </script>

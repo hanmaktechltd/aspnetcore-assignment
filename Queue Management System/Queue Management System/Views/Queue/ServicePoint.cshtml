@@ -5,7 +5,6 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Queue Management System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Queue_Management_System.styles.css" asp-append-version="true" />
@@ -125,8 +124,44 @@
     </div>
 
     <div id="queueEntriesContainer">
-        <!-- Partial view content for queue entries will be loaded here -->
+        <h1>Queue</h1>
+     
     </div>
+
+
+    <!-- Add this code within your existing HTML -->
+    <div class="modal fade" id="transferDialog" tabindex="-1" role="dialog" aria-labelledby="transferDialogLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="transferDialogLabel">Transfer Ticket</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="transferForm">
+                        <div class="form-group">
+                            <label for="servicePointDropdown">Select Service Point</label>
+                            <select class="form-control" id="servicePointDropdown" name="servicePoint">
+                                <!-- Populate this dropdown with options dynamically -->
+                                <!-- Example: -->
+                                <option value="servicePoint1">Service Point 1</option>
+                                <option value="servicePoint2">Service Point 2</option>
+                                <!-- Add more options based on your service points -->
+                            </select>
+                        </div>
+                        <input type="hidden" id="ticketNumber" name="ticketNumber" value="@Model?.TicketNumber" />
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitTransferForm()">Transfer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script>
        
@@ -172,10 +207,49 @@
         function transferNumber() {
             $.ajax({
                 type: "GET",
-                url: "/Queue/GetServiceProviders", // Endpoint to fetch the partial view
+                url: "/Queue/GetServiceProviders",
                 success: function (data) {
                     // Update the container with the received partial view
                     $('#ticketDetailsContainer').html(data);
+
+                    // Populate the dropdown with service providers
+                    populateServicePointDropdown(data);
+
+                    // Show the transfer dialog
+                    $('#transferDialog').modal('show');
+                },
+                error: function () {
+                    // Handle error if needed
+                }
+            });
+        }
+
+        function populateServicePointDropdown(data) {
+            var dropdown = $('#servicePointDropdown');
+            dropdown.empty(); // Clear existing options
+
+            if (data && data.length > 0) {
+                $.each(data, function (index, item) {
+                    dropdown.append($('<option></option>').attr('value', item.ServiceTypeId).text(item.ServicePoint));
+                });
+            } else {
+                dropdown.append($('<option></option>').text('No service providers found'));
+            }
+        }
+
+
+        // JavaScript code
+        function submitTransferForm() {
+            var formData = $('#transferForm').serialize(); // Serialize form data
+
+            $.ajax({
+                type: "POST",
+                url: "/Queue/TransferTicketToService",
+                data: formData,
+                success: function (data) {
+                    // Handle success, e.g., close the modal
+                    $('#transferDialog').modal('hide');
+                    // Perform any other actions upon successful transfer
                 },
                 error: function () {
                     // Handle error if needed

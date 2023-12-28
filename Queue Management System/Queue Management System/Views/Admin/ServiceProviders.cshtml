@@ -1,0 +1,145 @@
+﻿@model IEnumerable<Queue_Management_System.Models.ServiceProviderModel>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Service Providers</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Queue_Management_System.styles.css" asp-append-version="true" />
+    <style>
+        /* Table and Form Container */
+        .container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* Table Styling */
+        table {
+            width: calc(40% - 20px);
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        /* Alternate row background color */
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Form Styling */
+        .side-form {
+            width: calc(60% - 20px);
+            margin-right: 20px;
+        }
+
+            /* Sample Form Styles (Modify as per your requirements) */
+            .side-form form {
+                background-color: #f2f2f2;
+                padding: 20px;
+                border-radius: 5px;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .side-form label,
+            .side-form input {
+                width: calc(50% - 10px);
+                margin-bottom: 10px;
+            }
+
+                .side-form input[type="submit"] {
+                    width: 100%;
+                    padding: 10px 16px;
+                    background-color: #4caf50;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 bg-light">
+                <ul class="nav flex-column">
+                    <div class="side-form" style="width: 100%; height: auto;">
+                        @Html.Partial("_addServiceProvider", new ServiceProviderModel())
+                    </div>
+                </ul>
+            </div>
+
+
+            <main class="col-lg-10">
+                <section class="table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <!-- Table Headers -->
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Password Hash</th>
+                                <th>Registration Date</th>
+                                <th>Service Point</th>
+                                <th>Service Type ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Iterate through Service Providers -->
+                            @if (Model != null)
+                            {
+                                @foreach (var serviceProvider in Model)
+                                {
+                                    <tr>
+                                        <!-- Display Service Provider Details -->
+                                        <td>@serviceProvider.Id</td>
+                                        <td>@serviceProvider.Username</td>
+                                        <td>@serviceProvider.Email</td>
+                                        <td>@serviceProvider.Phone</td>
+                                        <td>@serviceProvider.PasswordHash</td>
+                                        <td>@serviceProvider.RegistrationDate.ToShortDateString()</td>
+                                        <td>@serviceProvider.ServicePoint</td>
+                                        <td>@serviceProvider.ServiceTypeId</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <!-- Display No Data Message -->
+                                <tr>
+                                    <td colspan="8">No data available</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </section>
+            </main>
+
+        </div>
+    </div>
+
+    
+
+    <!-- JavaScript for Form Submission -->
+    
+</body>
+</html>

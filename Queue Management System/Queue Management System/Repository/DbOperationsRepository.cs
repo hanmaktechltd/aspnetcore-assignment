@@ -168,7 +168,7 @@ namespace Queue_Management_System.Repository
             return serviceProvider;
         }
 
-        public async Task<QueueEntry> GetLatestQueueEntryAsync(int servicepointid)
+        public async Task<QueueEntry> GetLatestQueueEntryAsync(string servicepoint)
         {
             QueueEntry latestEntry = null;
 
@@ -178,7 +178,7 @@ namespace Queue_Management_System.Repository
                 await connection.OpenAsync();
 
                 var query = "SELECT id, ticketnumber, servicepoint, customername, checkintime" +
-                    " FROM public.queueentry WHERE servicepointid="+ servicepointid + " AND recallcount <3 AND noshow = 0 " +
+                    " FROM public.queueentry WHERE servicepoint= '" + servicepoint + "' AND recallcount <3 AND noshow = 0 " +
                     "and markfinished = 0 ORDER BY id ASC LIMIT 1";
 
                 using var cmd = new NpgsqlCommand(query, connection);
@@ -341,7 +341,7 @@ namespace Queue_Management_System.Repository
             return 0; // Default value if recall count retrieval fails
         }
 
-        public async Task<List<QueueEntry>> GetQueueEntriesByCriteria(int servicePointId)
+        public async Task<List<QueueEntry>> GetQueueEntriesByCriteria(string servicePointId)
         {
             var queueEntries = new List<QueueEntry>();
 
@@ -350,10 +350,8 @@ namespace Queue_Management_System.Repository
                 using var connection = _connectionFactory.CreateConnection();
                 await connection.OpenAsync();
 
-                var query = "SELECT id, ticketnumber, servicepoint, customername, checkintime " +
-                            "FROM public.queueentry " +
-                            $"WHERE servicepointid = {servicePointId} AND recallcount < 3 AND noshow = 0 AND markfinished = 0 " +
-                            "ORDER BY id ASC";
+                var query = "SELECT id, ticketnumber, servicepoint, customername, checkintime, servicepointid" +
+                   $"FROM public.queueentry WHERE servicepoint={servicePointId}";
 
                 using var cmd = new NpgsqlCommand(query, connection);
                 using var reader = await cmd.ExecuteReaderAsync();
@@ -585,6 +583,220 @@ namespace Queue_Management_System.Repository
                 return false;
             }
         }
+        public async Task<bool> IsUserAuthorizedAsync(LoginViewModel admin)
+        {
+            try
+            {
+                using var connection = _connectionFactory.CreateConnection();
+                await connection.OpenAsync();
+                var query = "SELECT adminid, username, password, email, phonenumber, createdat " +
+                            "FROM public.admins " +
+                            "WHERE (Username = @UsernameOrEmail OR Email = @UsernameOrEmail) " +
+                            "AND password = @Password";
+                using var command = new NpgsqlCommand(query, connection);
+                command.Parameters.AddWithValue("@username", admin.UsernameOrEmail);
+                command.Parameters.AddWithValue("@password", admin.Password);
+
+                var result = await command.ExecuteScalarAsync();
+                return result != null && Convert.ToInt32(result) > 0;
+            }
+            catch (Exception ex)
+            {
+                // Handle or log the exception
+                Console.WriteLine($"Error checking user authorization: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<List<QueueEntry>> GetQueueEntriesWithNoShowAsync()
+        {
+            var queueEntriesWithNoShow = new List<QueueEntry>();
+
+            try
+            {
+                using var connection = _connectionFactory.CreateConnection();
+                await connection.OpenAsync();
+
+                var query = "SELECT id, ticketnumber, servicepoint, customername, checkintime " +
+                            "FROM public.queueentry WHERE noshow = 1";
+
+                using var cmd = new NpgsqlCommand(query, connection);
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    var queueEntry = new QueueEntry
+                    {
+                        Id = reader.GetInt32(0),
+                        TicketNumber = reader.GetString(1),
+                        ServicePoint = reader.GetString(2),
+                        CustomerName = reader.GetString(3),
+                        CheckinTime = reader.GetDateTime(4),
+                    };
+
+                    queueEntriesWithNoShow.Add(queueEntry);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle or log the exception
+                Console.WriteLine($"Error fetching queue entries with no show: {ex.Message}");
+            }
+
+            return queueEntriesWithNoShow;
+        }
+
+        public List<ServiceProviderModel> GetServiceProviders()
+        {
+            var serviceProviders = new List<ServiceProviderModel>();
+
+            try
+            {
+                using var connection = _connectionFactory.CreateConnection();
+                connection.Open();
+
+                var query = "SELECT id, username, email, phone, passwordhash, registrationdate, servicepoint, servicetypeid FROM public.serviceproviders";
+
+                using var cmd = new NpgsqlCommand(query, connection);
+                using var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var serviceProvider = new ServiceProviderModel
+                    {
+                        Id = reader.GetInt32(0),
+                        Username = reader.GetString(1),
+                        Email = reader.GetString(2),
+                        Phone = reader.GetString(3),
+                        PasswordHash = reader.GetString(4),
+                        RegistrationDate = reader.GetDateTime(5),
+                        ServicePoint = reader.GetString(6),
+                        ServiceTypeId = reader.GetInt32(7)
+                    };
+
+                    serviceProviders.Add(serviceProvider);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle or log the exception
+                Console.WriteLine($"Error fetching service providers: {ex.Message}");
+            }
+
+            return serviceProviders;
+        }
+
+
+        public async Task<int> GetCustomersServedCountAsync(DateTime date)
+        {
+            int customersServedCount = 0;
+
+            try
+            {
+                using var connection = _connectionFactory.CreateConnection();
+                await connection.OpenAsync();
+
+                var query = "SELECT COUNT(*) FROM public.finishedtable WHERE DATE(markedtime) = @date";
+
+                using var cmd = new NpgsqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("date", date.Date);
+
+                object result = await cmd.ExecuteScalarAsync();
+
+                if (result != null && result != DBNull.Value)
+                {
+                    customersServedCount = Convert.ToInt32(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exception or log the error
+                Console.WriteLine($"Error fetching customers served count: {ex.Message}");
+            }
+
+            return customersServedCount;
+        }
+
+        public async Task<List<AverageServiceTimePerServicePoint>> GetAverageServiceTimePerServicePointAsync()
+        {
+            var result = new List<AverageServiceTimePerServicePoint>();
+
+            try
+            {
+                using var connection = _connectionFactory.CreateConnection();
+                await connection.OpenAsync();
+
+                var query = @"
+            SELECT 
+                Q.servicepointid,
+                AVG(EXTRACT(EPOCH FROM (F.markedtime - Q.checkintime))) AS average_seconds
+            FROM 
+                public.finishedtable AS F
+            INNER JOIN 
+                public.queueentry AS Q ON F.ticketnumber = Q.ticketnumber
+            GROUP BY 
+                Q.servicepointid;
+        ";
+
+                using var cmd = new NpgsqlCommand(query, connection);
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    int servicePointId = reader.GetInt32(0);
+                    double averageSeconds = reader.GetDouble(1); // Retrieve the average seconds
+
+                    var averageServiceTimePerServicePoint = new AverageServiceTimePerServicePoint
+                    {
+                        ServicePointId = servicePointId,
+                        AverageServiceTime = TimeSpan.FromSeconds(averageSeconds) // Convert seconds to TimeSpan
+                    };
+
+                    result.Add(averageServiceTimePerServicePoint);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exception or log the error
+                Console.WriteLine($"Error fetching average service time: {ex.Message}");
+            }
+
+            return result;
+        }
+
+        public async Task<string> GetServiceTypeNameByIdAsync(int id)
+        {
+            string serviceName = null;
+
+            try
+            {
+                using var connection = _connectionFactory.CreateConnection();
+                await connection.OpenAsync();
+
+                var query = "SELECT name FROM public.servicetypes WHERE id = @Id";
+
+                using var cmd = new NpgsqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    serviceName = reader.GetString(0);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle or log the exception
+                Console.WriteLine($"Error fetching service type name by ID: {ex.Message}");
+            }
+
+            return serviceName;
+        }
+
+
+
+
 
 
     }

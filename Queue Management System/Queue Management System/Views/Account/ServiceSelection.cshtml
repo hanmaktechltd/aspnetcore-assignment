@@ -18,13 +18,14 @@
     <form id="serviceForm" method="post" action="/Account/SelectService">
         <div class="container">
             <main role="main" class="pb-3">
-                <input type="hidden" id="selectedServiceId" name="selectedServiceId" value="" />
+                <input type="hidden" id="selectedService" name="selectedService" value="" />
                 <h1>Select Your Service Point</h1>
                 <div class="row">
                     @foreach (var service in Model)
                     {
                         <div class="col-md-4 mb-3">
-                            <button type="button" class="btn btn-primary btn-lg btn-block service-button" data-service-id="@service.Id">@service.Name</button>
+                            <!-- Use data-service attribute to hold the service name -->
+                            <button type="button" class="btn btn-primary btn-lg btn-block service-button" data-service="@service.Name">@service.Name</button>
                         </div>
                     }
                 </div>
@@ -36,9 +37,9 @@
     <script>
         $(document).ready(function () {
             $('.service-button').click(function () {
-                var selectedServiceId = $(this).data('service-id');
-                $('#selectedServiceId').val(selectedServiceId);
-                $('#serviceForm').submit(); // Submit the form when a service is selected
+                var selectedServiceId = $(this).data('service');
+                $('#selectedService').val(selectedServiceId);
+                $('#serviceForm').submit(); 
             });
         });
     </script>

@@ -17,6 +17,7 @@ namespace Queue_Management_System.Controllers
         {
             //return View("/Views/");
             // return View("./Views/Home/Index.cshtml");
+            string key = GenerateSecretKey();
             return View("~/Views/Home/Index.cshtml");
 
 
@@ -31,6 +32,18 @@ namespace Queue_Management_System.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private string GenerateSecretKey()
+        {
+            byte[] bytes = new byte[32]; // Adjust the byte length as needed for your key
+            using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(bytes);
+            }
+            string secretKey = Convert.ToBase64String(bytes);
+
+            return secretKey; // Return the generated secret key
         }
     }
 }

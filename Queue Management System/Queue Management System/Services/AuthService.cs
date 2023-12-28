@@ -1,4 +1,6 @@
-﻿using Queue_Management_System.Models;
+﻿using Npgsql;
+using Queue_Management_System.Models;
+using Queue_Management_System.Repository;
 using Queue_Management_System.ServiceInterface;
 
 namespace Queue_Management_System.Services
@@ -7,22 +9,17 @@ namespace Queue_Management_System.Services
     {
         private readonly IServiceProviderRepository _userRepository;
 
-        public AuthService(IServiceProviderRepository userRepository)
+        private readonly DbOperationsRepository _dbOperationsRepository;
+
+        public AuthService(DbOperationsRepository dbOperationsRepository)
         {
-            _userRepository = userRepository;
+            _dbOperationsRepository = dbOperationsRepository;
         }
 
-        public async Task<ServiceProviderModel> AuthenticateAsync(string username, string password)
+        public async Task<bool> IsUserAuthorizedAsync(LoginViewModel admin)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(username, password);
 
-            // Implement password verification logic here using user.PasswordHash
-            if (user != null)
-            {
-                return user;
-            }
-
-            return null;
+            return await _dbOperationsRepository.IsUserAuthorizedAsync(admin);
         }
 
     }

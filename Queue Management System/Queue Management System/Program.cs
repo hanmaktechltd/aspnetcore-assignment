@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-using Queue_Management_System.Models;
 using Queue_Management_System.Repository;
 using Queue_Management_System.ServiceInterface;
 using Queue_Management_System.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,13 +14,30 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
-builder.Services.AddAuthentication();
-builder.Services.AddAuthentication(options=> {
+
+builder.Services.AddSingleton<JwtAuthenticationService>(_ =>
+    new JwtAuthenticationService(builder.Configuration, "Admin"));
+
+// Add authentication services
+builder.Services.AddAuthentication(options =>
+{
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme= CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme= CookieAuthenticationDefaults.AuthenticationScheme;
-    }
-).AddCookie("ServiceUser");
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+}).AddCookie("ServiceUser")
+  .AddJwtBearer(options =>
+  {
+      options.TokenValidationParameters = new TokenValidationParameters
+      {
+          ValidateIssuer = true,
+          ValidateAudience = false,
+          ValidateLifetime = true,
+          ValidateIssuerSigningKey = true,
+          ValidIssuer = "Admin",
+          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("NVRBpevqncT8sw8gZMysnaRJ3Ww/ha6c9evS3TzcQBU="))
+      };
+  });
+
 
 // Configuration for PostgreSQL Connection String
 var connectionString = builder.Configuration.GetConnectionString("MyPostgresConnection");
@@ -30,13 +48,15 @@ builder.Services.AddScoped(provider => new NpgsqlConnectionFactory(connectionStr
 // Register DbOperationsRepository
 builder.Services.AddScoped<DbOperationsRepository>();
 
-// Register TicketService
+// Register other services
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IServiceProviderRepository, ServiceProviderRepository>();
 builder.Services.AddScoped<IServicePointOperations, ServicePointOperations>();
 
-
+// Register JwtAuthenticationService
+builder.Services.AddSingleton<JwtAuthenticationService>(_ =>
+    new JwtAuthenticationService(builder.Configuration, "Admin"));
 
 var app = builder.Build();
 
@@ -44,16 +64,25 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+    endpoints.MapRazorPages();
+});
 
 app.MapControllerRoute(
     name: "default",

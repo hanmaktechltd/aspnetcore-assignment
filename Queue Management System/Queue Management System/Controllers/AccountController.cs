@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Queue_Management_System.Models;
 using Queue_Management_System.Repository;
 using Queue_Management_System.ServiceInterface;
+using Queue_Management_System.Services;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Queue_Management_System.Controllers
@@ -12,9 +14,12 @@ namespace Queue_Management_System.Controllers
         private readonly ITicketService _ticketService;
         private readonly DbOperationsRepository _dbOperationsRepository;
         private static ServiceProviderModel loggedInUser;
+        private readonly string issuer = "Admin";
+        private readonly IConfiguration _configuration;
 
-        public AccountController(ITicketService ticketService, DbOperationsRepository dbOperationsRepository)
+        public AccountController(IConfiguration configuration, ITicketService ticketService, DbOperationsRepository dbOperationsRepository)
         {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration)); // Assign configuration to _configuration
             _ticketService = ticketService;
             _dbOperationsRepository = dbOperationsRepository;
         }
@@ -34,22 +39,29 @@ namespace Queue_Management_System.Controllers
                 var user = await _dbOperationsRepository.LoginAsync(model.UsernameOrEmail, model.Password);
                 if (user != null)
                 {
-
-                    // Authentication successful, store user data
-                    loggedInUser = user;
+                    //loggedInUser = user;
+                    UserUtility.SetLoggedInUser(user.ServicePoint);
 
                     return RedirectToAction("ServiceSelection");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt");
-                    return View(model);
+                    var authenticationService = new JwtAuthenticationService(_configuration, issuer);
+                    var token = authenticationService.GenerateToken(model);
+
+                    if (authenticationService.ValidateToken(token))
+                    {
+                        return RedirectToAction("Dashboard", "Admin");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Invalid login attempt");
+                        return View(model);
+                    }
                 }
             }
-
             return View(model);
         }
-
 
 
         [HttpGet]
@@ -75,12 +87,11 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SelectService(int selectedServiceId)
+        public async Task<IActionResult> SelectService(string selectedService)
         {
-
-            if (loggedInUser != null)
-            {
-                if (loggedInUser.ServiceTypeId == selectedServiceId)
+            string servicePoint = UserUtility.GetCurrentLoggedInUser();
+            
+                if (servicePoint == selectedService)
                 {
                     // Perform actions when the service types match
                     return RedirectToAction("ServicePoint", "Queue");
@@ -88,29 +99,26 @@ namespace Queue_Management_System.Controllers
                 }
                 else
                 {
-                    // Perform actions when the service types do not match
-                    // Redirect to an error page or perform different logic
-                    return RedirectToAction("ServiceSelection");
-                }
+                // Perform actions when the service types do not match
+                // Redirect to an error page or perform different logic
+                return RedirectToAction("Login", "Account");
             }
-            else
-            {
-                // Handle case where login fails or serviceProvider is null
-                return RedirectToAction("Login", "Account"); // Redirect to login page or handle appropriately
-            }
+            
+           
         }
-        public IActionResult GetLoggedInUser()
+
+     /*   public static IActionResult GetLoggedInUser()
         {
             // Use 'loggedInUser' as needed, such as displaying user information
             if (loggedInUser != null)
             {
-                // Return the user data or perform actions with loggedInUser
                 return Json(loggedInUser);
             }
             else
             {
                 return Json("No user logged in");
             }
-        }
+        }*/
+       
     }
 }

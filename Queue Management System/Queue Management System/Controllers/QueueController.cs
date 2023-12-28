@@ -61,7 +61,8 @@ namespace Queue_Management_System.Controllers
         [HttpGet]
         public async Task<IActionResult> ServicePoint()
         {
-            var queueEntry = await _dbOperationsRepository.GetLatestQueueEntryAsync(2);
+            string servicePointName = UserUtility.GetCurrentLoggedInUser();
+            var queueEntry = await _dbOperationsRepository.GetLatestQueueEntryAsync(servicePointName);
 
             if (queueEntry == null)
             {
@@ -73,59 +74,55 @@ namespace Queue_Management_System.Controllers
             return View(queue);
         }
 
-        [HttpPost]
         public async Task<IActionResult> ProcessSelection(int selectedServiceId, string customerName)
         {
-            if (string.IsNullOrEmpty(customerName))
+            try
             {
+                if (string.IsNullOrEmpty(customerName))
+                {
+                    var errorViewModel = new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier };
+                    return View("Error", errorViewModel);
+                }
+                string serviceName=await _dbOperationsRepository.GetServiceTypeNameByIdAsync(selectedServiceId)
+;                ServiceTypeModel selectedService = _ticketService.GetServiceDetails(selectedServiceId);
+
+                var queueEntry =  new QueueEntry
+                {
+                    TicketNumber = GenerateRandomTicketNumber(selectedService.Name),
+                    ServicePoint = serviceName,
+                    CustomerName = customerName,
+                    CheckinTime = DateTime.Now
+                };
+
+                bool saved = await SaveQueueEntry(customerName, selectedServiceId, serviceName);
+                if (!saved)
+                {
+                    return StatusCode(500); // Return 500 - Internal Server Error
+                }
+
+                return RedirectToAction("WaitingPage");
+            }
+            catch (Exception ex)
+            { 
+
                 var errorViewModel = new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier };
                 return View("Error", errorViewModel);
             }
-
-            ServiceTypeModel selectedService = _ticketService.GetServiceDetails(selectedServiceId); // Get service details
-
-            // Create a QueueEntry object with the selected service and customer details
-            var queueEntry = CreateQueueEntry(selectedService, customerName);
-
-            // Save the queue entry to the database
-            bool saved = await SaveQueueEntry(queueEntry, selectedServiceId);
-            if (!saved)
-            {
-                // Handle error if the queue entry couldn't be saved
-                // Optionally, display an error message or take corrective actions
-            }
-
-            // Generate ticket and perform other necessary actions
-            // byte[] ticketBytes = _ticketService.GenerateTicket(selectedService); // Generate ticket
-            // string ticketFilePath = _ticketService.SaveTicketToFile(ticketBytes); // Save ticket to file
-
-            // Redirect to waiting page or another action with necessary data
-            // return RedirectToAction("Waiting", new { serviceId = selectedServiceId, ticketPath = ticketFilePath });
-            return RedirectToAction("WaitingPage", new { serviceId = selectedServiceId });
         }
 
-        private QueueEntry CreateQueueEntry(ServiceTypeModel selectedService, string customerName)
-        {
-            return new QueueEntry
-            {
-                TicketNumber = GenerateRandomTicketNumber(selectedService.Name), // Generate a random ticket number
-                ServicePoint = selectedService.Name, // Use service name as the service point or adjust as needed
-                CustomerName = customerName,
-                CheckinTime = DateTime.Now // Timestamp for check-in time
-            };
-        }
 
-        private async Task<bool> SaveQueueEntry(QueueEntry queueEntry, int seerviceId)
+        
+
+        private async Task<bool> SaveQueueEntry(string CustomerName, int seerviceId, string serviceName)
         {
-            return await _ticketService.CheckInAsync(queueEntry.TicketNumber, queueEntry.ServicePoint, queueEntry.CustomerName, seerviceId);
+            return await _ticketService.CheckInAsync(GenerateRandomTicketNumber(serviceName), serviceName, CustomerName, seerviceId);
         }
 
         public string GenerateRandomTicketNumber(string serviceName)
         {
             Random random = new Random();
-            int randomNumber = random.Next(1, 999); // Generate a random 4-digit number
+            int randomNumber = random.Next(1, 999); 
 
-            // Construct a ticket number using service details and the random number
             string ticketNumber = $"{serviceName.Substring(0, 3)}-{randomNumber}";
 
             return ticketNumber;
@@ -139,7 +136,9 @@ namespace Queue_Management_System.Controllers
 
             if (success)
             {
-                var newTicket = await _dbOperationsRepository.GetLatestQueueEntryAsync(1);
+                string servicePointName = UserUtility.GetCurrentLoggedInUser();
+
+                var newTicket = await _dbOperationsRepository.GetLatestQueueEntryAsync(servicePointName);
 
                 if (newTicket != null)
                 {
@@ -166,7 +165,9 @@ namespace Queue_Management_System.Controllers
                         bool noShow = await _servicePointOperations.MarkAsNoShow(ticketNumber);
                        if (noShow)
                         {
-                            var newTicket = await _dbOperationsRepository.GetLatestQueueEntryAsync(1);
+                            string servicePointName = UserUtility.GetCurrentLoggedInUser();
+
+                            var newTicket = await _dbOperationsRepository.GetLatestQueueEntryAsync(servicePointName);
 
                             if (newTicket != null)
                             {
@@ -224,20 +225,22 @@ namespace Queue_Management_System.Controllers
 
             return null; // Return null if the user is not authenticated or if claims are not as expected
         }
-
         [HttpGet]
-        public async Task<ActionResult<List<QueueEntry>>> GetQueueEntries(int servicePointId)
+        public async Task<IActionResult> GetQueueEntries(string servicePoint)
         {
             try
             {
-                var queueEntries = await _dbOperationsRepository.GetQueueEntriesByCriteria(1);
+                string servicePointName = UserUtility.GetCurrentLoggedInUser();
+
+                var queueEntries = await _dbOperationsRepository.GetQueueEntriesByCriteria(servicePointName);
 
                 if (queueEntries == null || queueEntries.Count == 0)
                 {
                     return NotFound("No queue entries found for the specified criteria.");
                 }
-
-                return PartialView("_ViewQueue", queueEntries);
+                List<QueueEntry> queue = queueEntries;
+                // return PartialView("_ViewQueue", queue); // Ensure queueEntries is a list
+                return null;
             }
             catch (Exception ex)
             {
@@ -245,6 +248,9 @@ namespace Queue_Management_System.Controllers
                 return StatusCode(500, "An error occurred while fetching queue entries.");
             }
         }
+
+
+
 
         [HttpGet]
         public async Task<ActionResult<List<(string ServicePoint, int ServiceTypeId)>>> GetServiceProviders()
