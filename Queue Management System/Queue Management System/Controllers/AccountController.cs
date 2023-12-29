@@ -16,12 +16,12 @@ namespace Queue_Management_System.Controllers
             _config = config;
         }
 
-        public IActionResult Login(string ReturnUrl ="")
+        public IActionResult Login(string ReturnUrl = "/")
         {
             LoginM loginModel = new LoginM();
 
             loginModel.ReturnUrl = ReturnUrl;
-            return View();
+            return View(loginModel);
         }
 
         [HttpPost]

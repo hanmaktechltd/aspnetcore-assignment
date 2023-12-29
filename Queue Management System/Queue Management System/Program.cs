@@ -37,6 +37,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Queue}/{action=CheckinPage}/{id?}");
+    pattern: "{controller=Queue}/{action=ServicePoint}/{id?}");
 
 app.Run();
