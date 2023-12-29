@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="12/28/2023 09:57:23" ReportInfo.Modified="12/28/2023 12:25:56" ReportInfo.CreatorVersion="2024.1.0.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="Customer" ReferenceName="CustomerRef" DataType="System.Int32" Enabled="true">
+      <Column Name="QueueNumber" DataType="System.String"/>
+      <Column Name="ServicePointName" DataType="System.String"/>
+      <Column Name="ServedBy" DataType="System.String"/>
+    </BusinessObjectDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="56.7">
+      <TextObject Name="Text1" Left="226.8" Top="18.9" Width="179.55" Height="18.9" Text="CUSTOMER TICKET INFO" Font="Arial, 10pt"/>
+      <TextObject Name="Text8" Left="548.1" Top="18.9" Width="94.5" Height="18.9" Text="[Date]" Font="Arial, 10pt"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="60.7" Width="718.2" Height="28.35">
+      <TextObject Name="Text3" Left="28.35" Width="103.95" Height="18.9" Text="QueueNumber" Font="Arial, 10pt"/>
+      <TextObject Name="Text5" Left="226.8" Width="94.5" Height="18.9" Text="ServicePointName" Font="Arial, 10pt"/>
+      <TextObject Name="Text7" Left="472.5" Width="94.5" Height="18.9" Text="ServedBy" Font="Arial, 10pt"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="93.05" Width="718.2" Height="75.6" DataSource="Customer">
+      <TextObject Name="Text2" Left="28.35" Top="9.45" Width="94.5" Height="18.9" Text="[Customer.QueueNumber]" Font="Arial, 10pt"/>
+      <TextObject Name="Text4" Left="226.8" Top="9.45" Width="94.5" Height="18.9" Text="[Customer.ServicePointName]" Font="Arial, 10pt"/>
+      <TextObject Name="Text6" Left="472.5" Top="9.45" Width="94.5" Height="18.9" Text="[Customer.ServedBy]" Font="Arial, 10pt"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="172.65" Width="718.2" Height="18.9"/>
+  </ReportPage>
+</Report>

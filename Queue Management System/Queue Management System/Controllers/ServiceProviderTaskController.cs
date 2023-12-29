@@ -53,11 +53,22 @@ public class ServiceProviderTaskController : Controller
     {
         if (customer.ServicePointId.HasValue)
         {
+            // Update the customer's service point
             UpdateCustomerServicePoint(customer.Id, customer.ServicePointId.Value);
+
+            // Check if the update was successful
+            var updatedCustomer = GetCustomerById(customer.Id);
+            if (updatedCustomer != null && updatedCustomer.ServicePointId == customer.ServicePointId)
+            {
+                // Redirect to the view page for the updated customer
+                return RedirectToAction("ViewLatestCustomerQueueInfo", new { customerId = customer.Id });
+            }
         }
 
+        // If update was not successful or service point ID is not provided, redirect to the next customer
         return RedirectToAction("GetNextCustomerOnQueue");
     }
+
 
 
     [HttpGet]

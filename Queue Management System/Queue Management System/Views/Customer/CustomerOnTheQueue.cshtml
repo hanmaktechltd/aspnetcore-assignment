@@ -4,10 +4,21 @@
     ViewBag.Title = "CustomerOnTheQueue";
 }
 
-<h2>Customer - Queue Management</h2>
+<div class="container text-center my-5">
+    <h1 class="display-3 fw-bold text-one ">Customer - Queue Management</h1>
 
-<p>You have been added to the queue!</p>
+    <h3>You have been added to the queue!</h3>
 
-<p>Wait a little bit to be given a Service Point!</p>
+    <h3>Wait a little bit to be given a Service Point</h3>
 
-<p><a asp-action="ViewTicketInfo" asp-route-customerId="@Model.Id">View Ticket Info</a></p>
+    <div>
+        <p><a asp-action="ViewTicketInfo" asp-route-customerId="@Model.Id" class="btn btn-lg btn-custom-pink mt-3">View Ticket Info</a></p>
+    </div>
+
+    <div>
+        <a href="@Url.Action("GenerateCustomerQueueTicket", "Report")" class="btn btn-lg btn-custom-pink mt-3">Print Your Ticket </a>
+    </div>
+
+</div>
+
+ @*<a href="@Url.Action("ViewTicketInfo", "Customer")" >View Your Ticket Info</a>*@

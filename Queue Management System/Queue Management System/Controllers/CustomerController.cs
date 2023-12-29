@@ -20,6 +20,12 @@ public class CustomerController : Controller
     }
 
     [HttpGet]
+    public IActionResult CheckinPage()
+    {
+        return View();
+    }
+
+    [HttpGet]
     public IActionResult CustomerOnTheQueue()
     {
         // Add a new customer to the queue with a default service point
