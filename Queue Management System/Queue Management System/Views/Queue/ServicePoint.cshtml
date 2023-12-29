@@ -1,56 +1,28 @@
-@* 
-@{
-    ViewData["Title"] = "Service Point";
-}
 
-<h2>Service Point</h2>
+@model CheckinViewModel
 
-<form asp-controller="Account" asp-action="Logout" method="post">
-    <button type="submit">Logout</button>
-</form> *@
+<h1>All Service Points</h1>
 
-@{
-    ViewData["Title"] = "Service Point Dashboard";
-}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Service Point Name</th>
+            <th>Service Point About</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var servicePoint in Model.ServicePoints)
+        {
+            <tr>
+                <td>@servicePoint.ServicePointName</td>
+                <td>@Html.DisplayFor(modelItem => servicePoint.Description)</td>
+                <td>
+                    <a asp-action="ServicePointDetails" asp-controller="Queue" asp-route-id="@servicePoint.ServicePointId">Open</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
-<h4>Service Point Dashboard</h4>
 
-<hr>
-
-<div>
-    <p>Queue Information</p>
-    <!-- Display relevant queue information, such as current number, waiting time, etc. -->
-</div>
-
-<hr>
-
-<div>
-    <p>Queue Actions</p>
-    <!-- Buttons or forms for various queue actions -->
-    <form asp-controller="Queue" asp-action="GetNextNumber" method="post">
-        <button type="submit">Get Next Number</button>
-    </form>
-
-    <!-- Other actions... -->
-</div>
-
-<hr>
-
-<div>
-    <p>Queue Status</p>
-    <!-- Display status of the queue, such as currently serving number, etc. -->
-</div>
-
-<hr>
-
-<div>
-    <p>Service Point Information</p>
-    <!-- Display information about the authenticated service point -->
-</div>
-
-<hr>
-
-<div>
-    <h3>View Queue</h3>
-    <a asp-controller="Queue" asp-action="ViewQueue">View Queue</a>
-</div>

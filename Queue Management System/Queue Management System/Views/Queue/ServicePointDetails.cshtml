@@ -1,0 +1,96 @@
+@model ServicePointViewModel
+
+@{
+    ViewData["Title"] = "Service Point Dashboard";
+}
+
+
+<div>
+    <h3>Current Ticket</h3>
+    <div class="current-ticket">
+        <label for="ticketNumber">Ticket Number:</label>
+        <p class="ticket-number">@Model.CurrentTicketNumber</p>
+
+        <label for="issueTime">Issue Time:</label>
+        <p class="issue-time">@Model.CurrentTicketIssueTime.ToString("yyyy-MM-dd HH:mm:ss")</p>
+    </div>
+</div>
+
+<div class="queue-actions">
+     <form asp-controller="Queue" asp-action="ServicePointDetails" method="post" asp-action="ServicePointById" asp-controller="Queue">
+            <input type="hidden" name="direction" value="prev" />
+             <input type="hidden" name="id" value="@Model.CurrentServicePointId" />
+            <input type="hidden" name="CurrentTicketIndex" value="@Model.CurrentTicketIndex" />
+            <button type="submit"
+              @{ if (Model.CurrentTicketIndex <= 0) { <text>disabled</text>; } }>Prev</button>
+        </form>
+
+        <form asp-controller="Queue" asp-action="ServicePointDetails" method="post">
+            <input type="hidden" name="direction" value="next" />
+            <input type="hidden" name="id" value="@Model.CurrentServicePointId" />
+            <input type="hidden" name="CurrentTicketIndex" value="@Model.CurrentTicketIndex" />
+            <button type="submit"
+             @{ if (Model.CurrentTicketIndex >= Model.TicketCount - 1) { <text>disabled</text>; } }>Next</button>
+        </form>
+
+    <button type="button" id="toggleAllTickets">Show All Tickets</button>
+</div>
+
+
+<div id="allTicketsTable" style="display:none;">
+    <h2>All Tickets</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ticket Number</th>
+                <th>Issue Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model.AllTickets)
+            {
+                <tr>
+                    <td>@ticket.TicketId</td>
+                    <td>@ticket.IssueTime</td>
+                    <td>@ticket.Status</td>
+                    <td>
+                        <form asp-action="MarkFinished" asp-controller="Queue" method="post">
+                        <input type="hidden" name="ticketId" value="@ticket.TicketId" />
+                          <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId"/>
+                        <button type="submit" class="btn btn-primary">Mark as Finished</button>
+                    </form>
+
+                    <form asp-action="MarkNoShow" asp-controller="Queue" method="post">
+                        <input type="hidden" name="ticketId" value="@ticket.TicketId" />
+                        <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId"/>
+                        <button type="submit" class="btn btn-warning">Mark as No Show</button>
+                    </form>
+
+                    <form asp-action="TransferTicket" asp-controller="Queue" method="post">
+                        <input type="hidden" name="ticketId" value="@ticket.TicketId" />
+                          <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId"/>
+                        <button type="submit" class="btn btn-info">Transfer</button>
+                    </form>
+
+                    <form asp-action="RecallTicket" asp-controller="Queue" method="post">
+                        <input type="hidden" name="ticketId" value="@ticket.TicketId" />
+                          <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId"/>
+                        <button type="submit" class="btn btn-danger">Recall</button>
+                    </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('toggleAllTickets').addEventListener('click', function () {
+            var allTicketsTable = document.getElementById('allTicketsTable');
+            allTicketsTable.style.display = allTicketsTable.style.display === 'none' ? 'block' : 'none';
+        });
+    </script>
+}

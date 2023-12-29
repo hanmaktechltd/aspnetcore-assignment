@@ -9,11 +9,13 @@ public class ServiceProvider {
    public int Id { get; set; }
     public string Username { get; set; }
     public string PasswordHash { get; set; }
-    public int ServicePointId { get; set; }
     
      public string Role { get; set; }
 
-    public virtual ServicePoint AssociatedServicePoint { get; set; }
+    //public virtual ServicePoint AssociatedServicePoint { get; set; }
+
+     public int ServicePointId { get; set; }
+     public ServicePoint ServicePoint { get; set; }
 
 
      private string GenerateRandomPassword()

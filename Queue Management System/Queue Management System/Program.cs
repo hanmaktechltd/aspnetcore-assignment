@@ -24,6 +24,8 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
+builder.Services.AddScoped<IServicePointService, ServicePointService>();
+
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 

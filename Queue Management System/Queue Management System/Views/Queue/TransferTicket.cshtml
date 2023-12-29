@@ -1,0 +1,17 @@
+@model TransferTicketViewModel
+
+<h1>Transfer Ticket</h1>
+
+<p>Transfer Ticket ID: @Model.TicketId</p>
+
+<form asp-controller="Queue" asp-action="CompleteTransfer" method="post">
+    <label for="destinationServicePointId">Select Destination Service Point:</label>
+    <select asp-for="DestinationServicePointId" asp-items="@(new SelectList(Model.AvailableServicePoints, "ServicePointId", "ServicePointName"))">
+        <option>Please select a service point</option>
+    </select>
+    
+<input type="hidden" name="OriginServicePointId" value="@Model.OriginServicePointId" />
+
+<input type="hidden" name="TicketId" value="@Model.TicketId" />
+    <button type="submit">Transfer</button>
+</form>
