@@ -4,7 +4,7 @@
 ## Table of Contents
 * [General Info](#general-information)
 * [Technologies Used](#technologies-used)
-* [Features Workings and About the project](#features-workings-and-about-the-project)
+* [Features Workings and About the project](#features,-workings-and-about-the-project)
 * [Screenshots](#screenshots)
 * [Setup](#setup)
 * [Project Status](#project-status)
@@ -22,7 +22,7 @@
 - FastReport.Net
 - Bootstrap
 
-## Features Workings and About the project
+## Features, Workings and About the project
 The Queue Management system involve these parts: 
 
 - A client/customer - this is the person to be queued.
