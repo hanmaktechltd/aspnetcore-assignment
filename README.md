@@ -39,25 +39,25 @@ Working of the system
 ## Screenshots
 
 <img width="960" alt="1) Homepage" src="https://github.com/GeoffreyOmollo/aspnetcore-assignment/assets/120243097/69a0e567-2b45-4d28-bf3a-8fd3486e2803">
-_______
+
 <img width="955" alt="2) Customer Checkin" src="https://github.com/GeoffreyOmollo/aspnetcore-assignment/assets/120243097/6974fb36-6c40-4576-9b98-cc30386f4515">
-_______
+
 <img width="960" alt="3) Customer added ro Queue" src="https://github.com/GeoffreyOmollo/aspnetcore-assignment/assets/120243097/cb187565-3cd8-4f8f-91ca-eb2e6474202c">
-_______
+
 <img width="960" alt="4) Customer Ticket Details" src="https://github.com/GeoffreyOmollo/aspnetcore-assignment/assets/120243097/86fcd197-866e-40ec-8b43-667363ea0d0e">
-_______
+
 <img width="957" alt="5) Service Provider Login" src="https://github.com/GeoffreyOmollo/aspnetcore-assignment/assets/120243097/d9a622dd-0a54-462d-ae8f-e16620f113cf">
-_______
+
 <img width="960" alt="6) Logged-in Service Provider" src="https://github.com/GeoffreyOmollo/aspnetcore-assignment/assets/120243097/007e9ca1-e966-4867-836b-85a3d7a19f3e">
-_______
+
 <img width="960" alt="7) Service Provider Assigning a Service Point" src="https://github.com/GeoffreyOmollo/aspnetcore-assignment/assets/120243097/d7bf5170-118d-497a-93e9-a0db41bf168e">
-_______
+
 <img width="959" alt="8) Admin Login" src="https://github.com/GeoffreyOmollo/aspnetcore-assignment/assets/120243097/9c4d9516-3131-44b7-8f4d-4107fcb4071d">
-_______
+
 <img width="957" alt="9) Logged-in Admin" src="https://github.com/GeoffreyOmollo/aspnetcore-assignment/assets/120243097/f7aba035-5236-4c8c-ac8b-0ff2e4698a44">
-_______
+
 <img width="954" alt="10) Configuring Service Point" src="https://github.com/GeoffreyOmollo/aspnetcore-assignment/assets/120243097/7ecf9667-6e1e-46a0-80da-6357547f556f">
-_______
+
 <img width="960" alt="11) Configuring Service Providers" src="https://github.com/GeoffreyOmollo/aspnetcore-assignment/assets/120243097/6b520e99-9e3e-4f83-b44c-9d92124fb163">
 
 ## Setup
