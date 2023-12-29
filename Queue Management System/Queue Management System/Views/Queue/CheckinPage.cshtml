@@ -1,65 +1,87 @@
-﻿@model List<ServiceTypeModel>
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Kiosk Mode Service Selection</title>
+    <style>
+        /* Full-screen and kiosk mode styles */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
 
-<form method="post" action="/Queue/ProcessSelection">
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-control {
+            width: 80%;
+            margin-bottom: 15px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .service-button {
+            height: 100px;
+            min-width: auto; 
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
     <div class="container">
-        <main role="main" class="pb-3">
-            <div class="form-group">
-                <label for="customerName">Enter Your Name:</label>
-                <input type="text" class="form-control" id="customerName" name="customerName" placeholder="Your Name" required>
-            </div>
+        <input type="text" class="form-control" id="customerName" name="customerName" placeholder="Your Name" required autofocus>
 
-            <!-- Include a hidden input field to store the selected service ID -->
-            <input type="hidden" id="selectedServiceId" name="selectedServiceId" value="" />
+        <h1>Select Your Service</h1>
 
-            <h1>Select Your Service</h1>
-            <!-- Service Selection using Buttons -->
-            <div class="row">
-                @foreach (var service in Model)
-                {
-                    <div class="col-md-4 mb-3">
-                        <!-- Update the button to set the selected service ID -->
-                        <button type="button" class="btn btn-primary btn-lg btn-block service-button"
-                                data-service-id="@service.Id" onclick="handleButtonClick('@service.Id', '@service.Name')">
-                            @service.Name
-                        </button>
-                    </div>
-                }
-            </div>
-
-        </main>
-    </div>
-</form>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Handle button click event
-    function handleButtonClick(serviceId, serviceName) {
-        var customerName = $("#customerName").val(); // Get customer name from the input field
-
-        // Prepare data for the AJAX request
-        var requestData = {
-            selectedServiceId: serviceId,
-            customerName: customerName
-        };
-
-        // Make an AJAX POST request to the server-side action
-        $.ajax({
-            url: '/Queue/ProcessSelection',
-            type: 'POST',
-            data: requestData,
-            success: function (response) {
-                // Handle the success response (if needed)
-                console.log("Request successful:", response);
-
-                // Redirect to the waiting page
-                window.location.href = '/Queue/WaitingPage?serviceId=' + serviceId;
-            },
-            error: function (xhr, status, error) {
-                // Handle any errors from the server
-                console.error("Request error:", error);
-                // Optionally, display an error message or take corrective actions
+        <div class="row">
+            @foreach (var service in Model)
+            {
+                <div class="col-md-4 mb-3">
+                    <button type="button" class="btn btn-primary btn-lg btn-block service-button"
+                            data-service-id="@service.Id" onclick="handleButtonClick('@service.Id', '@service.Name')">
+                        @service.Name
+                    </button>
+                </div>
             }
-        });
-    }
-</script>
+        </div>
+    </div>
 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function handleButtonClick(serviceId, serviceName) {
+            var customerName = $("#customerName").val();
+            if (customerName.trim() === '') {
+                alert('Please input a customer name');
+                return;
+            }
+
+            var requestData = {
+                selectedServiceId: serviceId,
+                customerName: customerName
+            };
+
+            $.ajax({
+                url: '/Queue/ProcessSelection',
+                type: 'POST',
+                data: requestData,
+                success: function (response) {
+                    console.log("Request successful:", response);
+
+                    window.location.href = '/Queue/WaitingPage?serviceId=' + serviceId;
+                },
+                error: function (xhr, status, error) {
+                    console.error("Request error:", error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,5 +1,24 @@
 ﻿@model Queue_Management_System.Models.QueueEntry
+@{
+    // Fetch service providers data from the endpoint
+    List<(string ServicePoint, int ServiceTypeId)> serviceProviders = null;
 
+    try
+    {
+        var client = new System.Net.Http.HttpClient();
+        var response = await client.GetAsync("/Queue/GetServiceProviders");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            serviceProviders = Newtonsoft.Json.JsonConvert.DeserializeObject<List<(string ServicePoint, int ServiceTypeId)>>(content);
+        }
+    }
+    catch (Exception ex)
+    {
+        // Handle exceptions if needed
+    }
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +32,6 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
     <style>
-        /* Style for large buttons */
         .kiosk-button {
             display: inline-block;
             width: 300px;
@@ -50,7 +68,7 @@
 
             .queue-table th, .queue-table td {
                 padding: 8px;
-                border: 1px solid #ddd;
+                ddd border: 1px solid #;
                 text-align: left;
             }
 
@@ -100,7 +118,8 @@
             <div>
                 
                 <!-- Button to view the queue -->
-                <button type="button" class="kiosk-button" onclick="viewQueue()">View Queue</button>
+                <button type="button" class="kiosk-button" onclick="redirectToViewQueue()">View Queue</button>
+
             </div>
         </div>
 
@@ -119,14 +138,21 @@
                 {
                     <p>No ticket details available.</p>
                 }
+                <br/><br/>
+                <div id="transferNumberContainer">
+                    <h2>Transfer Number</h2>
+                    @if (serviceProviders != null && serviceProviders.Count > 0)
+                    {
+                        @await Html.PartialAsync("_TransferNumberPartial", serviceProviders)
+                    }
+
+                </div>
             </div>
         </div>
+
+       
     </div>
 
-    <div id="queueEntriesContainer">
-        <h1>Queue</h1>
-     
-    </div>
 
 
     <!-- Add this code within your existing HTML -->
@@ -257,18 +283,12 @@
             });
         }
 
-        function viewQueue() {
-            $.ajax({
-                type: "GET",
-                url: "/Queue/GetQueueEntries", // Update with your endpoint and service point ID
-                success: function (data) {
-                    $('#queueEntriesContainer').html(data);
-                },
-                error: function () {
-                    $('#queueEntriesContainer').html('<p>Failed to load queue entries.</p>');
-                }
-            });
+     
+        function redirectToViewQueue() {
+            window.location.href = '/Queue/ViewQueue';
         }
+
+    
         
     </script>
 </body>

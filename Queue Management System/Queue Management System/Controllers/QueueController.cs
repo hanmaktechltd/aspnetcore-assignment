@@ -33,6 +33,32 @@ namespace Queue_Management_System.Controllers
 
 
         [HttpGet]
+        public async Task<IActionResult> ViewQueue()
+        {
+            try
+            {
+                string servicePointName = UserUtility.GetCurrentLoggedInUser();
+
+                var queueEntries = await _dbOperationsRepository.GetQueueEntriesByCriteria(servicePointName);
+
+                if (queueEntries.Count > 0)
+                {
+                    return View(queueEntries);
+                }
+                else
+                {
+                    return NotFound("No queue entries found for the provided service point.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error fetching queue entries: {ex.Message}");
+            }
+        }
+
+
+
+        [HttpGet]
         public async Task<IActionResult> WaitingPage()
         {
             var topQueueEntry = await _dbOperationsRepository.GetTopQueueEntryAsync();
@@ -54,10 +80,7 @@ namespace Queue_Management_System.Controllers
 
 
 
-
-
-
-        // [Authorize(AuthenticationSchemes = "ServiceUser")]
+       // [Authorize(Policy = "ServiceProvider")]
         [HttpGet]
         public async Task<IActionResult> ServicePoint()
         {
@@ -97,7 +120,7 @@ namespace Queue_Management_System.Controllers
                 bool saved = await SaveQueueEntry(customerName, selectedServiceId, serviceName);
                 if (!saved)
                 {
-                    return StatusCode(500); // Return 500 - Internal Server Error
+                    return StatusCode(500); 
                 }
 
                 return RedirectToAction("WaitingPage");
@@ -189,65 +212,6 @@ namespace Queue_Management_System.Controllers
 
 
 
-
-
-
-
-        private ServiceProviderModel GetUserFromLoggedInUser()
-        {
-            // Get the user's identity from HttpContext
-            var userIdentity = HttpContext.User.Identity;
-
-            // Example: Assuming the user is authenticated and a ServiceProviderModel is stored in claims
-            if (userIdentity.IsAuthenticated)
-            {
-                // Accessing claims to retrieve ServiceProviderModel information
-                var serviceProviderIdClaim = HttpContext.User.FindFirst("ServiceProviderId");
-                var serviceProviderUsernameClaim = HttpContext.User.FindFirst("ServiceProviderUsername");
-
-                // Check if both claims are present
-                if (serviceProviderIdClaim != null && serviceProviderUsernameClaim != null)
-                {
-                    // Parse claims to build the ServiceProviderModel
-                    if (int.TryParse(serviceProviderIdClaim.Value, out int serviceProviderId))
-                    {
-                        var serviceProvider = new ServiceProviderModel
-                        {
-                            Id = serviceProviderId,
-                            Username = serviceProviderUsernameClaim.Value,
-                            // Add other properties from claims as needed
-                        };
-
-                        return serviceProvider;
-                    }
-                }
-            }
-
-            return null; // Return null if the user is not authenticated or if claims are not as expected
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetQueueEntries(string servicePoint)
-        {
-            try
-            {
-                string servicePointName = UserUtility.GetCurrentLoggedInUser();
-
-                var queueEntries = await _dbOperationsRepository.GetQueueEntriesByCriteria(servicePointName);
-
-                if (queueEntries == null || queueEntries.Count == 0)
-                {
-                    return NotFound("No queue entries found for the specified criteria.");
-                }
-                List<QueueEntry> queue = queueEntries;
-                // return PartialView("_ViewQueue", queue); // Ensure queueEntries is a list
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error fetching queue entries: {ex.Message}");
-                return StatusCode(500, "An error occurred while fetching queue entries.");
-            }
-        }
 
 
 

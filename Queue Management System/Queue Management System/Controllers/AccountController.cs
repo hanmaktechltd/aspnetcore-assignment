@@ -13,13 +13,11 @@ namespace Queue_Management_System.Controllers
     {
         private readonly ITicketService _ticketService;
         private readonly DbOperationsRepository _dbOperationsRepository;
-        private static ServiceProviderModel loggedInUser;
-        private readonly string issuer = "Admin";
         private readonly IConfiguration _configuration;
 
         public AccountController(IConfiguration configuration, ITicketService ticketService, DbOperationsRepository dbOperationsRepository)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration)); // Assign configuration to _configuration
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration)); 
             _ticketService = ticketService;
             _dbOperationsRepository = dbOperationsRepository;
         }
@@ -33,33 +31,63 @@ namespace Queue_Management_System.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
-        {
-            if (ModelState.IsValid)
+        { if (ModelState.IsValid)
             {
-                var user = await _dbOperationsRepository.LoginAsync(model.UsernameOrEmail, model.Password);
-                if (user != null)
+                string servicePoint = "";
+                try
                 {
-                    //loggedInUser = user;
-                    UserUtility.SetLoggedInUser(user.ServicePoint);
 
+                    var user = await _dbOperationsRepository.LoginAsync(model.UsernameOrEmail, model.Password);
+                var admin = await _dbOperationsRepository.AdminLoginAsync(model.UsernameOrEmail, model.Password);
+
+                if (admin != null)
+                {
+                    HandleSuccessfulLogin(model.UsernameOrEmail, isAdmin: true);
+                    return RedirectToAction("Dashboard", "Admin");
+                }
+                else if (user != null)
+                {
+                        servicePoint = user.ServicePoint;
+
+                    HandleSuccessfulLogin(model.UsernameOrEmail, isAdmin: false);
                     return RedirectToAction("ServiceSelection");
                 }
                 else
                 {
-                    var authenticationService = new JwtAuthenticationService(_configuration, issuer);
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt");
+                    return View(model);
+                }
+
+                void HandleSuccessfulLogin(string username, bool isAdmin)
+                {
+                    UserUtility.issuer = username;
+                    var authenticationService = new JwtAuthenticationService(_configuration, username);
                     var token = authenticationService.GenerateToken(model);
 
                     if (authenticationService.ValidateToken(token))
                     {
-                        return RedirectToAction("Dashboard", "Admin");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Invalid login attempt");
-                        return View(model);
+                        if (isAdmin)
+                        {
+                            UserUtility.IsAdmin = true;
+                        }
+                        else
+                        {
+                            UserUtility.SetLoggedInUser(servicePoint);
+                            UserUtility.IsAuthorized = true;
+                        }
                     }
                 }
             }
+        catch (Exception ex)
+        {
+                ModelState.AddModelError(string.Empty, "An error occurred during login");
+                Console.WriteLine($"Login Error: {ex.Message}");
+                return View(model);
+            }
+
+
+
+        }
             return View(model);
         }
 
@@ -93,32 +121,18 @@ namespace Queue_Management_System.Controllers
             
                 if (servicePoint == selectedService)
                 {
-                    // Perform actions when the service types match
                     return RedirectToAction("ServicePoint", "Queue");
 
                 }
                 else
                 {
-                // Perform actions when the service types do not match
-                // Redirect to an error page or perform different logic
                 return RedirectToAction("Login", "Account");
             }
             
            
         }
 
-     /*   public static IActionResult GetLoggedInUser()
-        {
-            // Use 'loggedInUser' as needed, such as displaying user information
-            if (loggedInUser != null)
-            {
-                return Json(loggedInUser);
-            }
-            else
-            {
-                return Json("No user logged in");
-            }
-        }*/
+    
        
     }
 }

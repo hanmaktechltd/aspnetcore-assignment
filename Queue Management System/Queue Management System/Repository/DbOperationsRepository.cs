@@ -11,7 +11,7 @@ namespace Queue_Management_System.Repository
     public class DbOperationsRepository
     {
         private readonly NpgsqlConnectionFactory _connectionFactory;
-        
+
 
         public DbOperationsRepository(NpgsqlConnectionFactory connectionFactory)
         {
@@ -98,7 +98,7 @@ namespace Queue_Management_System.Repository
 
                 var query = "SELECT id, ticketnumber, servicepoint, customername, checkintime " +
                             "FROM public.queueentry " +
-                            "ORDER BY id DESC " +
+                            "ORDER BY id ASC " +
                             "LIMIT 1";
 
                 using var cmd = new NpgsqlCommand(query, connection);
@@ -133,10 +133,9 @@ namespace Queue_Management_System.Repository
                 using var connection = _connectionFactory.CreateConnection();
                 await connection.OpenAsync();
 
-                var query = "SELECT Id, Username, Email, Phone, PasswordHash, RegistrationDate, ServicePoint, ServiceTypeId " +
-                            "FROM serviceProviders " +
-                            "WHERE (Username = @UsernameOrEmail OR Email = @UsernameOrEmail) " +
-                            "AND PasswordHash = @Password";
+                
+                var query = "SELECT Id, Username, Email, Phone, PasswordHash, RegistrationDate, ServicePoint, ServiceTypeId, isauthorized   FROM serviceProviders" +
+                    $"  WHERE(email = '{usernameOrEmail}' or username = '{usernameOrEmail}')   AND PasswordHash = '{password}'";
 
                 using var cmd = new NpgsqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("UsernameOrEmail", usernameOrEmail);
@@ -155,7 +154,10 @@ namespace Queue_Management_System.Repository
                         PasswordHash = reader.GetString(4),
                         RegistrationDate = reader.GetDateTime(5),
                         ServicePoint = reader.GetString(6),
-                        ServiceTypeId = reader.GetInt32(7)
+                        ServiceTypeId = reader.GetInt32(7),
+                        IsAuthorized = reader.GetBoolean(8)
+
+
                     };
                 }
             }
@@ -266,7 +268,7 @@ namespace Queue_Management_System.Repository
                 using var connection = _connectionFactory.CreateConnection();
                 await connection.OpenAsync();
 
-                var query = "UPDATE public.queueentry SET noshow = 1 WHERE ticketNumber="+ ticketNumber ;
+                var query = "UPDATE public.queueentry SET noshow = 1 WHERE ticketNumber=" + ticketNumber;
 
                 using var cmd = new NpgsqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@TicketNumber", ticketNumber);
@@ -338,10 +340,10 @@ namespace Queue_Management_System.Repository
                 Console.WriteLine($"Error fetching recall count: {ex.Message}");
             }
 
-            return 0; // Default value if recall count retrieval fails
+            return 0;
         }
 
-        public async Task<List<QueueEntry>> GetQueueEntriesByCriteria(string servicePointId)
+        public async Task<List<QueueEntry>> GetQueueEntriesByCriteria(string servicePoint)
         {
             var queueEntries = new List<QueueEntry>();
 
@@ -350,8 +352,10 @@ namespace Queue_Management_System.Repository
                 using var connection = _connectionFactory.CreateConnection();
                 await connection.OpenAsync();
 
-                var query = "SELECT id, ticketnumber, servicepoint, customername, checkintime, servicepointid" +
-                   $"FROM public.queueentry WHERE servicepoint={servicePointId}";
+                var query = "SELECT id, ticketnumber, servicepoint, customername, checkintime, servicepointid " +
+                    $"FROM public.queueentry WHERE servicepoint = '{servicePoint}' AND recallcount<3 AND noshow = 0 AND markfinished = 0";
+
+
 
                 using var cmd = new NpgsqlCommand(query, connection);
                 using var reader = await cmd.ExecuteReaderAsync();
@@ -655,7 +659,7 @@ namespace Queue_Management_System.Repository
                 using var connection = _connectionFactory.CreateConnection();
                 connection.Open();
 
-                var query = "SELECT id, username, email, phone, passwordhash, registrationdate, servicepoint, servicetypeid FROM public.serviceproviders";
+                var query = "SELECT id, username, email, phone, passwordhash, registrationdate, servicepoint, servicetypeid, isauthorized FROM public.serviceproviders";
 
                 using var cmd = new NpgsqlCommand(query, connection);
                 using var reader = cmd.ExecuteReader();
@@ -671,7 +675,8 @@ namespace Queue_Management_System.Repository
                         PasswordHash = reader.GetString(4),
                         RegistrationDate = reader.GetDateTime(5),
                         ServicePoint = reader.GetString(6),
-                        ServiceTypeId = reader.GetInt32(7)
+                        ServiceTypeId = reader.GetInt32(7),
+                        IsAuthorized = reader.GetBoolean(8)
                     };
 
                     serviceProviders.Add(serviceProvider);
@@ -795,8 +800,135 @@ namespace Queue_Management_System.Repository
         }
 
 
+        public async Task<bool> UpdateServiceProviderAuthorization(int serviceProviderId)
+        {
+            try
+            {
+                using var connection = _connectionFactory.CreateConnection();
+                await connection.OpenAsync();
+
+                // Construct the SQL command with a parameterized query to avoid SQL injection
+                var sql = "UPDATE public.serviceproviders SET isauthorized = true WHERE id = @ServiceProviderId";
+
+                await using var cmd = new NpgsqlCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@ServiceProviderId", serviceProviderId);
+
+                var rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                return rowsAffected > 0; // Return true if any rows were affected by the query
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception appropriately
+                Console.WriteLine($"Error updating service provider authorization: {ex.Message}");
+                return false;
+            }
+        }
+        public async Task<bool> DeleteServiceProviderById(int serviceProviderId)
+        {
+            try
+            {
+                using var connection = _connectionFactory.CreateConnection();
+                await connection.OpenAsync();
+
+                var deleteCommandText = $"DELETE FROM public.serviceproviders WHERE id = {serviceProviderId}";
 
 
+                await using var cmd = new NpgsqlCommand(deleteCommandText, connection);
+                cmd.Parameters.AddWithValue("@ServiceProviderId", serviceProviderId);
+
+                var rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                return rowsAffected > 0; // Return true if any rows were affected by the query
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception appropriately
+                Console.WriteLine($"Error updating service provider authorization: {ex.Message}");
+                return false;
+            }
+        }
+
+       
+
+        public async Task<List<ServiceStatistics>> GetServiceStatistics()
+        {
+            List<ServiceStatistics> statistics = new List<ServiceStatistics>();
+
+            try
+            {
+                using var connection = _connectionFactory.CreateConnection();
+                await connection.OpenAsync();
+
+                var query = @"
+            WITH FinishedCount AS (
+                SELECT COUNT(*) AS finished_count
+                FROM public.finishedtable
+                WHERE DATE(markedtime) = CURRENT_DATE
+            ),
+            AverageTimes AS (
+                SELECT 
+                    Q.servicepointid,
+                    AVG(EXTRACT(EPOCH FROM (F.markedtime - Q.checkintime))) AS average_seconds
+                FROM 
+                    public.finishedtable AS F
+                INNER JOIN 
+                    public.queueentry AS Q ON F.ticketnumber = Q.ticketnumber
+                GROUP BY 
+                    Q.servicepointid
+            ),
+            NoShowEntries AS (
+                SELECT 
+                    id, ticketnumber, servicepoint, customername, servicepointid
+                FROM 
+                    public.queueentry
+                WHERE 
+                    noshow = 1
+            )
+            SELECT 
+                FC.finished_count,
+                AT.servicepointid AS ServicePointId,
+                AT.average_seconds AS AverageSeconds,
+                NE.id AS Id,
+                NE.ticketnumber AS TicketNumber,
+                NE.servicepoint AS ServicePoint,
+                NE.customername AS CustomerName,
+                NE.servicepointid AS NoShowServicePointId
+            FROM 
+                FinishedCount FC
+            LEFT JOIN 
+                AverageTimes AT ON 1=1
+            LEFT JOIN 
+                NoShowEntries NE ON NE.servicepointid = AT.servicepointid";
+
+                using var cmd = new NpgsqlCommand(query, connection);
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    var stat = new ServiceStatistics
+                    {
+                        FinishedCount = Convert.ToInt32(reader["finished_count"]),
+                        ServicePointId = Convert.ToInt32(reader["ServicePointId"]),
+                        AverageSeconds = Convert.ToDouble(reader["AverageSeconds"]),
+                        Id = Convert.ToInt32(reader["Id"]),
+                        TicketNumber = reader["TicketNumber"].ToString(),
+                        ServicePoint = reader["ServicePoint"].ToString(),
+                        CustomerName = reader["CustomerName"].ToString(),
+                        NoShowServicePointId = Convert.ToInt32(reader["NoShowServicePointId"])
+                    };
+
+                    statistics.Add(stat);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exception or log the error
+                Console.WriteLine($"Error getting service statistics: {ex.Message}");
+            }
+
+            return statistics;
+        }
 
 
     }

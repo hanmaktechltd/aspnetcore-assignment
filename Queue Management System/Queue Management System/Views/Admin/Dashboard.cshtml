@@ -3,9 +3,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Include necessary CSS and JavaScript libraries -->
     <title>Admin Dashboard</title>
-    <!-- Add your CSS styling -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
     <style>
         .CustomersTable {
             width: 100%;
@@ -44,11 +49,11 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             text-align: center;
-            margin-right: 10px; /* Add margin for spacing between fields */
+            margin-right: 10px; 
         }
 
             .info-field:last-child {
-                margin-right: 0; /* Remove margin from the last info-field */
+                margin-right: 0; 
             }
 
             .info-field h3 {
@@ -57,7 +62,6 @@
     </style>
 </head>
 <body>
-    <h1>Available Services</h1>
     <div class="container-fluid">
         <div class="row">
             <nav class="col-lg-2 bg-light">
@@ -73,7 +77,9 @@
 
 
             <main class="col-lg-10">
-               
+
+                <button onclick="downloadServiceStatisticsReport()">Download Service Statistics Report</button>
+                
 
                 <section class="table">
                     <div class="CustomersTable vertical-center">
@@ -185,6 +191,39 @@
                     }
                 });
             });
+             function confirmDownload() {
+        // Display a confirmation dialog
+        if (confirm(' Download the Service Statistics Report?')) {
+            downloadServiceStatisticsReport(); 
+        } else {
+        }
+    }
+            async function downloadServiceStatisticsReport() {
+                try {
+                    const response = await fetch('/Admin/GenerateServiceStatisticsReportAsync', {
+                        method: 'POST',
+                    });
+
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+
+                        // Create a temporary <a> element to trigger the download
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'ServiceStatisticsReport.pdf'; // Set the filename for the downloaded file
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    } else {
+                        console.error('Error generating report:', response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error generating report:', error);
+                }
+            }
+
     </script>
 
     <!-- JavaScript for Form Submission -->

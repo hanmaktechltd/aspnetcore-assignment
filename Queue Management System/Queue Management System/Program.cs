@@ -1,43 +1,20 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using Queue_Management_System.Repository;
 using Queue_Management_System.ServiceInterface;
 using Queue_Management_System.Services;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
-
-
-builder.Services.AddSingleton<JwtAuthenticationService>(_ =>
-    new JwtAuthenticationService(builder.Configuration, "Admin"));
-
-// Add authentication services
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-}).AddCookie("ServiceUser")
-  .AddJwtBearer(options =>
-  {
-      options.TokenValidationParameters = new TokenValidationParameters
-      {
-          ValidateIssuer = true,
-          ValidateAudience = false,
-          ValidateLifetime = true,
-          ValidateIssuerSigningKey = true,
-          ValidIssuer = "Admin",
-          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("NVRBpevqncT8sw8gZMysnaRJ3Ww/ha6c9evS3TzcQBU="))
-      };
-  });
-
 
 // Configuration for PostgreSQL Connection String
 var connectionString = builder.Configuration.GetConnectionString("MyPostgresConnection");
@@ -45,22 +22,63 @@ var connectionString = builder.Configuration.GetConnectionString("MyPostgresConn
 // Register NpgsqlConnectionFactory with the connection string
 builder.Services.AddScoped(provider => new NpgsqlConnectionFactory(connectionString));
 
-// Register DbOperationsRepository
+// Register DbOperationsRepository and other services
 builder.Services.AddScoped<DbOperationsRepository>();
-
-// Register other services
 builder.Services.AddScoped<ITicketService, TicketService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IServiceProviderRepository, ServiceProviderRepository>();
 builder.Services.AddScoped<IServicePointOperations, ServicePointOperations>();
 
-// Register JwtAuthenticationService
+// JWT Authentication setup
+var issuer = UserUtility.issuer;
+var secretKey = UserUtility.secretKey;
+
 builder.Services.AddSingleton<JwtAuthenticationService>(_ =>
-    new JwtAuthenticationService(builder.Configuration, "Admin"));
+    new JwtAuthenticationService(builder.Configuration, issuer));
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = "ServiceUser";
+})
+.AddCookie("ServiceProvider")
+.AddCookie("ServiceUser")
+.AddJwtBearer("JwtBearerScheme", options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = issuer,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+    };
+});
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ServiceProvider", policy =>
+    {
+        policy.AuthenticationSchemes.Add("ServiceProvider"); // Specify the authentication scheme
+        policy.RequireAuthenticatedUser();
+        policy.RequireAssertion(context => UserUtility.IsAuthorized);
+        policy.RequireClaim(ClaimTypes.Role, "ServiceProvider");
+        policy.RequireClaim(ClaimTypes.Name); // Adding additional claim requirement
+    });
+
+    options.AddPolicy("Admin", policy =>
+    {
+        policy.AuthenticationSchemes.Add(CookieAuthenticationDefaults.AuthenticationScheme); // Use CookieAuthentication scheme
+        policy.RequireAuthenticatedUser();
+        policy.RequireAssertion(context => UserUtility.IsAdmin);
+        policy.RequireClaim(ClaimTypes.Role, "Admin");
+    });
+});
+
+
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -71,7 +89,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseAuthorization();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -83,9 +100,5 @@ app.UseEndpoints(endpoints =>
         pattern: "{controller=Home}/{action=Index}/{id?}");
     endpoints.MapRazorPages();
 });
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

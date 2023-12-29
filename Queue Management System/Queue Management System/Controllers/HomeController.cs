@@ -15,9 +15,8 @@ namespace Queue_Management_System.Controllers
 
         public IActionResult Index()
         {
-            //return View("/Views/");
-            // return View("./Views/Home/Index.cshtml");
-            string key = GenerateSecretKey();
+            
+            UserUtility.secretKey = GenerateSecretKey();
             return View("~/Views/Home/Index.cshtml");
 
 
@@ -36,14 +35,14 @@ namespace Queue_Management_System.Controllers
 
         private string GenerateSecretKey()
         {
-            byte[] bytes = new byte[32]; // Adjust the byte length as needed for your key
+            byte[] bytes = new byte[32]; 
             using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
             {
                 rng.GetBytes(bytes);
             }
             string secretKey = Convert.ToBase64String(bytes);
 
-            return secretKey; // Return the generated secret key
+            return secretKey; 
         }
     }
 }

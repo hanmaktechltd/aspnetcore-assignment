@@ -10,5 +10,6 @@
         public DateTime RegistrationDate { get; set; }
         public string ServicePoint { get; set; }
         public int ServiceTypeId { get; set; }
+        public bool IsAuthorized { get; set; }
     }
 }

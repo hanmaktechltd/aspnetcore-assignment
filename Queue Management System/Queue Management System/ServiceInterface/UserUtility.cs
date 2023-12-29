@@ -21,4 +21,10 @@ public static class UserUtility
     {
         return string.IsNullOrEmpty(loggedInUserName) ? "No user logged in" : loggedInUserName;
     }
+
+    public static bool IsAuthorized { get; set; }
+    public static bool IsAdmin { get; set; }
+    public static string secretKey { get; set; }
+    public static string issuer { get; set;}
+
 }

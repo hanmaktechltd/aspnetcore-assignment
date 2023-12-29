@@ -10,19 +10,15 @@ namespace Queue_Management_System.Services
 {
     public class JwtAuthenticationService
     {
-       
+        private string secretKey = UserUtility.secretKey;
         private readonly string issuer;
         private readonly IConfiguration configuration;
-        private readonly string secretKey= "NVRBpevqncT8sw8gZMysnaRJ3Ww/ha6c9evS3TzcQBU=";
-
-
-
+       
         public JwtAuthenticationService(IConfiguration configuration, string issuer)
         {
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(secretKey));
             this.issuer = issuer ?? throw new ArgumentNullException(nameof(issuer));
 
-            // Retrieve the secret key from app settings
            
 
             if (string.IsNullOrEmpty(secretKey))
@@ -40,10 +36,12 @@ namespace Queue_Management_System.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, admin.UsernameOrEmail),
-                    // Add more claims if needed (e.g., roles, permissions)
+                     new Claim(ClaimTypes.Name, admin.UsernameOrEmail),
+                    new Claim(ClaimTypes.Role, "Admin"),
+                    new Claim(ClaimTypes.Role, "ServiceProvider"),
+                    new Claim(ClaimTypes.Authentication, "Auth"),
                 }),
-                Expires = DateTime.UtcNow.AddDays(7), // Token expiration time
+                Expires = DateTime.UtcNow.AddDays(7), 
                 Issuer = issuer,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -69,29 +67,16 @@ namespace Queue_Management_System.Services
                     IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
 
-                // Validate the token
                 var claimsPrincipal = tokenHandler.ValidateToken(token, validationParameters, out _);
 
-                // If the token validation succeeds and the user is authenticated, return true
                 return claimsPrincipal.Identity?.IsAuthenticated == true;
             }
             catch (Exception)
             {
-                // Token validation failed or exception occurred
                 return false;
             }
         }
 
-        private string GenerateSecretKey()
-        {
-            byte[] bytes = new byte[32]; // Adjust the byte length as needed for your key
-            using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
-            {
-                rng.GetBytes(bytes);
-            }
-            string secretKey = Convert.ToBase64String(bytes);
-
-            return secretKey; // Return the generated secret key
-        }
+       
     }
 }

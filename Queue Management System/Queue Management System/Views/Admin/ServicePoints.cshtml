@@ -7,8 +7,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Queue_Management_System.styles.css" asp-append-version="true" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
 
     <style>
         /* CSS Styles */
@@ -117,6 +119,7 @@
                                     <td>@service.Id</td>
                                     <td>@service.Name</td>
                                     <td>@service.Description</td>
+                                   
                                 </tr>
                             }
                         </tbody>
@@ -130,7 +133,8 @@
 
 
 
-    <!-- JavaScript for Form Submission -->
+  
+
 
 </body>
 
