@@ -6,7 +6,7 @@ namespace Queue_Management_System.Repository
 {
     public class AdminRepository : IAdminRepository
     {
-        private const string _serviceProvidersTable = "appusers";
+        private const string _serviceProvidersTable = "appuserstb";
         private const string _servicePointTable = "ServicePointsTb";
         private IConfiguration _config;
         private NpgsqlConnection _connection;
@@ -251,6 +251,16 @@ namespace Queue_Management_System.Repository
             }
             
             _connection.Close();
+        }
+
+        public Task UpdateServicePoint(ServicePointM servicePoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateServiceProvider(ServiceProviderM serviceProvider)
+        {
+            throw new NotImplementedException();
         }
     }
 }

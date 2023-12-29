@@ -16,12 +16,12 @@ namespace Queue_Management_System.Controllers
             _config = config;
         }
 
-        public IActionResult Login()
+        public IActionResult Login(string ReturnUrl ="")
         {
             LoginM loginModel = new LoginM();
-            string ReturnUrl = "/";
+
             loginModel.ReturnUrl = ReturnUrl;
-            return View(loginModel);
+            return View();
         }
 
         [HttpPost]
@@ -50,20 +50,23 @@ namespace Queue_Management_System.Controllers
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                       new ClaimsPrincipal(claimsIdentity));
-                    if (loginModel.ReturnUrl != "/")
-                    {
-                        return Redirect(loginModel.ReturnUrl);
-                    }
+
+                     if (loginModel.ReturnUrl == "/")
+                     {
+                         return Redirect(loginModel.ReturnUrl);
+                     }
                     else if (appUser.Role == "Admin")
-                    {
-                        return RedirectToAction("Dashboard", "Admin");
-                    }
-                    else if (appUser.Role == "Service Provider")
-                    {
-                        return RedirectToAction("ServicePoint", "Queue");
-                    }
+                     {
+                         return RedirectToAction("Dashboard", "Admin");
+                     }
+                     else if (appUser.Role == "Service Provider")
+                     {
+                         return RedirectToAction("ServicePoint", "Queue");
+                     }
+                    
                 }
             }
+            //return RedirectToAction("ServicePoints", "Admin");
             return View(loginModel);
         }
         public UserM? AuthenticateAppUser(string userAuthenticationQuery)

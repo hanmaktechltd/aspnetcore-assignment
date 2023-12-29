@@ -41,13 +41,44 @@ namespace Queue_Management_System.Controllers
         }
 
 
-
-
+        // GET: Queue/ServicePoint
         [Authorize, HttpGet]
-        public IActionResult ServicePoint()
+        public async Task<IActionResult> ServicePoint()
         {
-            return View();
+            int? servicePointId = GetServicePointId();
+            if (servicePointId != null)
+            {
+                var waitingCustomers = await _queueRepository.GetWaitingCustomers((int)servicePointId);
+                QueueM currentCustomerId = await _queueRepository.CurrentServingCustomer((int)servicePointId);
+                var services = await _queueRepository.GetServices();
+                QueueMList queueList = new QueueMList()
+                {
+                    WaitingCustomers = waitingCustomers,
+                    CurrentServingCustomerId = currentCustomerId,
+                    Services = services,
+                };
+                return View(queueList);
+            }
+            return NotFound();
         }
+
+
+        private int? GetServicePointId()
+        {
+            _identity = new ClaimsIdentity(User.Claims);
+
+            var servicePointIdClaim = _identity.Claims.FirstOrDefault(claim => claim.Type == "ServicePointId");
+
+            if (servicePointIdClaim != null && int.TryParse(servicePointIdClaim.Value, out int servicePointId))
+            {
+                return servicePointId;
+            }
+
+            return null;
+        }
+
+ 
+
 
 
     }

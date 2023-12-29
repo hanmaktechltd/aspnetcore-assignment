@@ -16,5 +16,7 @@ namespace Queue_Management_System.Services
         Task CreateServicePoint(ServicePointM servicePoint);
         Task UpdateServicePoint(int id, ServicePointM servicePoint);
         Task DeleteServicePoint(int id);
+        Task UpdateServicePoint(ServicePointM servicePoint);
+        Task UpdateServiceProvider(ServiceProviderM serviceProvider);
     }
 }

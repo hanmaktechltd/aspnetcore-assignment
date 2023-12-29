@@ -8,14 +8,14 @@ namespace Queue_Management_System.Models
     public class QueueMList
     {
         [Key]
+        [Display(Name = "Queue Id Number")]
         public int Id { get; set; }
-
-        [ForeignKey("ServicePointId")]
-        public ServicePoint ServicePoint { get; set; }
-        public int ServicePointId { get; set; }
-        public int Status { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime CompletedAt { get; set; }
+        public int? ServicePointCount { get; set; }
+        
+        public QueueM CurrentServingCustomerId { get; set; }
+        public IEnumerable<QueueM> WaitingCustomers { get; set; }
+        public IEnumerable<ServicePointM> Services { get; set; }
+        [Display(Name = "Joined Queue At")]
+        public DateTime JoinedAt { get; set; }
     }
 }

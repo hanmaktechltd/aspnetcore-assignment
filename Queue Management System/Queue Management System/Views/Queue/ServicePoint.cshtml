@@ -1,0 +1,98 @@
+﻿@model Queue_Management_System.Models.QueueMList
+
+@{
+    ViewData["Title"] = "Service Point";
+}
+<div class="row align-items-start" style="max-height: 75vh;">
+    <div  class="col-md-5 " style="height: 70vh; background-color: #f8f9fa; ">
+        @if (@Model.CurrentServingCustomerId == null)
+        {
+            <H1 style="padding-top: 50px;" class="text-center">No Customer Being Served At The Moment</H1>
+
+        }
+        else
+        {
+            <div style="padding-top: 50px;">
+                <h4 class="text-center">Current Serving</h4>
+                <h1 class="text-center">Queue Id Number</h1>
+                <h1 class="text-center">@Model.CurrentServingCustomerId.Id</h1>
+            </div>                 
+        }
+    </div>
+    <div class="col-md-2 text-center" style="height: 70vh; background-color: rgb(255, 270, 355 );">
+        @if (@Model.CurrentServingCustomerId == null)
+        {
+            <button style="padding:15px 70px;" data-id="" class="btn btn-primary btn-lg rounded-0 nextBtn  " type="button"> Next</button>
+
+        }
+        else
+        {
+            <button style="padding:15px 70px;" data-id="@Model.CurrentServingCustomerId.Id" class="btn btn-primary btn-lg rounded-0 nextBtn  " type="button"> Next</button><br><br>
+            <button style="padding:19px 70px;" class="btn btn-primary btn-lg rounded-0 recallBtn" type="button"> Recall</button> <br> <br>
+            <button style="padding:5px 70px;" class="btn btn-primary btn-lg rounded-0 noShowBtn" type="button"> <small>No Show</small></button> <br><br>
+            <button style="padding:15px 60px;" class="btn btn-primary btn-lg rounded-0 finishedBtn" type="button"> Finished</button> <br><br>
+            <button style="padding:5px 60px;" data-bs-toggle="modal" data-bs-target="#transferNumberModal"  type="button" class="btn btn-primary btn-lg rounded-0 transferBtn">Transfer Number</button>
+        }
+    </div>
+
+    
+ 
+    <div class="col-md-5" style="height: 70vh; background-color: #f8f9fa; overflow: auto;">
+         @if(TempData["AlertMessage"] != null)
+        {
+           <div class="alert alert-success alert-dismissible fade show" role="alert" >
+                <strong>Success!</strong> @TempData["AlertMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>  
+        }
+    @if (@Model.WaitingCustomers == null)
+    {
+        <H1 style="padding-top: 50px;" class="text-center">No customer on queue</H1>
+    }
+    else
+    {   
+
+         <h4 class="text-center">@Model.WaitingCustomers.Count() Customers on the queue</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.JoinedAt)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.WaitingCustomers)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedAt)
+                        </td>
+                    </tr>
+                }  
+            </tbody>
+        </table>    
+
+             
+    }
+   </div>
+</div>
+@await Html.PartialAsync("TransferNumberPartialView", new QueueMList {ServicePointCount = @Model.Services.Count()})
+<form id="nextForm" asp-action="GetNextNumber">
+    <input type="hidden" id="currentServingCustomerId" name="Id" />
+</form>
+<form id="recallForm" asp-action="RecallNumber">
+    <input type="hidden" id="currentServingCustomerId" name="Id" />
+</form>
+<form id="noShowForm" asp-action="MarkNumberASNoShow">
+    <input type="hidden" id="currentServingCustomerId" name="Id" />
+</form>
+<form id="finishedForm" asp-action="MarkNumberASFinished">
+    <input type="hidden" id="currentServingCustomerId" name="Id" />
+</form>
