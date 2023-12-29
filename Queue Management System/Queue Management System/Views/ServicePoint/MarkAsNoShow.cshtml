@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Mark as No Show";
+}
+
+<h1>Mark as No Show</h1>
+<!-- Form to input the ticket number to mark as no show -->
+<form asp-action="MarkAsNoShow" method="post">
+    <label for="ticketNumber">Enter Ticket Number to Mark as No Show:</label>
+    <input type="number" id="ticketNumber" name="ticketNumber" />
+    <button type="submit" class="btn btn-primary">Mark as No Show</button>
+</form>

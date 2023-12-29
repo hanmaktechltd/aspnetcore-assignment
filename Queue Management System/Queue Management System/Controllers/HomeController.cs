@@ -15,7 +15,11 @@ namespace Queue_Management_System.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            
+            UserUtility.secretKey = GenerateSecretKey();
+            return View("~/Views/Home/Index.cshtml");
+
+
         }
 
         public IActionResult Privacy()
@@ -27,6 +31,18 @@ namespace Queue_Management_System.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private string GenerateSecretKey()
+        {
+            byte[] bytes = new byte[32]; 
+            using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(bytes);
+            }
+            string secretKey = Convert.ToBase64String(bytes);
+
+            return secretKey; 
         }
     }
 }

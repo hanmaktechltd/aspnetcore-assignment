@@ -1,0 +1,18 @@
+﻿@model List<(string ServicePoint, int ServiceTypeId)>
+
+<div>
+    <label for="servicePointDropdown">Select Service Point:</label>
+    <select id="servicePointDropdown" class="form-control">
+        @if (Model != null && Model.Count > 0)
+        {
+            foreach (var servicePoint in Model)
+            {
+                <option value="@servicePoint.ServiceTypeId">@servicePoint.ServicePoint</option>
+            }
+        }
+        else
+        {
+            <option value="">No service points available</option>
+        }
+    </select>
+</div>

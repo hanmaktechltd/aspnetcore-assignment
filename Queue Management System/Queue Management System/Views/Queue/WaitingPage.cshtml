@@ -1,0 +1,34 @@
+﻿@model Queue_Management_System.Models.WaitingPageModel
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Waiting Page</title>
+    <!-- Add your stylesheets, scripts, etc. -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Queue_Management_System.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <h1>Waiting Page</h1>
+    <div>
+        <h2>Ticket Details</h2>
+        @if (Model != null)
+        {
+            <div>
+                <p>Ticket Number: @Model.TicketNumber</p>
+                <p>Service Point: @Model.ServicePoint</p>
+                <p>Customer Name: @Model.CustomerName</p>
+                <p>Check-in Time: @Model.CheckinTime</p>
+            </div>
+        }
+        else
+        {
+            <p>No ticket details available.</p>
+        }
+    </div>
+</body>
+</html>

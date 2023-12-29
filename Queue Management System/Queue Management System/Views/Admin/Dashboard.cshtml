@@ -1,0 +1,236 @@
+﻿@model IEnumerable<Queue_Management_System.Models.ServedCustomers>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <style>
+        .CustomersTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .CustomersTable th,
+            .CustomersTable td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+            .CustomersTable th {
+                background-color: #f2f2f2;
+            }
+
+            .CustomersTable tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            .CustomersTable tr:hover {
+                background-color: #f2f2f2;
+            }
+        /* Style for the row */
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 20px 0;
+        }
+
+        /* Style for each info field */
+        .info-field {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            margin-right: 10px; 
+        }
+
+            .info-field:last-child {
+                margin-right: 0; 
+            }
+
+            .info-field h3 {
+                margin-bottom: 10px;
+            }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-lg-2 bg-light">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" id="serviceProviderLink" href="/Admin/ServiceProviders">Service Provider</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="serviceProviderLink" href="/Admin/ServicePoints">Service Points</a>
+                    </li>
+                </ul>
+            </nav>
+
+
+            <main class="col-lg-10">
+
+                <button onclick="downloadServiceStatisticsReport()">Download Service Statistics Report</button>
+                
+
+                <section class="table">
+                    <div class="CustomersTable vertical-center">
+                        <h2>Last 50 customers served</h2>
+                        <div class="table-responsive">
+                            <table class="table table-bordered CustomersTable">
+                                <!-- Table headers -->
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Ticket Number</th>
+                                        <th>Service Point</th>
+                                        <th>Customer Name</th>
+                                        <th>Check-in Time</th>
+                                        <th>Time Served</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Rows for served customers -->
+                                    @foreach (var queueEntry in Model)
+                                    {
+                                        <tr>
+                                            <td>@queueEntry.FinishedId</td>
+                                            <td>@queueEntry.TicketNumber</td>
+                                            <td>@queueEntry.ServicePoint</td>
+                                            <td>@queueEntry.CustomerName</td>
+                                            <td>@queueEntry.CheckInTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                            <td>@queueEntry.MarkedTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Column for displaying no-show customers -->
+                    <div class="NoShowTable vertical-center">
+                        <h2>No Show Customers</h2>
+                        <div class="table-responsive">
+                            <table class="table table-bordered NoShowTable">
+                                <!-- Table headers -->
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Ticket Number</th>
+                                        <th>Service Point</th>
+                                        <th>Customer Name</th>
+                                        <th>Check-in Time</th>
+                                        <th>No Show</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (ViewBag.NoShowEntries != null && ViewBag.NoShowEntries.Any())
+                                    {
+                                        <!-- Rows with no-show customers data -->
+                                        @foreach (var noShowEntry in ViewBag.NoShowEntries)
+                                        {
+                                            <tr>
+                                                <td>@noShowEntry.Id</td>
+                                                <td>@noShowEntry.TicketNumber</td>
+                                                <td>@noShowEntry.ServicePoint</td>
+                                                <td>@noShowEntry.CustomerName</td>
+                                                <td>@noShowEntry.CheckInTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                                <td>Not Served</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <!-- Display message when no data available -->
+                                        <tr>
+                                            <td colspan="6">No data available</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+        </div>
+    </div>
+
+
+
+    <script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const serviceProviderLink = document.getElementById('serviceProviderLink');
+
+                serviceProviderLink.addEventListener('click', async (event) => {
+                    event.preventDefault(); // Prevent default link behavior (page navigation)
+
+                    try {
+                        const response = await fetch('/Admin/ServiceProviders');
+                        if (response.ok) {
+                            const data = await response.json();
+
+                            // Process and display data as needed
+                            console.log('Service Provider data:', data);
+                            // Example: Display data in an alert
+                            alert(JSON.stringify(data)); // Replace this with your logic to display the data
+                        } else {
+                            console.error('Error fetching service providers:', response.statusText);
+                        }
+                    } catch (error) {
+                        console.error('Error fetching service providers:', error);
+                    }
+                });
+            });
+             function confirmDownload() {
+        // Display a confirmation dialog
+        if (confirm(' Download the Service Statistics Report?')) {
+            downloadServiceStatisticsReport(); 
+        } else {
+        }
+    }
+            async function downloadServiceStatisticsReport() {
+                try {
+                    const response = await fetch('/Admin/GenerateServiceStatisticsReportAsync', {
+                        method: 'POST',
+                    });
+
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+
+                        // Create a temporary <a> element to trigger the download
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'ServiceStatisticsReport.pdf'; // Set the filename for the downloaded file
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    } else {
+                        console.error('Error generating report:', response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error generating report:', error);
+                }
+            }
+
+    </script>
+
+    <!-- JavaScript for Form Submission -->
+
+</body>
+</html>
+
+
+
+

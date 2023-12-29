@@ -1,0 +1,398 @@
+﻿@model Queue_Management_System.ViewModels.ServiceProviderViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Service Providers</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Queue_Management_System.styles.css" asp-append-version="true" />
+    <style>
+        <style >
+        /* Table and Form Container */
+        .container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* Table Styling */
+        table {
+            width: calc(40% - 20px);
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        /* Alternate row background color */
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Form Styling */
+        .side-form {
+            width: calc(60% - 20px);
+            margin-right: 20px;
+        }
+
+            /* Sample Form Styles (Modify as per your requirements) */
+            .side-form form {
+                background-color: #f2f2f2;
+                padding: 20px;
+                border-radius: 5px;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .side-form label,
+            .side-form input {
+                width: calc(50% - 10px);
+                margin-bottom: 10px;
+            }
+
+                .side-form input[type="submit"] {
+                    width: 100%;
+                    padding: 10px 16px;
+                    background-color: #4caf50;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+
+
+        button.authorized {
+            background-color: #4CAF50; /* Green color for authorized */
+            color: white;
+        }
+
+        button.not-authorized {
+            background-color: #FF6347; /* Red color for not authorized */
+            color: white;
+        }
+
+        /* CSS for the modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        label {
+            flex: 1;
+            text-align: right;
+            margin-right: 10px;
+        }
+
+        input,
+        button {
+            flex: 2;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+
+    </style>
+</head>
+<body>
+
+
+    <button onclick="confirmAddServiceProvider()">Add Service Provider</button>
+
+   
+    <!-- Existing modal structure -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <h2>Add Service Provider</h2>
+            <form asp-action="/Admin/AddServiceProvider" id="serviceProviderForm" onsubmit="return gatherAndConfirmSubmit(event)">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="text" id="phone" name="phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password">
+                </div>
+
+                <div class="form-group">
+                    <label for="servicePoint">Service Point:</label>
+                    <input type="text" id="servicePoint" name="servicePoint">
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceType">Service Type ID:</label>
+                    <input type="number" id="serviceType" name="serviceType">
+                </div>
+
+                <div class="form-group">
+                    <label for="isAuthorized">Is Authorized:</label>
+                    <input type="checkbox" id="isAuthorized" name="isAuthorized">
+                </div>
+
+                <button type="submit">Submit Form</button>
+            </form>
+        </div>
+    </div>
+
+
+
+
+       <br />
+    
+
+    <main class="col-lg-9">
+        <!-- Adjusted col-lg-10 to col-lg-9 for better grid alignment -->
+        <section class="table">
+            <table>
+                <thead>
+                    <tr>
+                        <!-- Table Headers -->
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Password Hash</th>
+                        <th>Registration Date</th>
+                        <th>Service Point</th>
+                        <th>Service Type ID</th>
+                        <th>Status</th>
+                        <th>Delete</th>
+                        <th>Change Service Point</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Iterate through Service Providers -->
+                    @if (Model != null)
+                    {
+                        @foreach (var serviceProvider in Model.ServiceProviderList)
+
+                        {
+                            <tr>
+                                <!-- Display Service Provider Details -->
+                                <td>@serviceProvider.Id</td>
+                                <td>@serviceProvider.Username</td>
+                                <td>@serviceProvider.Email</td>
+                                <td>@serviceProvider.Phone</td>
+                                <td>@serviceProvider.PasswordHash</td>
+                                <td>@serviceProvider.RegistrationDate.ToShortDateString()</td>
+                                <td>@serviceProvider.ServicePoint</td>
+                                <td>@serviceProvider.ServiceTypeId</td>
+                                <td>
+                                    <button onclick="confirmAuthorization('@serviceProvider.Username', '@serviceProvider.Id', this)" data-serviceId="@serviceProvider.Id" class="authorization-button @(serviceProvider.IsAuthorized ? "authorized" : "not-authorized")">
+                                        @if (serviceProvider.IsAuthorized)
+                                        {
+                                            <span>Authorized</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Not Authorized</span>
+                                        }
+                                    </button>
+                                </td>
+
+                                <td>
+                                    <button onclick="confirmDeleteAuthorization('@serviceProvider.Username', @serviceProvider.Id, this)">Delete</button>
+                                </td>
+
+                                <td>
+                                    <button onclick="changeServicePoint(@serviceProvider.Id)">Change Service Point</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <!-- Display No Data Message -->
+                        <tr>
+                            <td colspan="11">No data available</td> <!-- colspan adjusted to match the number of columns -->
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        const formSaveFunctions = {
+            'serviceProviderForm': saveServiceProvider,
+            // Add more mappings if needed: 'otherFormId': correspondingFunction
+        };
+
+        function confirmAuthorization(username, serviceId, button) {
+            const confirmation = window.confirm(`Confirm Action for ${username}?`);
+            if (confirmation) {
+                const endpointUrl = `/Admin/TriggerAuthorization?serviceId=${serviceId}`;
+                performAction(endpointUrl, username, button, 'Authorization');
+            } else {
+                console.log(`Authorization for ${username} denied.`);
+            }
+        }
+
+        function confirmDeleteAuthorization(username, serviceId, button) {
+            const confirmation = window.confirm(`Confirm Deletion for ${username}?`);
+            if (confirmation) {
+                const endpointUrl = `/Admin/DeleteService?serviceId=${serviceId}`;
+                performAction(endpointUrl, username, button, 'Deletion');
+            } else {
+                console.log(`Deletion for ${username} denied.`);
+            }
+        }
+
+        function performAction(endpointUrl, username, button, actionType) {
+            fetch(endpointUrl, {
+                method: actionType === 'Authorization' ? 'PUT' : 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log(`${actionType} for ${username} successful.`);
+                        if (actionType === 'Authorization') {
+                            authorizeService(serviceId, button);
+                        } else {
+                            // Optionally, handle success for deletion
+                        }
+                    } else {
+                        console.log(`${actionType} for ${username} failed.`);
+                        // Handle failure scenarios here
+                    }
+                })
+                .catch(error => {
+                    console.error(`Error calling ${actionType.toLowerCase()} endpoint:`, error);
+                });
+        }
+
+        function confirmAddServiceProvider() {
+            const confirmation = window.confirm('Are you sure you want to add a service provider?');
+            if (confirmation) {
+                document.getElementById('myModal').style.display = 'block';
+            } else {
+                console.log('Add service provider action canceled.');
+            }
+        }
+
+        function saveServiceProvider(formData) {
+            fetch('/Admin/AddServiceProvider', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Form submitted successfully');
+                        closeModal();
+                    } else {
+                        console.error('Form submission failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        document.getElementById('serviceProviderForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formId = event.target.id;
+            const formData = gatherFormData(formId);
+            confirmSubmit(formData, formId);
+        });
+
+        function gatherFormData(formId) {
+            const form = document.getElementById(formId);
+            return {
+                username: form.querySelector('#username').value,
+                email: form.querySelector('#email').value,
+                phone: form.querySelector('#phone').value,
+                password: form.querySelector('#password').value,
+                servicePoint: form.querySelector('#servicePoint').value,
+                serviceType: form.querySelector('#serviceType').value,
+                isAuthorized: form.querySelector('#isAuthorized').checked
+            };
+        }
+
+        function confirmSubmit(formData, formId) {
+            if (confirm("Are you sure you want to submit this form?")) {
+                const saveFunction = formSaveFunctions[formId];
+                if (saveFunction) {
+                    saveFunction(formData);
+                } else {
+                    console.error('No corresponding save function found for this form.');
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('myModal');
+            modal.style.display = 'none';
+        }
+
+        
+
+        // Other existing functions and event listeners remain unchanged
+
+            // Additional functions or event listeners can be added below
+
+
+    </script>
+
+    <!-- JavaScript for Form Submission -->
+    
+</body>
+</html>

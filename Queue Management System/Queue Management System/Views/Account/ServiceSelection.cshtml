@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Service</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    
+</head>
+<body>
+    <form id="serviceForm" method="post" action="/Account/SelectService">
+        <div class="container">
+            <main role="main" class="pb-3">
+                <input type="hidden" id="selectedService" name="selectedService" value="" />
+                <h1>Select Your Service Point</h1>
+                <div class="row">
+                    @foreach (var service in Model)
+                    {
+                        <div class="col-md-4 mb-3">
+                            <button type="button" class="btn btn-primary btn-lg btn-block service-button" data-service="@service.Name">@service.Name</button>
+                        </div>
+                    }
+                </div>
+            </main>
+        </div>
+    </form>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.service-button').click(function () {
+                var selectedServiceId = $(this).data('service');
+                $('#selectedService').val(selectedServiceId);
+                $('#serviceForm').submit(); 
+            });
+        });
+    </script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Kiosk Mode Service Selection</title>
+    <style>
+        /* Full-screen and kiosk mode styles */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-control {
+            width: 80%;
+            margin-bottom: 15px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .service-button {
+            height: 100px;
+            min-width: auto; 
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="text" class="form-control" id="customerName" name="customerName" placeholder="Your Name" required autofocus>
+
+        <h1>Select Your Service</h1>
+
+        <div class="row">
+            @foreach (var service in Model)
+            {
+                <div class="col-md-4 mb-3">
+                    <button type="button" class="btn btn-primary btn-lg btn-block service-button"
+                            data-service-id="@service.Id" onclick="handleButtonClick('@service.Id', '@service.Name')">
+                        @service.Name
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function handleButtonClick(serviceId, serviceName) {
+            var customerName = $("#customerName").val();
+            if (customerName.trim() === '') {
+                alert('Please input a customer name');
+                return;
+            }
+
+            var requestData = {
+                selectedServiceId: serviceId,
+                customerName: customerName
+            };
+
+            $.ajax({
+                url: '/Queue/ProcessSelection',
+                type: 'POST',
+                data: requestData,
+                success: function (response) {
+                    console.log("Request successful:", response);
+
+                    window.location.href = '/Queue/WaitingPage?serviceId=' + serviceId;
+                },
+                error: function (xhr, status, error) {
+                    console.error("Request error:", error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
