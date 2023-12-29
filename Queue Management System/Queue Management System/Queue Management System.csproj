@@ -13,9 +13,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Account\**" />
+    <Content Remove="Views\Account\**" />
+    <EmbeddedResource Remove="Views\Account\**" />
+    <None Remove="Views\Account\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Repository\" />
     <Folder Include="Services\" />
-    <Folder Include="Views\Account\" />
+    <Folder Include="wwwroot\Reports\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FastReport.OpenSource" Version="2023.3.9" />
+    <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2023.3.9" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.0-6.final" />
+    <PackageReference Include="Npgsql" Version="8.0.1" />
   </ItemGroup>
 
 </Project>

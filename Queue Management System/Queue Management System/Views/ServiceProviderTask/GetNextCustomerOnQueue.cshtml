@@ -1,0 +1,58 @@
+﻿@model Queue_Management_System.Models.Customer
+
+@{
+    ViewBag.Title = "GetNextCustomerOnQueue";
+}
+
+<div class="container text-center my-5">
+    <h1 class="display-3 fw-bold text-one ">Service Provider - Queue Management</h1>
+
+    @if (ViewBag.Message != null)
+    {
+        <p>@ViewBag.Message</p>
+    }
+    else
+    {
+
+        <section class="mt-5">
+            <div class="container-lg">
+                <div class="row my-5 g-0 align-items-center justify-content-center">
+                    <div class="row justify-content-md-center">
+                        <div class="card border-0" style="width: 25rem;">
+                            <div class="card-body text-center py-4">
+
+
+                                <h3>Latest Customer in Queue:</h3>
+                                <p>Queue Number: @Model.QueueNumber</p>
+
+                                <h3>Assign the Customer to a Service Point:</h3>
+
+                                <div class="form-group w-auto p-3 center">
+
+                                    <form asp-action="AssignServicePoint">
+                                        <select asp-for="ServicePointId" asp-items="@((List<SelectListItem>)ViewBag.ServicePoints)" class="form-select">
+                                            <option value="">Select Service Point</option>
+                                        </select>
+                                        <br>
+                                        <input type="submit" value="Assign" class="btn btn-primary" />
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end container -->
+        </section>
+
+        <div>
+            <a asp-action="ViewLatestCustomerQueueInfo" asp-route-customerId="@Model.Id" class="btn btn-lg btn-custom-pink mt-3">View Latest Customer Queue Info</a>
+        </div>
+
+        <div>
+            <a asp-action="Welcome" asp-controller="ServicePointProvider" class="btn btn-lg btn-custom-pink mt-3">Back to Service Provider Tasks</a>
+        </div>
+
+    }
+
+</div>

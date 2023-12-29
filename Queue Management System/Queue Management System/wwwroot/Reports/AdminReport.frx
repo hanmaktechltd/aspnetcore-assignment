@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="12/29/2023 09:06:13" ReportInfo.Modified="12/29/2023 12:44:02" ReportInfo.CreatorVersion="2024.1.0.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="AdminAnalysis" ReferenceName="AdminAnalysisRef" DataType="System.Int32" Enabled="true">
+      <Column Name="NumberofCustomers" DataType="System.String"/>
+      <Column Name="AverageWaitingTime" DataType="System.Double"/>
+      <Column Name="AverageServiceTime" DataType="System.Double"/>
+    </BusinessObjectDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="56.7">
+      <TextObject Name="Text1" Left="255.15" Top="18.9" Width="122.85" Height="18.9" Text="ADMIN REPORT" Font="Arial, 10pt"/>
+      <TextObject Name="Text8" Left="529.2" Top="18.9" Width="94.5" Height="18.9" Text="[Date]" Font="Arial, 10pt"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="60.7" Width="718.2" Height="28.35">
+      <TextObject Name="Text3" Left="18.9" Width="141.75" Height="18.9" Text="NumberofCustomers" Font="Arial, 10pt"/>
+      <TextObject Name="Text5" Left="226.8" Width="141.75" Height="18.9" Text="AverageWaitingTime" Font="Arial, 10pt"/>
+      <TextObject Name="Text7" Left="453.6" Width="151.2" Height="18.9" Text="AverageServiceTime" Font="Arial, 10pt"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="93.05" Width="718.2" Height="75.6" DataSource="AdminAnalysis">
+      <TextObject Name="Text2" Left="18.9" Top="9.45" Width="160.65" Height="18.9" Text="[AdminAnalysis.NumberofCustomers]" Font="Arial, 10pt"/>
+      <TextObject Name="Text4" Left="226.8" Top="9.45" Width="189" Height="18.9" Text="[AdminAnalysis.AverageWaitingTime]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text6" Left="453.6" Top="9.45" Width="245.7" Height="18.9" Text="[AdminAnalysis.AverageServiceTime]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="172.65" Width="718.2" Height="18.9"/>
+  </ReportPage>
+</Report>

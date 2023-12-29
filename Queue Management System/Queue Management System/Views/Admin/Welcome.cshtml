@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "Welcome";
+}
+
+@if (Context.Session.GetString("username") != null)
+{
+    <h2>Welcome @Context.Session.GetString("username")</h2>
+}
+
+
+<div class="container text-center my-5">
+    <h1 class="display-3 fw-bold text-one ">Admin Roles</h1>
+
+    <div>
+        <a href="@Url.Action("ListofServicePoints", "ServicePoint")" class="btn btn-lg btn-custom-pink mt-3">Configure Service Points</a>
+    </div>
+
+    <div>
+        <a href="@Url.Action("ListofServiceProviders", "ServiceProviderConfiguration")" class="btn btn-lg btn-custom-pink mt-3">Configure Service Providers</a>
+    </div>
+
+    <div>
+        <a href="@Url.Action("GenerateAdminReport", "Report")" class="btn btn-lg btn-custom-pink mt-3">Generate Application Report </a>
+    </div>
+
+    @*<div>
+        <button class="btn btn-lg btn-custom-pink mt-3">Generate Application Report</button>
+    </div>*@
+
+</div>

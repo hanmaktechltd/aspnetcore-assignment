@@ -1,0 +1,39 @@
+﻿@model List<Queue_Management_System.Models.ServiceProviderConfiguration>
+
+@{
+    ViewBag.Title = "ListofServiceProviders";
+}
+
+<h2>List of Service Providers</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.First().UserName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Password)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var serviceProvider in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => serviceProvider.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => serviceProvider.Password)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = serviceProvider.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = serviceProvider.Id })
+            </td>
+        </tr>
+    }
+</table>
+
+<p>
+    @Html.ActionLink("Add New Service Provider", "CreateServiceProvider")
+</p>
