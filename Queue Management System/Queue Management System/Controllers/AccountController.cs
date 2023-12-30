@@ -40,14 +40,17 @@ public IActionResult LoginPost(LoginViewModel loginData)
             
          _logger.LogInformation("authentication success");
 
+         var userRole = _authenticationService.GetServiceProviderByUsername(loginData.Username).Role;
+
              var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, loginData.Username),
+                 new Claim(ClaimTypes.Role, userRole),
     
             };
 
 
-             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var authProperties = new AuthenticationProperties();
 
             HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);

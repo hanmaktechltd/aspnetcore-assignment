@@ -17,6 +17,12 @@ var builder = WebApplication.CreateBuilder(args);
         options.LogoutPath = "/Account/Logout";
     });
 
+  builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole",
+         policy => policy.RequireRole("super"));
+});
+
 // Add services to the container
 builder.Services.AddControllersWithViews();
 
