@@ -1,0 +1,28 @@
+@model IEnumerable<ServicePoint>
+
+<h4>Service Points</h4>
+
+<p><a asp-controller="ServicePoint" asp-action="Create" class="btn btn-primary">Create New Service Point</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Service Point Name</th>
+            <th>Description</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var servicePoint in Model)
+        {
+            <tr>
+                <td>@servicePoint.ServicePointName</td>
+                <td>@servicePoint.Description</td>
+                <td>
+                    <a asp-controller="ServicePoint" asp-action="Edit" asp-route-id="@servicePoint.ServicePointId" class="btn btn-primary">Edit</a>
+                    <a asp-controller="ServicePoint" asp-action="Delete" asp-route-id="@servicePoint.ServicePointId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

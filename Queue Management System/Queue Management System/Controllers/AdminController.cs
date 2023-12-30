@@ -6,12 +6,26 @@ namespace Queue_Management_System.Controllers
     [Authorize(Policy = "RequireAdminRole")]
     public class AdminController : Controller
     {
+        private readonly ITicketService _ticketService;
+        private readonly IServicePointService _servicePointService;
+        private readonly ILogger<QueueController> _logger;
+
+        public AdminController(ITicketService ticketService, IServicePointService servicePointService, ILogger<QueueController> logger)
+        {
+            _ticketService = ticketService;
+            _servicePointService = servicePointService;
+            _logger = logger;
+        }
 
         [HttpGet]
         public IActionResult Dashboard()
         {
-            return View();
-        }
+            var viewModel = new DashboardViewModel
+            {
+                ServicePoints = _servicePointService.GetServicePoints()
+            };
 
+            return View(viewModel);
+        }
     }
 }

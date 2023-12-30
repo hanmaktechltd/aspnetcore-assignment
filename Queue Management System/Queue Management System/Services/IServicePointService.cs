@@ -13,4 +13,13 @@ public interface IServicePointService {
 
    public Ticket GetNextTicketPerServicePoint (int servicePointId);
 
+   public void CreateServicePoint (ServicePoint model);
+
+   public void UpdateServicePoint(ServicePoint model);
+
+   public void DeleteServicePoint(int id);
+
+
+
+
 }

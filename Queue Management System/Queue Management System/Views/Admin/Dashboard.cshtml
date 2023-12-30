@@ -1,0 +1,17 @@
+
+
+@model DashboardViewModel
+
+<h2>Admin Dashboard</h2>
+
+<div>
+    @Html.Partial("_ServicePointsPartial", Model.ServicePoints)
+</div>
+
+@* <div>
+    @Html.Partial("_ServiceProvidersPartial", Model.ServiceProviders)
+</div> *@
+
+<div>
+    <h3>Generate Analytical Report</h3>
+</div>
