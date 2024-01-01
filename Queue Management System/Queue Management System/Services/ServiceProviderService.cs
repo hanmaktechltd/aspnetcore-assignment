@@ -298,4 +298,28 @@ public class ServiceProviderService : IServiceProviderService
             }
         }
     }
+
+    public bool IsUsernameUnique(string username)
+    {
+        using (var connection = new NpgsqlConnection(_connectionString))
+        {
+            connection.Open();
+
+            using (var command = new NpgsqlCommand("SELECT COUNT(*) = 0 AS IsUsernameUnique FROM ServiceProvider WHERE LOWER(Username) = LOWER(@Username)", connection))
+            {
+                command.Parameters.AddWithValue("@Username", username);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return reader.GetBoolean(0);
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
 }

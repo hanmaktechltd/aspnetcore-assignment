@@ -34,8 +34,25 @@ namespace Queue_Management_System.Controllers
         [HttpPost]
         public IActionResult Create(ServiceProviderViewModel model)
         {
+            
+            var allServicePoints = _servicePointService.GetServicePoints();
+
+            var newViewModel = new ServiceProviderViewModel
+            {
+                Roles = GetRoleSelectList(),
+                AllServicePoints = GetServicePointSelectList(allServicePoints)
+            };
+
             if (ModelState.IsValid)
             {
+
+                 if (!_serviceProviderService.IsUsernameUnique(model.Username))
+                    {
+                        ModelState.AddModelError("Username", "Username is already taken. Please choose a different one.");
+                        return View(newViewModel);
+                    }
+
+
                 var serviceProvider = new ServiceProvider
                 {
                     Username = model.Username,
@@ -45,15 +62,6 @@ namespace Queue_Management_System.Controllers
                 _serviceProviderService.AddServiceProviderWithServicePoints(serviceProvider, model.SelectedServicePointIds);
                 return RedirectToAction("Dashboard", "Admin");
             }
-
-             var allServicePoints = _servicePointService.GetServicePoints();
-
-            var newViewModel = new ServiceProviderViewModel
-            {
-                Roles = GetRoleSelectList(),
-                AllServicePoints = GetServicePointSelectList(allServicePoints)
-            };
-
 
             LogModelStateErrors();
             return View(newViewModel);
@@ -81,10 +89,24 @@ namespace Queue_Management_System.Controllers
         [HttpPost]
         public IActionResult Edit(ServiceProviderViewModel model)
         {
-            _logger.LogInformation($"Editing ServiceProvider - ServiceProviderId: {model.ServiceProviderId}, Username: {model.Username}, Role: {model.Role}");
+            var allServicePoints = _servicePointService.GetServicePoints();
+
+            var newViewModel = new ServiceProviderViewModel
+            {
+                Roles = GetRoleSelectList(),
+                AllServicePoints = GetServicePointSelectList(allServicePoints)
+            };
 
             if (ModelState.IsValid)
             {
+
+                 
+                if (!_serviceProviderService.IsUsernameUnique(model.Username))
+                    {
+                        ModelState.AddModelError("Username", "Username is already taken. Please choose a different one.");
+                        return View(newViewModel);
+                    }
+
                 var serviceProvider = new ServiceProvider
                 {
                     ServiceProviderId = model.ServiceProviderId,
@@ -96,13 +118,7 @@ namespace Queue_Management_System.Controllers
                 return RedirectToAction("Dashboard", "Admin");
             }
 
-            var allServicePoints = _servicePointService.GetServicePoints();
-
-            var newViewModel = new ServiceProviderViewModel
-            {
-                Roles = GetRoleSelectList(),
-                AllServicePoints = GetServicePointSelectList(allServicePoints)
-            };
+           
 
             return View(newViewModel);
         }
@@ -157,5 +173,6 @@ namespace Queue_Management_System.Controllers
                 })
                 .ToList();
         }
+
     }
 }

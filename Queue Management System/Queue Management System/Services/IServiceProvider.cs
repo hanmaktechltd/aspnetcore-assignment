@@ -17,6 +17,8 @@ public interface IServiceProviderService {
 
     public void UpdateServiceProviderWithServicePoints(ServiceProvider serviceProvider, List<int> newServicePointIds);
 
+    public bool IsUsernameUnique(string username);
+
 
 
 
