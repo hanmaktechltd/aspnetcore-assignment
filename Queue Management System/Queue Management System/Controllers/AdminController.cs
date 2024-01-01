@@ -8,12 +8,15 @@ namespace Queue_Management_System.Controllers
     {
         private readonly ITicketService _ticketService;
         private readonly IServicePointService _servicePointService;
+
+        private readonly IServiceProviderService _serviceProviderService;
         private readonly ILogger<QueueController> _logger;
 
-        public AdminController(ITicketService ticketService, IServicePointService servicePointService, ILogger<QueueController> logger)
+        public AdminController(ITicketService ticketService, IServicePointService servicePointService, IServiceProviderService serviceProviderService, ILogger<QueueController> logger)
         {
             _ticketService = ticketService;
             _servicePointService = servicePointService;
+            _serviceProviderService = serviceProviderService;
             _logger = logger;
         }
 
@@ -22,8 +25,10 @@ namespace Queue_Management_System.Controllers
         {
             var viewModel = new DashboardViewModel
             {
-                ServicePoints = _servicePointService.GetServicePoints()
-            };
+                ServicePoints = _servicePointService.GetServicePoints(),
+                ServiceProviders = _serviceProviderService.GetServiceProvidersWithServicePoints()
+    
+            };    
 
             return View(viewModel);
         }

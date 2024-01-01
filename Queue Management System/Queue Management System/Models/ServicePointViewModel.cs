@@ -4,9 +4,8 @@ public class ServicePointViewModel {
 
     public int CurrentTicketNumber {get; set;}
 
-
     public DateTime CurrentTicketIssueTime {get; set;}
-    public ICollection<Ticket> AllTickets { get; set; }
+    public ICollection<Ticket>? AllTickets { get; set; }
 
     public Boolean HasTickets {get; set;}
 
@@ -16,7 +15,7 @@ public class ServicePointViewModel {
 
     public int TicketCount {get; set;}
 
-    public ICollection<Ticket> NotServedTickets { get; set; }
+    public ICollection<Ticket>? NotServedTickets { get; set; }
 
     
 }

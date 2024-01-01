@@ -1,36 +1,30 @@
-
-//probably 1 to 1 relationship with ServicePoint
 using Queue_Management_System.Models;
 
-public class ServiceProvider {
-
-    public int ServiceProviderId {get; set;}
-
-   public int Id { get; set; }
+public class ServiceProvider
+{
+    public int ServiceProviderId { get; set; }
     public string Username { get; set; }
-    public string PasswordHash { get; set; }
-    
-     public string Role { get; set; }
+    public string Password { get; set; }
+    public string Role { get; set; }
+    public List<ServicePoint> ServicePoints { get; set; }
 
-    //public virtual ServicePoint AssociatedServicePoint { get; set; }
-
-     public int ServicePointId { get; set; }
-     public ServicePoint ServicePoint { get; set; }
-
-
-     private string GenerateRandomPassword()
+    public ServiceProvider()
     {
-        int length = 12;
-        string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
-        
+        Password = SimplePasswordGenerator();
+    }
+
+    private string SimplePasswordGenerator()
+    {
+        const int length = 12;
+        const string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+
         Random random = new Random();
         string randomPassword = new string(Enumerable.Repeat(characters, length)
             .Select(s => s[random.Next(s.Length)]).ToArray());
 
-        // maybe considering using bcrypt..
+        // Consider using bcrypt for password hashing
 
         return randomPassword;
     }
-
 
 }
