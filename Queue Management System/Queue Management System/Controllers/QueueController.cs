@@ -201,14 +201,14 @@ namespace Queue_Management_System.Controllers
 
               if (model.DestinationServicePointId == 0)
                 {
+                    ModelState.AddModelError("", "You need to select a servicepoint");
                     return View("TransferTicket", new TransferTicketViewModel {TicketId = model.TicketId, OriginServicePointId = model.OriginServicePointId, AvailableServicePoints = availableServicePoints});
                 }
                   
               _ticketService.TransferTicket(model.TicketId, model.DestinationServicePointId);
-    
               return RedirectToAction("ServicePointDetails", new { id = model.OriginServicePointId });
              }
-
+             ModelState.AddModelError("", "You need to select a servicepoint");
              return View("TransferTicket", new TransferTicketViewModel {TicketId = model.TicketId, OriginServicePointId = model.OriginServicePointId, AvailableServicePoints = availableServicePoints});
           }
 
