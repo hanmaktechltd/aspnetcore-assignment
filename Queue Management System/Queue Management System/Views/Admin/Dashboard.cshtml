@@ -1,5 +1,4 @@
 
-
 @model DashboardViewModel
 
 <h2>Admin Dashboard</h2>
@@ -14,4 +13,5 @@
 
 <div>
     <h3>Generate Analytical Report</h3>
+        <input type = "button" value = "Print Report" onclick="location.href='@Url.Action("DownloadReport", "Admin", @Model)'"/> 
 </div>

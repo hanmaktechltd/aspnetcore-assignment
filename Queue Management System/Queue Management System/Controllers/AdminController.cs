@@ -10,13 +10,16 @@ namespace Queue_Management_System.Controllers
         private readonly IServicePointService _servicePointService;
 
         private readonly IServiceProviderService _serviceProviderService;
+
+        private readonly IReportService _reportService;
         private readonly ILogger<QueueController> _logger;
 
-        public AdminController(ITicketService ticketService, IServicePointService servicePointService, IServiceProviderService serviceProviderService, ILogger<QueueController> logger)
+        public AdminController(ITicketService ticketService, IServicePointService servicePointService, IServiceProviderService serviceProviderService, IReportService reportService, ILogger<QueueController> logger)
         {
             _ticketService = ticketService;
             _servicePointService = servicePointService;
             _serviceProviderService = serviceProviderService;
+            _reportService = reportService;
             _logger = logger;
         }
 
@@ -32,5 +35,12 @@ namespace Queue_Management_System.Controllers
 
             return View(viewModel);
         }
+
+        public IActionResult DownloadReport()
+        {
+            var reportBytes = _reportService.GenerateReport();
+            return File(reportBytes, "application/pdf", "report.pdf");
+        }
+
     }
 }
