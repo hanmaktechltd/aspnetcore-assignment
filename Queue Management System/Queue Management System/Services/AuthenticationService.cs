@@ -33,10 +33,10 @@ public class AuthenticationService : IAuthenticationService {
                     {
                         var serviceProvider = new ServiceProvider
                         {
-                            Id = Convert.ToInt32(reader["ServiceProviderId"]),
+                            ServiceProviderId = Convert.ToInt32(reader["ServiceProviderId"]),
                             Username = reader["Username"].ToString(),
-                            PasswordHash = reader["PasswordHash"].ToString(),
-                            ServicePointId = Convert.ToInt32(reader["ServicePointId"]),
+                            Password = reader["PasswordHash"].ToString(),
+                            //ServicePointId = Convert.ToInt32(reader["ServicePointId"]),
                             Role = reader["Role"].ToString()
                     
                         };
@@ -57,9 +57,11 @@ public class AuthenticationService : IAuthenticationService {
         if (serviceProvider != null)
         {
         
-            return string.Equals(serviceProvider.PasswordHash, providedPassword, StringComparison.Ordinal);
+            return string.Equals(serviceProvider.Password, providedPassword, StringComparison.Ordinal);
         }
 
         return false;
     }
+
+    
 }

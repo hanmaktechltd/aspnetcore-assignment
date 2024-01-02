@@ -1,3 +1,4 @@
+
 @model LoginViewModel
 
 @{
@@ -14,10 +15,18 @@
                     <form asp-action="LoginPost" method="post" class="needs-validation" novalidate>
                         @Html.AntiForgeryToken()
 
+                        <input type="hidden" name="ServiceProviderId" id="serviceProviderId" value="" />
+
                         <div class="mb-3">
-                            <label for="username" class="form-label">Username:</label>
-                            <input type="text" id="username" name="Username" class="form-control" required>
-                            <div class="invalid-feedback">Please enter your username.</div>
+                            <label for="username" class="form-label">Service Provider:</label>
+                            <select id="username" name="Username" class="form-select" required>
+                                <option value="">Select Service Provider</option>
+                                @foreach (var serviceProvider in Model.AvailableServiceProviders)
+                                {
+                                    <option value="@serviceProvider.Username">@serviceProvider.Username</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback">Please select a service provider.</div>
                         </div>
 
                         <div class="mb-3">
@@ -37,3 +46,4 @@
         </div>
     </div>
 </div>
+
