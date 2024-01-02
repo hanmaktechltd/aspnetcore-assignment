@@ -5,11 +5,9 @@ public class CheckinViewModel
 {
 
     public int SelectedServicePointId {get; set;}
-    
-    public List<ServicePoint> ServicePoints {get; set;}
 
+    public int CurrentServiceProviderId {get; set;}
 
-    //public string ServicePointName { get; set; }
-
+    public List<ServicePoint> CurrentServiceProviderServicePoints {get; set;}
 
 }

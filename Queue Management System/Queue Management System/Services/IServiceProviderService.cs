@@ -19,6 +19,8 @@ public interface IServiceProviderService {
 
     public bool IsUsernameUnique(string username);
 
+     public List<ServicePoint> GetServicePointsByServiceProviderId(int serviceProviderId);
+
 
 
 

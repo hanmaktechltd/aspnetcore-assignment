@@ -216,23 +216,23 @@ public class TicketService : ITicketService
     }
 
     public void MarkAsFinished(int ticketId)
-{
-    using (var connection = new NpgsqlConnection(_connectionString))
     {
-        connection.Open();
-
-        Ticket ticket = GetTicketById(ticketId);
-        if (ticket != null)
+        using (var connection = new NpgsqlConnection(_connectionString))
         {
-            UpdateTicketStatus(ticket.TicketId, "Finished");
-            UpdateServiceTime(connection, ticket.TicketId, DateTime.Now);
+            connection.Open();
+
+            Ticket ticket = GetTicketById(ticketId);
+            if (ticket != null)
+            {
+                UpdateTicketStatus(ticket.TicketId, "Finished");
+                UpdateServiceTime(connection, ticket.TicketId, DateTime.Now);
+            }
+
+            _logger.LogInformation("Ticket {TicketId} marked as finished.", ticketId);
+
         }
-
-          _logger.LogInformation("Ticket {TicketId} marked as finished.", ticketId);
-
     }
-}
-    private Ticket GetTicketById(int ticketId)
+    public Ticket GetTicketById(int ticketId)
     {
         using (var connection = new NpgsqlConnection(_connectionString))
         {
@@ -253,7 +253,9 @@ public class TicketService : ITicketService
                         IssueTime = (DateTime)reader["IssueTime"],
             
                         Status = reader.GetString(reader.GetOrdinal("Status")),
-                         ServicePointId = reader.GetInt32(reader.GetOrdinal("ServicePointId"))
+                         ServicePointId = reader.GetInt32(reader.GetOrdinal("ServicePointId")),
+                         ServicePoint = reader.GetString(reader.GetOrdinal("ServicePoint")),
+                         ServiceProvider = reader.GetString(reader.GetOrdinal("ServiceProvider"))
                     };
                 }
 
@@ -287,15 +289,15 @@ public class TicketService : ITicketService
 
 
     private void UpdateServiceTime(NpgsqlConnection connection, int ticketId, DateTime serviceTime)
-{
-    using (var command = new NpgsqlCommand("UPDATE Ticket SET ServiceTime = @ServiceTime WHERE TicketId = @TicketId", connection))
     {
-        command.Parameters.AddWithValue("@TicketId", ticketId);
-        command.Parameters.AddWithValue("@ServiceTime", serviceTime);
+        using (var command = new NpgsqlCommand("UPDATE Ticket SET ServiceTime = @ServiceTime WHERE TicketId = @TicketId", connection))
+        {
+            command.Parameters.AddWithValue("@TicketId", ticketId);
+            command.Parameters.AddWithValue("@ServiceTime", serviceTime);
 
-        command.ExecuteNonQuery();
+            command.ExecuteNonQuery();
+        }
     }
-}
 
     public void TransferTicket(int ticketId, int newServicePointId)
     {
@@ -317,4 +319,24 @@ public class TicketService : ITicketService
              _logger.LogInformation("Ticket {ticketId} transferred to {newServicePointId}.", ticketId, newServicePointId);
         }
     }
+
+    public void SetServicePointAndProviderForTicket(int ticketId, string servicePointName, string serviceProviderUsername)
+    {
+        
+        using (var connection = new NpgsqlConnection(_connectionString))
+        {
+            connection.Open();
+
+            using (var command = new NpgsqlCommand("UPDATE Ticket SET ServicePoint = @ServicePoint, ServiceProvider = @ServiceProvider WHERE TicketId = @TicketId", connection))
+            {
+            
+                command.Parameters.AddWithValue("@ServicePoint", servicePointName);
+                command.Parameters.AddWithValue("@ServiceProvider", serviceProviderUsername);
+                command.Parameters.AddWithValue("@TicketId", ticketId);
+
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+
 }

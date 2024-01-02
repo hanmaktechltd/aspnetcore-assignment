@@ -9,4 +9,6 @@ public class LoginViewModel {
     [Required]
     public string Password { get; set; }
 
+    public List<ServiceProvider>? AvailableServiceProviders {get; set;}
+
 }

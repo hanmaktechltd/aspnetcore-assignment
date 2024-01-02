@@ -10,7 +10,7 @@ ViewData["Title"] = "Check-In";
 
 <form asp-action="WaitingPage" method="post">
     <label asp-for="SelectedServicePointId">Select Service:</label>
-    <select asp-for="SelectedServicePointId" asp-items="@(new SelectList(Model.ServicePoints, "ServicePointId", "ServicePointName"))">
+    <select asp-for="SelectedServicePointId" asp-items="@(new SelectList(Model.CurrentServiceProviderServicePoints, "ServicePointId", "ServicePointName"))">
         <option>Please select a service</option>
     </select>
     <button type="Submit">Let's Go</button>

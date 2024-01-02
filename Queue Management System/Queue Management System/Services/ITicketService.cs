@@ -8,7 +8,7 @@ public interface ITicketService {
 
     byte[] GenerateTicket(WaitingPageViewModel waitingPageData);
 
-    //Ticket GetTicketById(int ticketId);
+    Ticket GetTicketById(int ticketId);
 
     public void MarkAsNoShow(int ticketId);
 
@@ -19,6 +19,8 @@ public interface ITicketService {
     public void UpdateTicketStatus(int ticketId, string status);
 
      //void UpdateServiceTime(NpgsqlConnection connection, int ticketId, DateTime serviceTime)
+
+    public void SetServicePointAndProviderForTicket(int ticketId, string servicePointName, string serviceProviderUsername);
 
 
 

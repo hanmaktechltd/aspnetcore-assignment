@@ -17,5 +17,9 @@ public class ServicePointViewModel {
 
     public ICollection<Ticket>? NotServedTickets { get; set; }
 
+    public ICollection<ServiceProvider> AllServiceProviders {get; set;}
+
+    public int CurrentServiceProviderId {get; set;}
+
     
 }

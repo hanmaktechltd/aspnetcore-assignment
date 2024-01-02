@@ -1,7 +1,7 @@
 
 @model CheckinViewModel
 
-<h1>All Service Points</h1>
+<h3>Your ServicePoints</h3>
 
 <table class="table">
     <thead>
@@ -12,13 +12,13 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var servicePoint in Model.ServicePoints)
+        @foreach (var servicePoint in Model.CurrentServiceProviderServicePoints)
         {
             <tr>
                 <td>@servicePoint.ServicePointName</td>
                 <td>@Html.DisplayFor(modelItem => servicePoint.Description)</td>
                 <td>
-                    <a asp-action="ServicePointDetails" asp-controller="Queue" asp-route-id="@servicePoint.ServicePointId">Open</a>
+                    <a asp-action="ServicePointDetails" asp-controller="Queue" asp-route-id="@servicePoint.ServicePointId" asp-route-serviceProviderId="@Model.CurrentServiceProviderId">Open</a>
                 </td>
             </tr>
         }

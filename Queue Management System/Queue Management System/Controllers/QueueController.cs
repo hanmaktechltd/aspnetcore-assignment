@@ -15,13 +15,17 @@ namespace Queue_Management_System.Controllers
 
           private readonly IServicePointService _servicePointService;
 
+          private readonly IServiceProviderService _serviceProviderService;
+
           private readonly ILogger<QueueController> _logger;
 
-     public QueueController(ITicketService ticketService, IServicePointService servicePointService, ILogger<QueueController> logger)
+     public QueueController(ITicketService ticketService, IServicePointService servicePointService, IServiceProviderService serviceProviderService, ILogger<QueueController> logger)
     {
         _ticketService = ticketService;
 
         _servicePointService = servicePointService;
+
+        _serviceProviderService = serviceProviderService;
 
         _logger = logger;
     }
@@ -35,7 +39,7 @@ namespace Queue_Management_System.Controllers
          List <ServicePoint> servicePoints = _servicePointService.GetServicePoints();
 
 
-          viewModel.ServicePoints = servicePoints;
+          viewModel.CurrentServiceProviderServicePoints = servicePoints;
 
           return View(viewModel);
         }
@@ -48,17 +52,20 @@ namespace Queue_Management_System.Controllers
      
 
         [Authorize, HttpGet]
-        public IActionResult ServicePoint()
-        {    
-
+        public IActionResult ServicePoint(int currentServiceProviderId)
+        {   
+      
           var viewModel = new CheckinViewModel();
+
+          viewModel.CurrentServiceProviderId = currentServiceProviderId;
          
-         List <ServicePoint> servicePoints = _servicePointService.GetServicePoints();
+          var servicePoints = _serviceProviderService.GetServicePointsByServiceProviderId(currentServiceProviderId);
 
-          viewModel.ServicePoints = servicePoints;
-        
+          _logger.LogInformation("ServicePoints for ServiceProviderId {ServiceProviderId}: {@ServicePoints}", currentServiceProviderId, servicePoints);
 
-            return View(viewModel);
+          viewModel.CurrentServiceProviderServicePoints = servicePoints;
+          
+          return View(viewModel);
         }
         
 
@@ -67,9 +74,6 @@ namespace Queue_Management_System.Controllers
         public IActionResult WaitingPage(CheckinViewModel checkinData) {
           
           Ticket newTicket = _ticketService.SaveTicketToDatabase(checkinData);
-
-          _logger.LogInformation("checkindata selected id: {@checkinData}", checkinData.SelectedServicePointId);
-          _logger.LogInformation("New ticket id: {@newTicket}", newTicket.TicketId);
 
           WaitingPageViewModel waitingPageView = new WaitingPageViewModel();
 
@@ -97,14 +101,12 @@ namespace Queue_Management_System.Controllers
           
         [HttpPost]
         [HttpGet]
-        public IActionResult ServicePointDetails (int id, int TicketCount, int CurrentTicketIndex, string direction) {
+        public IActionResult ServicePointDetails (int id, int serviceProviderId, int TicketCount, int CurrentTicketIndex, string direction) {
         
         ServicePointViewModel viewModel = new ServicePointViewModel();
 
         List <Ticket> fetchedTickets = _servicePointService.findTicketsPerServicePoint(id);
-
         viewModel.AllTickets = fetchedTickets;
-
         List<Ticket> notServedTickets = fetchedTickets.Where(t => t.Status == "Not Served").ToList();
 
         viewModel.NotServedTickets = notServedTickets;
@@ -121,6 +123,8 @@ namespace Queue_Management_System.Controllers
 
       
         viewModel.CurrentServicePointId = id;
+
+        viewModel.CurrentServiceProviderId = serviceProviderId;
         
 
         if (notServedTickets != null && notServedTickets.Count > 0 && CurrentTicketIndex >= 0 && CurrentTicketIndex < notServedTickets.Count)
@@ -138,7 +142,7 @@ namespace Queue_Management_System.Controllers
         {
             viewModel.HasTickets = false;   
         }
-    
+  
           return View(viewModel);
         }
 
@@ -156,7 +160,12 @@ namespace Queue_Management_System.Controllers
           [ValidateAntiForgeryToken]
           public IActionResult MarkFinished(int ticketId, int currentServicePointId)
           {
-              _ticketService.MarkAsFinished(ticketId);
+              
+             var serviceProviderUsername = _ticketService.GetTicketById(ticketId).ServiceProvider;
+             _ticketService.MarkAsFinished(ticketId);
+             var servicePointName = _servicePointService.GetServicePointById(currentServicePointId).ServicePointName;
+             _ticketService.SetServicePointAndProviderForTicket(ticketId, servicePointName, serviceProviderUsername);
+
               return RedirectToAction("ServicePointDetails", new { id = currentServicePointId });
           }
 
@@ -165,43 +174,52 @@ namespace Queue_Management_System.Controllers
 
           public IActionResult MarkNoShow(int ticketId, int currentServicePointId)
           {
-               _ticketService.MarkAsNoShow(ticketId);
+              _ticketService.MarkAsNoShow(ticketId);
               return RedirectToAction("ServicePointDetails", new { id = currentServicePointId });
           }
 
           public IActionResult TransferTicket(int ticketId, int currentServicePointId)
           {
-              
-             Console.WriteLine("currentServicePoinId is {0}", currentServicePointId);
-             List <ServicePoint> availableServicePoints = _servicePointService.GetServicePoints();
-              
-              return View("TransferTicket", new TransferTicketViewModel { TicketId = ticketId, OriginServicePointId = currentServicePointId, AvailableServicePoints = availableServicePoints });
+
+               if (ModelState.IsValid)
+              {
+                 List <ServicePoint> availableServicePoints = _servicePointService.GetServicePoints();
+             return View("TransferTicket", new TransferTicketViewModel { TicketId = ticketId, OriginServicePointId = currentServicePointId, AvailableServicePoints = availableServicePoints });
+              }
+            
+              return RedirectToAction("ServicePointDetails", new { id = currentServicePointId });   
+            
           }
 
           [HttpPost]
           public IActionResult CompleteTransfer(TransferTicketViewModel model)
           {
 
-               Console.WriteLine("OriginServicePointId is : {0}", model.OriginServicePointId);
-                 Console.WriteLine("DestinationServicePointId is : {0}", model.DestinationServicePointId);
-                 Console.WriteLine("TicketId is : {0}", model.TicketId);
-  
+            List <ServicePoint> availableServicePoints = _servicePointService.GetServicePoints();
+             
+             if (ModelState.IsValid) {
+
+              if (model.DestinationServicePointId == 0)
+                {
+                    return View("TransferTicket", new TransferTicketViewModel {TicketId = model.TicketId, OriginServicePointId = model.OriginServicePointId, AvailableServicePoints = availableServicePoints});
+                }
+                  
               _ticketService.TransferTicket(model.TicketId, model.DestinationServicePointId);
     
-              return RedirectToAction("ServicePointDetails", new { currentServicePointId = model.OriginServicePointId });
+              return RedirectToAction("ServicePointDetails", new { id = model.OriginServicePointId });
+             }
+
+             return View("TransferTicket", new TransferTicketViewModel {TicketId = model.TicketId, OriginServicePointId = model.OriginServicePointId, AvailableServicePoints = availableServicePoints});
           }
 
 
 
          [HttpPost]
          [ValidateAntiForgeryToken]
-          public IActionResult RecallTicket(int ticketId, int currentServicePointId)
+          public IActionResult RecallTicket(int ticketId, int currentServicePointId, int currentServiceProviderId)
           {
-
-            Console.WriteLine("ticketId is {0}", ticketId);
-            Console.WriteLine("currentServicePointId is {0}", currentServicePointId);
               _ticketService.UpdateTicketStatus(ticketId, "Not Served");
-              return RedirectToAction("ServicePointDetails", new { id = currentServicePointId });
+              return RedirectToAction("ServicePointDetails", new { id = currentServicePointId, serviceProviderId = currentServiceProviderId });
           }
 
 
