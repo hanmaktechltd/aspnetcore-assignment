@@ -322,4 +322,39 @@ public class ServiceProviderService : IServiceProviderService
         return false;
     }
 
+    public List<ServicePoint> GetServicePointsByServiceProviderId(int serviceProviderId)
+{
+    List<ServicePoint> servicePoints = new List<ServicePoint>();
+
+    using (var connection = new NpgsqlConnection(_connectionString))
+    {
+        connection.Open();
+
+        using (var command = new NpgsqlCommand("SELECT sp.ServicePointId, sp.ServicePointName " +
+            "FROM ServiceProviderServicePoint spsp " +
+            "JOIN ServicePoint sp ON spsp.ServicePointId = sp.ServicePointId " +
+            "WHERE spsp.ServiceProviderId = @ServiceProviderId", connection))
+        {
+            command.Parameters.AddWithValue("@ServiceProviderId", serviceProviderId);
+
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    var servicePoint = new ServicePoint
+                    {
+                        ServicePointId = reader.GetInt32(reader.GetOrdinal("ServicePointId")),
+                        ServicePointName = reader.GetString(reader.GetOrdinal("ServicePointName"))
+                    };
+
+                    servicePoints.Add(servicePoint);
+                }
+            }
+        }
+    }
+
+    return servicePoints;
+}
+
+
 }
