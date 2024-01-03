@@ -135,22 +135,23 @@ public class TicketService : ITicketService
                 command.Connection = connection;
 
                 command.CommandText = @"
-                INSERT INTO Ticket (IssueTime, ServicePointId)
-                VALUES (CURRENT_TIMESTAMP, @ServicePointId)
-                RETURNING TicketId, IssueTime, ServicePointId;
+                INSERT INTO Ticket (IssueTime, ServicePointId, ServicePoint)
+                VALUES (CURRENT_TIMESTAMP, @ServicePointId, @CurrentServicePointName)
+                RETURNING TicketId, IssueTime, ServicePointId, ServicePoint;
             ";
 
                 command.Parameters.AddWithValue("@ServicePointId", checkinData.SelectedServicePointId);
+                command.Parameters.AddWithValue("@CurrentServicePointName", checkinData.CurrentServicePointName);
+
 
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
                         ticket.TicketId = reader.GetInt32(0);
-                        //ticket.TicketNumber = reader.GetInt32(0);
-                        //ticket.ServicePointName = reader.GetString(1);
                         ticket.IssueTime = reader.GetDateTime(1);
                         ticket.ServicePointId = reader.GetInt32(reader.GetOrdinal("ServicePointId"));
+                        ticket.ServicePoint = reader.GetString(reader.GetOrdinal("ServicePoint"));
                     }
                 }
             }
@@ -255,7 +256,7 @@ public class TicketService : ITicketService
                         Status = reader.GetString(reader.GetOrdinal("Status")),
                          ServicePointId = reader.GetInt32(reader.GetOrdinal("ServicePointId")),
                          ServicePoint = reader.GetString(reader.GetOrdinal("ServicePoint")),
-                         ServiceProvider = reader.GetString(reader.GetOrdinal("ServiceProvider"))
+                         //ServiceProvider = reader.GetString(reader.GetOrdinal("ServiceProvider"))
                     };
                 }
 
@@ -320,17 +321,16 @@ public class TicketService : ITicketService
         }
     }
 
-    public void SetServicePointAndProviderForTicket(int ticketId, string servicePointName, string serviceProviderUsername)
+    public void SetServiceProviderForTicket(int ticketId, string serviceProviderUsername)
     {
         
         using (var connection = new NpgsqlConnection(_connectionString))
         {
             connection.Open();
 
-            using (var command = new NpgsqlCommand("UPDATE Ticket SET ServicePoint = @ServicePoint, ServiceProvider = @ServiceProvider WHERE TicketId = @TicketId", connection))
+            using (var command = new NpgsqlCommand("UPDATE Ticket SET ServiceProvider = @ServiceProvider WHERE TicketId = @TicketId", connection))
             {
             
-                command.Parameters.AddWithValue("@ServicePoint", servicePointName);
                 command.Parameters.AddWithValue("@ServiceProvider", serviceProviderUsername);
                 command.Parameters.AddWithValue("@TicketId", ticketId);
 

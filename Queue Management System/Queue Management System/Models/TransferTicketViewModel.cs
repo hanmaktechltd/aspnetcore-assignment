@@ -12,4 +12,6 @@ public class TransferTicketViewModel {
     public int OriginServicePointId {get; set;}
 
     public List <ServicePoint>? AvailableServicePoints {get; set;}
+
+    public int CurrentServiceProviderId {get; set;}
 }

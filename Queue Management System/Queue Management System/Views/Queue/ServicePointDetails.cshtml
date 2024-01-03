@@ -66,12 +66,14 @@ else
                             <form asp-action="MarkFinished" asp-controller="Queue" method="post">
                                 <input type="hidden" name="ticketId" value="@ticket.TicketId" />
                                 <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId"/>
+                                <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId"/>
                                 <button type="submit" class="btn btn-primary">Mark as Finished</button>
                             </form>
 
                             <form asp-action="MarkNoShow" asp-controller="Queue" method="post">
                                 <input type="hidden" name="ticketId" value="@ticket.TicketId" />
                                 <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId" />
+                                <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId"/>
                                 <button type="submit" class="btn btn-warning">Mark as No Show</button>
                             </form>
                         }
@@ -81,6 +83,7 @@ else
                             <form asp-action="RecallTicket" asp-controller="Queue" method="post">
                                 <input type="hidden" name="ticketId" value="@ticket.TicketId" />
                                 <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId" />
+                                <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId"/>
                                 <button type="submit" class="btn btn-danger">Recall</button>
                             </form>
                         }
@@ -88,6 +91,7 @@ else
                         <form asp-action="TransferTicket" asp-controller="Queue" method="post">
                             <input type="hidden" name="ticketId" value="@ticket.TicketId" />
                             <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId" />
+                            <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId"/>
                             <button type="submit" class="btn btn-info">Transfer</button>
                         </form>
                     </td>

@@ -10,4 +10,6 @@ public class CheckinViewModel
 
     public List<ServicePoint> CurrentServiceProviderServicePoints {get; set;}
 
+    public string CurrentServicePointName {get; set;}
+
 }

@@ -20,7 +20,7 @@ public interface ITicketService {
 
      //void UpdateServiceTime(NpgsqlConnection connection, int ticketId, DateTime serviceTime)
 
-    public void SetServicePointAndProviderForTicket(int ticketId, string servicePointName, string serviceProviderUsername);
+    public void SetServiceProviderForTicket(int ticketId, string serviceProviderUsername);
 
 
 
