@@ -300,7 +300,7 @@ public class TicketService : ITicketService
         }
     }
 
-    public void TransferTicket(int ticketId, int newServicePointId)
+    public void TransferTicket(int ticketId, int newServicePointId, string newServicePointName)
     {
         using (var connection = new NpgsqlConnection(_connectionString))
         {
@@ -310,9 +310,10 @@ public class TicketService : ITicketService
             {
                 command.Connection = connection;
 
-                command.CommandText = "UPDATE Ticket SET ServicePointId = @newServicePointId WHERE TicketId = @ticketId";
+                command.CommandText = "UPDATE Ticket SET ServicePointId = @newServicePointId, ServicePoint = @newServicePointName  WHERE TicketId = @ticketId";
                 command.Parameters.AddWithValue("newServicePointId", newServicePointId);
                 command.Parameters.AddWithValue("ticketId", ticketId);
+                command.Parameters.AddWithValue("newServicePointName", newServicePointName);
 
                 command.ExecuteNonQuery();
             }

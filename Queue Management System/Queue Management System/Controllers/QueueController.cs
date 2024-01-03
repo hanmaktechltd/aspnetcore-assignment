@@ -141,6 +141,8 @@ namespace Queue_Management_System.Controllers
         {
             List<ServicePoint> availableServicePoints = _servicePointService.GetServicePoints();
 
+            var destinationServicePointName = _servicePointService.GetServicePointById(model.DestinationServicePointId).ServicePointName;
+
             if (ModelState.IsValid)
             {
                 if (model.DestinationServicePointId == 0)
@@ -149,7 +151,7 @@ namespace Queue_Management_System.Controllers
                     return View("TransferTicket", new TransferTicketViewModel { TicketId = model.TicketId, OriginServicePointId = model.OriginServicePointId, AvailableServicePoints = availableServicePoints });
                 }
 
-                _ticketService.TransferTicket(model.TicketId, model.DestinationServicePointId);
+                _ticketService.TransferTicket(model.TicketId, model.DestinationServicePointId, destinationServicePointName);
                 return RedirectToAction("ServicePointDetails", new { id = model.OriginServicePointId, serviceProviderId = model.CurrentServiceProviderId });
             }
 

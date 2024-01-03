@@ -14,7 +14,7 @@ public interface ITicketService {
 
     public void MarkAsFinished(int ticketId);
 
-    public void TransferTicket(int ticketId, int newServicePointId);
+    public void TransferTicket(int ticketId, int newServicePointId, string newServicePointName);
 
     public void UpdateTicketStatus(int ticketId, string status);
 
