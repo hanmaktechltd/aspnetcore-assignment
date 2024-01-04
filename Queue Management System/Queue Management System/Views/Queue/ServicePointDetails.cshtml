@@ -1,4 +1,4 @@
-@model ServicePointViewModel
+@* @model ServicePointViewModel
 
 @{
     ViewData["Title"] = "Service Point Dashboard";
@@ -108,4 +108,175 @@ else
             allTicketsTable.style.display = allTicketsTable.style.display === 'none' ? 'block' : 'none';
         });
     </script>
+} *@
+
+
+@model ServicePointViewModel
+
+@{
+    ViewData["Title"] = "Service Point Dashboard";
 }
+
+<div class="container mt-4">
+     <div id="successMessage" class="alert alert-success" style="display: none;"></div>
+
+    <div class="card">
+        <div class="card-header text-center">
+            <h3 class="card-title">Service Point Dashboard</h3>
+        </div>
+        <div class="card-body">
+            <div class="current-ticket text-center">
+                @if (Model.HasTickets)
+                {
+                    <div class="ticket-info mb-3">
+                        <label for="ticketNumber">Ticket Number:</label>
+                        <p class="ticket-number">@Model.CurrentTicketNumber</p>
+                    </div>
+
+                    <div class="d-flex justify-content-center">
+                        <form asp-controller="Queue" asp-action="ServicePointDetails" method="post">
+                            <input type="hidden" name="direction" value="prev" />
+                            <input type="hidden" name="id" value="@Model.CurrentServicePointId" />
+                            <input type="hidden" name="CurrentTicketIndex" value="@Model.CurrentTicketIndex" />
+                            <button type="submit" class="btn btn-sm btn-outline-primary mr-2" @{ if (Model.CurrentTicketIndex <= 0) { <text>disabled</text>; } }>&lt; Prev</button>
+                        </form>
+
+                        <form asp-controller="Queue" asp-action="ServicePointDetails" method="post">
+                            <input type="hidden" name="direction" value="next" />
+                            <input type="hidden" name="id" value="@Model.CurrentServicePointId" />
+                            <input type="hidden" name="CurrentTicketIndex" value="@Model.CurrentTicketIndex" />
+                            <button type="submit" class="btn btn-sm btn-outline-primary" @{ if (Model.CurrentTicketIndex >= Model.TicketCount - 1) { <text>disabled</text>; } }>Next &gt;</button>
+                        </form>
+                    </div>
+
+                    <div class="ticket-info mt-3">
+                        <label for="issueTime">Issue Time:</label>
+                        <p class="issue-time">@Model.CurrentTicketIssueTime.ToString("HH:mm:ss")</p>
+                    </div>
+                }
+                else
+                {
+                    <p>No pending tickets.</p>
+                }
+            </div>
+
+
+            @if (Model.CurrentTicketStatus == "Not Served")
+            {
+               <div class="text-center mt-3">
+                    <div class="btn-group" role="group">
+                        <form asp-action="CallTicket" asp-controller="Queue" method="post">
+                            <input type="hidden" name="ticketId" value="@Model.CurrentTicketNumber" />
+                            <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId" />
+                            <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId" />
+                            <button type="submit" class="btn btn-sm btn-outline-success">Call Ticket</button>
+                        </form>
+
+                        <form asp-action="MarkFinished" asp-controller="Queue" method="post">
+                            <input type="hidden" name="ticketId" value="@Model.CurrentTicketNumber" />
+                            <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId" />
+                            <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId" />
+                            <button type="submit" class="btn btn-sm btn-outline-primary ml-2"
+                                    @{ if(!Model.ServiceStartTimeSet) { <text>disabled</text>; } }>Mark as Finished</button>
+                        </form>
+
+                        <form asp-action="MarkNoShow" asp-controller="Queue" method="post">
+                            <input type="hidden" name="ticketId" value="@Model.CurrentTicketNumber" />
+                            <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId" />
+                            <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId" />
+                            <button type="submit" class="btn btn-sm btn-outline-warning ml-2" 
+                                    @{ if(!Model.ServiceStartTimeSet) { <text>disabled</text>; } }>Mark as No Show</button>
+                        </form>  
+                        
+                          <form asp-action="TransferTicket" asp-controller="Queue" method="post">
+                    <input type="hidden" name="ticketId" value="@Model.CurrentTicketNumber" />
+                    <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId" />
+                    <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId" />
+                    <button type="submit" class="btn btn-sm btn-outline-info ml-2"
+                             @{ if(!Model.ServiceStartTimeSet) { <text>disabled</text>; } }>Transfer</button>
+                </form>
+    
+ 
+                    </div>
+                </div>
+            }
+
+            @* <div class="text-center mt-3">
+                <form asp-action="TransferTicket" asp-controller="Queue" method="post">
+                    <input type="hidden" name="ticketId" value="@Model.CurrentTicketNumber" />
+                    <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId" />
+                    <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId" />
+                    <button type="submit" class="btn btn-sm btn-outline-info ml-2"
+                             @{ if(!Model.ServiceStartTimeSet) { <text>disabled</text>; } }>Transfer</button>
+                </form>
+            </div> *@
+
+            <div id="allTicketsTable" class="mt-4">
+                <h2 class="text-center">All Tickets</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Ticket Number</th>
+                            <th>Issue Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ticket in Model.AllTickets)
+                        {
+                            <tr>
+                                <td>@ticket.TicketId</td>
+                                <td>@ticket.IssueTime</td>
+                                <td>@ticket.Status</td>
+                                <td>
+                                    @if (ticket.Status == "Finished" || ticket.Status == "No Show")
+                                    {
+                                        <form asp-action="RecallTicket" asp-controller="Queue" method="post">
+                                            <input type="hidden" name="ticketId" value="@ticket.TicketId" />
+                                            <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId" />
+                                            <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Recall</button>
+                                        </form>
+                                    }
+
+                                    <form asp-action="TransferTicket" asp-controller="Queue" method="post">
+                                        <input type="hidden" name="ticketId" value="@ticket.TicketId" />
+                                        <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId" />
+                                        <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-info ml-2">Transfer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var successMessage = '@Html.Raw(Model.SuccessMessage)';
+
+        if (successMessage && successMessage.length > 0) {
+            successMessage = successMessage.replace('{ticketId}', '@Model.CurrentTicketNumber');
+
+            document.getElementById('successMessage').innerText = successMessage;
+            document.getElementById('successMessage').style.display = 'block';
+
+            setTimeout(function () {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 5000);
+        }
+    });
+
+    function confirmMarkAction(action, buttonText) {
+        if (confirm(`You haven't called the ticket yet. Are you sure you want to ${action}?`)) {
+            alert(`Please call the ticket first before trying to ${buttonText}.`);
+            return false;
+        }
+        return false;
+    }
+</script>

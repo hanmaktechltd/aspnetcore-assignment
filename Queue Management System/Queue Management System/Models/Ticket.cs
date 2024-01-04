@@ -9,7 +9,9 @@ public class Ticket {
 
     public string Status {get; set;}
 
-    public DateTime ServiceTime {get; set;}
+    public DateTime ServiceStartTime {get; set;}
+
+    public DateTime ServiceCompleteTime {get; set;}
 
     public int ServicePointId { get; set; }
     public string? ServicePoint { get; set; }

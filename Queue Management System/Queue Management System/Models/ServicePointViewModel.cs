@@ -21,5 +21,13 @@ public class ServicePointViewModel {
 
     public int CurrentServiceProviderId {get; set;}
 
+    public string? CurrentTicketStatus {get; set;}
+
+    public string? SuccessMessage {get; set;}
+
+    public Boolean ServiceStartTimeSet {get; set;}
+
+
+
     
 }

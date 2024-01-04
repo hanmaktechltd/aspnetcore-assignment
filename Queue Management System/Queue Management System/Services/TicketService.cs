@@ -226,7 +226,7 @@ public class TicketService : ITicketService
             if (ticket != null)
             {
                 UpdateTicketStatus(ticket.TicketId, "Finished");
-                UpdateServiceTime(connection, ticket.TicketId, DateTime.Now);
+                UpdateServiceCompleteTime(connection, ticket.TicketId, DateTime.Now);
             }
 
             _logger.LogInformation("Ticket {TicketId} marked as finished.", ticketId);
@@ -289,12 +289,12 @@ public class TicketService : ITicketService
     }
 
 
-    private void UpdateServiceTime(NpgsqlConnection connection, int ticketId, DateTime serviceTime)
+    private void UpdateServiceCompleteTime(NpgsqlConnection connection, int ticketId, DateTime serviceCompleteTime)
     {
-        using (var command = new NpgsqlCommand("UPDATE Ticket SET ServiceTime = @ServiceTime WHERE TicketId = @TicketId", connection))
+        using (var command = new NpgsqlCommand("UPDATE Ticket SET ServiceCompleteTime = @ServiceCompleteTime WHERE TicketId = @TicketId", connection))
         {
             command.Parameters.AddWithValue("@TicketId", ticketId);
-            command.Parameters.AddWithValue("@ServiceTime", serviceTime);
+            command.Parameters.AddWithValue("@ServiceCompleteTime", serviceCompleteTime);
 
             command.ExecuteNonQuery();
         }
@@ -339,5 +339,51 @@ public class TicketService : ITicketService
             }
         }
     }
+
+        public void UpdateServiceStartTime(int ticketId, DateTime serviceStartTime)
+    {
+
+        using (var connection = new NpgsqlConnection(_connectionString))
+        {
+
+        connection.Open();
+        
+        using (var command = new NpgsqlCommand("UPDATE Ticket SET ServiceStartTime = @ServiceStartTime WHERE TicketId = @TicketId", connection))
+        {
+            command.Parameters.AddWithValue("@TicketId", ticketId);
+            command.Parameters.AddWithValue("@ServiceStartTime", serviceStartTime);
+
+            command.ExecuteNonQuery();
+        }
+
+         Console.WriteLine($"ServiceStartTime updated for TicketId: {ticketId}");
+        }
+    }
+
+     public bool IsServiceStartTimeSet(int ticketId)
+    {
+        using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+        {
+            connection.Open();
+
+            using (NpgsqlCommand command = new NpgsqlCommand())
+            {
+                command.Connection = connection;
+                command.CommandText = "SELECT COUNT(*) FROM Ticket WHERE TicketId = @ticketId AND ServiceStartTime IS NOT NULL";
+                command.Parameters.AddWithValue("@ticketId", ticketId);
+
+                object result = command.ExecuteScalar();
+
+                if (result != null && result != DBNull.Value)
+                {
+                    int count = Convert.ToInt32(result);
+                    return count > 0;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
 }

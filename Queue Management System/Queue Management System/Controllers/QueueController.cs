@@ -11,26 +11,22 @@ namespace Queue_Management_System.Controllers
         private readonly ITicketService _ticketService;
         private readonly IServicePointService _servicePointService;
         private readonly IServiceProviderService _serviceProviderService;
-        private readonly ILogger<QueueController> _logger;
 
         public QueueController(
             ITicketService ticketService,
             IServicePointService servicePointService,
-            IServiceProviderService serviceProviderService,
-            ILogger<QueueController> logger)
+            IServiceProviderService serviceProviderService)
         {
             _ticketService = ticketService;
             _servicePointService = servicePointService;
             _serviceProviderService = serviceProviderService;
-            _logger = logger;
         }
 
         [HttpGet]
         public IActionResult CheckinPage()
         {
             var viewModel = new CheckinViewModel();
-            List<ServicePoint> servicePoints = _servicePointService.GetServicePoints();
-            viewModel.CurrentServiceProviderServicePoints = servicePoints;
+            viewModel.CurrentServiceProviderServicePoints = _servicePointService.GetServicePoints();
             return View(viewModel);
         }
 
@@ -39,9 +35,7 @@ namespace Queue_Management_System.Controllers
         {
             var viewModel = new CheckinViewModel();
             viewModel.CurrentServiceProviderId = currentServiceProviderId;
-            var servicePoints = _serviceProviderService.GetServicePointsByServiceProviderId(currentServiceProviderId);
-            _logger.LogInformation("ServicePoints for ServiceProviderId {ServiceProviderId}: {@ServicePoints}", currentServiceProviderId, servicePoints);
-            viewModel.CurrentServiceProviderServicePoints = servicePoints;
+            viewModel.CurrentServiceProviderServicePoints = _serviceProviderService.GetServicePointsByServiceProviderId(currentServiceProviderId);
             return View(viewModel);
         }
 
@@ -65,10 +59,9 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpPost, HttpGet]
-        public IActionResult ServicePointDetails(int id, int serviceProviderId, int TicketCount, int CurrentTicketIndex, string direction)
+        public IActionResult ServicePointDetails(int id, int serviceProviderId, int TicketCount, int CurrentTicketIndex, string direction, string successMessage)
         {
-
-            ServicePointViewModel viewModel = new ServicePointViewModel();
+            var viewModel = new ServicePointViewModel();
             List<Ticket> fetchedTickets = _servicePointService.findTicketsPerServicePoint(id);
             viewModel.AllTickets = fetchedTickets;
             List<Ticket> notServedTickets = fetchedTickets.FindAll(t => t.Status == "Not Served");
@@ -82,6 +75,7 @@ namespace Queue_Management_System.Controllers
 
             viewModel.CurrentServicePointId = id;
             viewModel.CurrentServiceProviderId = serviceProviderId;
+            viewModel.SuccessMessage = successMessage;
 
             if (notServedTickets != null && notServedTickets.Count > 0 && CurrentTicketIndex >= 0 && CurrentTicketIndex < notServedTickets.Count)
             {
@@ -91,6 +85,9 @@ namespace Queue_Management_System.Controllers
                 viewModel.CurrentTicketNumber = notServedTickets[CurrentTicketIndex].TicketId;
                 viewModel.CurrentTicketIssueTime = notServedTickets[CurrentTicketIndex].IssueTime;
                 viewModel.CurrentServicePointId = notServedTickets[CurrentTicketIndex].ServicePointId;
+                viewModel.CurrentTicketStatus = notServedTickets[CurrentTicketIndex].Status;
+
+                viewModel.ServiceStartTimeSet = _ticketService.IsServiceStartTimeSet(viewModel.CurrentTicketNumber);
             }
             else
             {
@@ -102,9 +99,31 @@ namespace Queue_Management_System.Controllers
 
         private int GetDirectionModifier(string direction)
         {
-            int modifier = direction.ToLower() == "next" ? 1 : -1;
-            Console.WriteLine(modifier);
-            return modifier;
+            return direction.ToLower() == "next" ? 1 : -1;
+        }
+
+        [HttpPost]
+        public IActionResult CallTicket(int ticketId, int currentServicePointId, int currentServiceProviderId)
+        {
+            _ticketService.UpdateServiceStartTime(ticketId, DateTime.Now);
+
+            var updatedTickets = _servicePointService.findTicketsPerServicePoint(currentServicePointId);
+
+            string successMessage = $"You started working on ticket number {ticketId}";
+
+            var viewModel = new ServicePointViewModel
+            {
+                CurrentServicePointId = currentServicePointId,
+                CurrentServiceProviderId = currentServiceProviderId,
+                SuccessMessage = successMessage
+            };
+
+            return RedirectToAction("ServicePointDetails", new
+            {
+                id = viewModel.CurrentServicePointId,
+                serviceProviderId = viewModel.CurrentServiceProviderId,
+                successMessage = viewModel.SuccessMessage,
+            });
         }
 
         [HttpPost]
@@ -156,7 +175,7 @@ namespace Queue_Management_System.Controllers
             }
 
             ModelState.AddModelError("", "You need to select a servicepoint");
-            return View("TransferTicket", new TransferTicketViewModel { TicketId = model.TicketId, OriginServicePointId = model.OriginServicePointId, AvailableServicePoints = availableServicePoints });
+            return View("TransferTicket", new TransferTicketViewModel { TicketId = model.TicketId, OriginServicePointId = model.OriginServicePointId, CurrentServiceProviderId = model.CurrentServiceProviderId, AvailableServicePoints = availableServicePoints });
         }
 
         [HttpPost]

@@ -26,7 +26,7 @@ public class ServicePointService : IServicePointService
         {
             connection.Open();
             command.Connection = connection;
-            command.CommandText = "SELECT TicketId, IssueTime, Status, ServicePointId FROM Ticket WHERE ServicePointId = @ServicePointId";
+            command.CommandText = "SELECT TicketId, IssueTime, Status, ServicePointId FROM Ticket WHERE ServicePointId = @ServicePointId ORDER BY IssueTime";
             command.Parameters.AddWithValue("@ServicePointId", servicePointId);
 
             using (var reader = command.ExecuteReader())

@@ -22,6 +22,12 @@ public interface ITicketService {
 
     public void SetServiceProviderForTicket(int ticketId, string serviceProviderUsername);
 
+    public void UpdateServiceStartTime(int ticketId, DateTime serviceStartTime);
+
+    public bool IsServiceStartTimeSet(int ticketId);
+
+
+
 
 
 
