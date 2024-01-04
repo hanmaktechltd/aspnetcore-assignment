@@ -1,17 +1,27 @@
-
 @model CheckinViewModel
 
 @{    
-ViewData["Title"] = "Check-In";
-
+    ViewData["Title"] = "Check-In";
 }
 
-<h2>Check-In</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Check-In</h2>
 
-<form asp-action="WaitingPage" method="post">
-    <label asp-for="SelectedServicePointId">Select Service:</label>
-    <select asp-for="SelectedServicePointId" asp-items="@(new SelectList(Model.CurrentServiceProviderServicePoints, "ServicePointId", "ServicePointName"))">
-        <option>Please select a service</option>
-    </select>
-    <button type="Submit">Let's Go</button>
-</form>
+            <form asp-action="WaitingPage" method="post" class="needs-validation" novalidate>
+                <div class="mb-3 text-center">
+                    <label asp-for="SelectedServicePointId" class="form-label">Select Service:</label>
+                    <select asp-for="SelectedServicePointId" class="form-select" 
+                            asp-items="@(new SelectList(Model.CurrentServiceProviderServicePoints, "ServicePointId", "ServicePointName"))">
+                        <option value="">Please select a service</option>
+                    </select>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-sm">Get Ticket</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

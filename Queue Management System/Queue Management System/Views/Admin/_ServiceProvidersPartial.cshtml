@@ -1,46 +1,48 @@
 @model IEnumerable<ServiceProvider>
 
-<h4>Service Providers</h4>
+<div class="container mt-4">
+    <h4>Service Providers</h4>
 
-<p><a asp-controller="ServiceProvider" asp-action="Create" class="btn btn-primary btn-sm">Add New Service Provider</a></p>
+    <p><a asp-controller="ServiceProvider" asp-action="Create" class="btn btn-outline-primary btn-sm">Add New Service Provider</a></p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Provider Name</th>
-            <th>Role</th>
-            <th>Password</th>
-            <th>Service Points</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var serviceProvider in Model)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>@serviceProvider.Username</td>
-                <td>@serviceProvider.Role</td>
-                <td>@serviceProvider.Password</td> 
-                <td>
-                    @if (serviceProvider.ServicePoints != null && serviceProvider.ServicePoints.Any())
-                    {
-                        <ul>
-                            @foreach (var servicePoint in serviceProvider.ServicePoints)
-                            {
-                                <li>@servicePoint.ServicePointName</li>
-                            }
-                        </ul>
-                    }
-                    else
-                    {
-                        <span>No Service Points</span>
-                    }
-                </td>
-                <td>
-                    <a asp-controller="ServiceProvider" asp-action="Edit" asp-route-id="@serviceProvider.ServiceProviderId" class="btn btn-primary btn-sm">Edit</a> |
-                    <a asp-controller="ServiceProvider" asp-action="Delete" asp-route-id="@serviceProvider.ServiceProviderId" class="btn btn-danger btn-sm">Delete</a>
-                </td>
+                <th>Provider Name</th>
+                <th>Role</th>
+                <th>Password</th>
+                <th>Service Points</th>
+                <th>Action</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var serviceProvider in Model)
+            {
+                <tr>
+                    <td>@serviceProvider.Username</td>
+                    <td>@serviceProvider.Role</td>
+                    <td>@serviceProvider.Password</td>
+                    <td>
+                        @if (serviceProvider.ServicePoints != null && serviceProvider.ServicePoints.Any())
+                        {
+                            <ul>
+                                @foreach (var servicePoint in serviceProvider.ServicePoints)
+                                {
+                                    <li>@servicePoint.ServicePointName</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>No Service Points</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-controller="ServiceProvider" asp-action="Edit" asp-route-id="@serviceProvider.ServiceProviderId" class="btn btn-outline-primary btn-sm">Edit</a> |
+                        <a asp-controller="ServiceProvider" asp-action="Delete" asp-route-id="@serviceProvider.ServiceProviderId" class="btn btn-outline-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

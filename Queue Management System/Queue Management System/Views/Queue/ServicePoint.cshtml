@@ -1,28 +1,27 @@
-
 @model CheckinViewModel
 
 <h3>Your ServicePoints</h3>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Service Point Name</th>
-            <th>Description</th>
-            <th>Details</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var servicePoint in Model.CurrentServiceProviderServicePoints)
-        {
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead class="thead-dark">
             <tr>
-                <td>@servicePoint.ServicePointName</td>
-                <td>@Html.DisplayFor(modelItem => servicePoint.Description)</td>
-                <td>
-                    <a asp-action="ServicePointDetails" asp-controller="Queue" asp-route-id="@servicePoint.ServicePointId" asp-route-serviceProviderId="@Model.CurrentServiceProviderId">Open</a>
-                </td>
+                <th>Service Point Name</th>
+                <th>Description</th>
+                <th>Details</th>
             </tr>
-        }
-    </tbody>
-</table>
-
-
+        </thead>
+        <tbody>
+            @foreach (var servicePoint in Model.CurrentServiceProviderServicePoints)
+            {
+                <tr>
+                    <td>@servicePoint.ServicePointName</td>
+                    <td>@Html.DisplayFor(modelItem => servicePoint.Description)</td>
+                    <td>
+                        <a asp-action="ServicePointDetails" asp-controller="Queue" asp-route-id="@servicePoint.ServicePointId" asp-route-serviceProviderId="@Model.CurrentServiceProviderId" class="btn btn-outline-primary btn-sm">Open</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
