@@ -6,9 +6,9 @@ namespace Queue_Management_System.Controllers
     {
         private readonly ITicketService _ticketService;
         private readonly IServicePointService _servicePointService;
-        private readonly ILogger<QueueController> _logger;
+        private readonly ILogger<ServicePointController> _logger;
 
-        public ServicePointController(ITicketService ticketService, IServicePointService servicePointService, ILogger<QueueController> logger)
+        public ServicePointController(ITicketService ticketService, IServicePointService servicePointService, ILogger<ServicePointController> logger)
         {
             _ticketService = ticketService;
             _servicePointService = servicePointService;
@@ -45,7 +45,7 @@ namespace Queue_Management_System.Controllers
             if (ModelState.IsValid)
             {
                 _servicePointService.UpdateServicePoint(model);
-                _logger.LogInformation("ServicePoint updated successfully: {ServicePointId}");
+                _logger.LogInformation("ServicePoint updated successfully: {ServicePointId}", model.ServicePointId);
                 return RedirectToAction("Dashboard", "Admin");
             }
 
@@ -71,9 +71,10 @@ namespace Queue_Management_System.Controllers
             {
                 foreach (var error in entry.Value.Errors)
                 {
-                    Console.WriteLine($"Property: {entry.Key}, Error: {error.ErrorMessage}");
+                    _logger.LogError($"Property: {entry.Key}, Error: {error.ErrorMessage}");
                 }
             }
         }
     }
 }
+

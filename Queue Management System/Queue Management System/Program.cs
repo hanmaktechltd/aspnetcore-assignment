@@ -34,6 +34,8 @@ builder.Services.AddScoped<IServicePointService, ServicePointService>();
 
 builder.Services.AddScoped<IServiceProviderService, ServiceProviderService>();
 
+builder.Services.AddScoped<IReportService, ReportService>();
+
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
