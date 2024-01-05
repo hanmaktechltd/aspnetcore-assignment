@@ -1,18 +1,24 @@
 @model TransferTicketViewModel
 
-<h1>Transfer Ticket</h1>
+<div class="container mt-5">
+    <h1>Transfer Ticket</h1>
 
-<p>Transfer Ticket ID: @Model.TicketId</p>
+    <p>Transfer Ticket ID: @Model.TicketId</p>
 
-<form asp-controller="Queue" asp-action="CompleteTransfer" method="post">
-    <label for="destinationServicePointId">Select Destination Service Point:</label>
-    <select asp-for="DestinationServicePointId" asp-items="@(new SelectList(Model.AvailableServicePoints, "ServicePointId", "ServicePointName"))">
-        <option>Please select a service point</option>
-    </select>
-<input type="hidden" name="OriginServicePointId" value="@Model.OriginServicePointId" />
+    <form asp-controller="Queue" asp-action="CompleteTransfer" method="post">
+        <div class="form-group">
+            <label for="destinationServicePointId">Select Destination Service Point:</label>
+            <select class="form-control" asp-for="DestinationServicePointId" asp-items="@(new SelectList(Model.AvailableServicePoints, "ServicePointId", "ServicePointName"))">
+                <option>Please select a service point</option>
+            </select>
+        </div>
 
-<input type="hidden" name="TicketId" value="@Model.TicketId" />
-<input type="hidden" name="CurrentServiceProviderId" value="@Model.CurrentServiceProviderId"/>
-    <button type="submit">Transfer</button>
-    <div asp-validation-summary="ModelOnly" class="text-danger mt-3"></div>
-</form>
+        <input type="hidden" name="OriginServicePointId" value="@Model.OriginServicePointId" />
+        <input type="hidden" name="TicketId" value="@Model.TicketId" />
+        <input type="hidden" name="CurrentServiceProviderId" value="@Model.CurrentServiceProviderId" />
+
+        <button type="submit" class="btn btn-outline-primary">Transfer</button>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary">Cancel</a>
+        <div asp-validation-summary="ModelOnly" class="text-danger mt-3"></div>
+    </form>
+</div>

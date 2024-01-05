@@ -1,13 +1,16 @@
 
 @model WaitingPageViewModel;
+<div class="container mt-5">
+    <div class="card text-center">
+        <div class="card-body">
+            <h2 class="card-title">Waiting Page</h2>
 
-@{
-    
-}
+            <p class="card-text">Ticket Number: @Model.TicketNumber</p>
+            <p class="card-text">Service Point: @Model.ServicePointName</p>
 
-<h2>Waiting Page</h2>
+            <p class="card-text text-muted">You are waiting for your ticket to be called. Please be patient.</p>
 
-<p>Ticket Number: @Model.TicketNumber </p> 
-<p>Service Point: @Model.ServicePointName </p>
-
-<input type = "button" value = "Print Ticket" onclick="location.href='@Url.Action("DownloadTicket", "Queue", @Model)'"/> 
+            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary">Back to Home</a>
+        </div>
+    </div>
+</div>
