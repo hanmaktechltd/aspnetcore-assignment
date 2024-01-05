@@ -128,8 +128,9 @@ namespace Queue_Management_System.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult MarkFinished(int ticketId, int currentServicePointId, int currentServiceProviderId)
+        public IActionResult MarkFinished(int ticketId, int currentServicePointId, string currentTicketStatus, int currentServiceProviderId)
         {
+
             var serviceProviderUsername = _serviceProviderService.GetServiceProviderById(currentServiceProviderId).Username;
             _ticketService.MarkAsFinished(ticketId);
             _ticketService.SetServiceProviderForTicket(ticketId, serviceProviderUsername);
@@ -158,12 +159,14 @@ namespace Queue_Management_System.Controllers
         [HttpPost]
         public IActionResult CompleteTransfer(TransferTicketViewModel model)
         {
+    
             List<ServicePoint> availableServicePoints = _servicePointService.GetServicePoints();
 
-            var destinationServicePointName = _servicePointService.GetServicePointById(model.DestinationServicePointId).ServicePointName;
-
+           
             if (ModelState.IsValid)
-            {
+            {  
+                 var destinationServicePointName = _servicePointService.GetServicePointById(model.DestinationServicePointId).ServicePointName;
+
                 if (model.DestinationServicePointId == 0)
                 {
                     ModelState.AddModelError("", "You need to select a servicepoint");
