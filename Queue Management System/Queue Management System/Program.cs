@@ -49,10 +49,10 @@ initializer.InitializeDatabase();
 var app = builder.Build();
 
 
-app.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping.Register(() => {
+// app.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping.Register(() => {
    
-   initializer.DatabaseCleanup();
-});
+//    initializer.DatabaseCleanup();
+// });
 
 
 // Configure the HTTP request pipeline.
