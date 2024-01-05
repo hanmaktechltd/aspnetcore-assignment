@@ -91,5 +91,10 @@ namespace Queue_Management_System.Controllers
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
+
+        public IActionResult AccessDenied() 
+        {
+            return View();
+        }
     }
 }

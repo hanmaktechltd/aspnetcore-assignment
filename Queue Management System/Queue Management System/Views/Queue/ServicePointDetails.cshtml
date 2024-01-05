@@ -255,6 +255,25 @@ else
         </div>
     </div>
 </div>
+<div class="mt-3">
+    <div class="d-flex">
+        <form asp-action="Logout" asp-controller="Account" method="post">
+            <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
+        </form>
+
+        <form asp-action="ServicePoint" asp-controller="Queue" method="get">
+            <input type="hidden" name="currentServicePointId" value="@Model.CurrentServicePointId" />
+            <input type="hidden" name="currentServiceProviderId" value="@Model.CurrentServiceProviderId" />
+
+            <button type="submit" class="btn btn-sm btn-info ml-2">
+                Go Back to Your Service Points
+            </button>
+        </form>
+    </div>
+</div>
+
+
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -271,12 +290,4 @@ else
             }, 5000);
         }
     });
-
-    function confirmMarkAction(action, buttonText) {
-        if (confirm(`You haven't called the ticket yet. Are you sure you want to ${action}?`)) {
-            alert(`Please call the ticket first before trying to ${buttonText}.`);
-            return false;
-        }
-        return false;
-    }
 </script>
