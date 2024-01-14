@@ -1,7 +1,10 @@
+using Queue_Management_System.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IServiceRepository, MockServiceRepository>();
 
 var app = builder.Build();
 
