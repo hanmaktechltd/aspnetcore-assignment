@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Waiting Page";
+}
+
+<!DOCTYPE html>
+    <html>
+       
+    <body>
+        <div class="text-center m-2">
+            <div>
+                <h3>
+                Thank you for choosing to use qms services.<br />
+                You are now at the waiting room.<br />
+                Your ticket details are shown below:<br/>
+                <br/>
+                
+            </div>
+
+            <div>
+                @await ViewBag.WebReport.Render()
+            </div>
+        </div>
+    </body> 
+</html>
