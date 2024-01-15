@@ -8,7 +8,11 @@ namespace Queue_Management_System.Repositories
 
         IEnumerable<ServiceModel> GetServices();
 
-        void AddService(ServiceModel service);
+        //void AddService(ServiceModel service);
+
+        //void UpdateService(ServiceModel service);
+
+        //void DeleteService(ServiceModel service);
     }
 
    /* public class ServiceRepository : IServiceRepository
