@@ -56,9 +56,66 @@ namespace Queue_Management_System.Controllers
 
 
         [Authorize, HttpGet]
-        public IActionResult ServicePoint()
+        public IActionResult ServicePoint(string buttonName, string serviceId)
         {
-            return View();
+            if (buttonName == "GetNextNumber")
+            {
+                //_ticket repo.get nexno
+                //if number, setviewdatamessage, setviewdatacalled = true
+            }
+
+            if (buttonName == "RecallNextNoShowNumber")
+            {
+                //get number from no show tickets, remove from no show
+                //set viewdatacalledmessage, set viewdatacallednumber to true
+            }
+
+            if (buttonName == "MarkAsShow")
+            {
+                //mark ticket as shown in db
+                //record time marked as shown in db
+                //set viewdatacalled = true, set viewdatashowedup = true
+
+            }
+
+            if (buttonName == "MarkAsNoShow")
+            {
+                //set showed up to false in db
+                //transfer ticket to no show tickets
+                //
+            }
+
+            if (buttonName == "MarkAsFinished")
+            {
+                //mark ticket as finished in db and record finsihed time
+                //set viewdatacalled = true, set viewdatashowedup = true, set viewdatafished = true
+                //pass services to view excluding current service
+            
+            }
+
+            if (serviceId != null)
+            {
+                TicketModel ticket = _ticketService.TransferTicket(ticketNumber, serviceId)
+                //ticketrepo.saveticket
+
+                WebReport report = _reportService.GenerateTicketReport(ticket.TicketNumber, ticket.ServiceId, ticket.TimePrinted);
+
+                ViewBag.WebReport = report;
+            }
+
+            //configure view model
+            var ticketsInQueue = _ticketRepository.GetUnservedTicketsByServiceID("id"); //get service id from session
+            var noShowTickets = null; //get from list of noshow tickets in session
+            var services = _serviceRepository.GetServices();
+
+            var viewModel = new ServicePointViewModel(){
+                ServicePointId = null, //get from session
+                ServiceDescription = null, //get from session
+                TicketsInQueue = ticketsInQueue,
+                NoshowTickets = noShowTickets,
+                Services = services,
+            };
+            return View(viewModel);
         }
 
 

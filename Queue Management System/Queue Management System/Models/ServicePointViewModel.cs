@@ -2,13 +2,15 @@ namespace Queue_Management_System.Models
 {
     public class ServicePointViewModel
     {
-        public string? ServicePointID {get; set;}
+        public string? ServicePointId {get; set;}
 
         public string? ServiceDescription {get; set;}
 
         public TicketModel[]? TicketsInQueue {get; set;}
 
         public TicketModel[]? NoshowTickets {get; set;}
+
+        public ServiceModel[]? Services {get; set;}
 
     }
 }
