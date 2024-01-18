@@ -6,6 +6,8 @@ namespace Queue_Management_System.Repositories
     {
         ServicePointModel GetServicePointById(string id);
 
+        ServicePointModel GetServicePointByProviderId(string serviceProviderId);
+
         IEnumerable<ServicePointModel> GetServicePoints();
 
         void AddServicePoint(ServicePointModel servicePoint);

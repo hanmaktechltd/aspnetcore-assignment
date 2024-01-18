@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Queue_Management_System.Repositories;
 using Queue_Management_System.Models;
 using Queue_Management_System.Services;
@@ -58,6 +59,13 @@ namespace Queue_Management_System.Controllers
         [Authorize, HttpGet]
         public IActionResult ServicePoint(string buttonName, string serviceId)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("servicePointId")))
+            {
+                //logged in user has no service point
+                //return no configured service point view
+            }
+
+
             if (buttonName == "GetNextNumber")
             {
                 //_ticket repo.get nexno
@@ -95,7 +103,7 @@ namespace Queue_Management_System.Controllers
 
             if (serviceId != null)
             {
-                TicketModel ticket = _ticketService.TransferTicket(ticketNumber, serviceId)
+                TicketModel ticket = _ticketService.TransferTicket(ticketNumber, serviceId);
                 //ticketrepo.saveticket
 
                 WebReport report = _reportService.GenerateTicketReport(ticket.TicketNumber, ticket.ServiceId, ticket.TimePrinted);
@@ -104,13 +112,16 @@ namespace Queue_Management_System.Controllers
             }
 
             //configure view model
-            var ticketsInQueue = _ticketRepository.GetUnservedTicketsByServiceID("id"); //get service id from session
+            var servicePointId = HttpContext.Session.GetString("servicePointId");
+            var serviceDescription = HttpContext.Session.GetString("serviceDescription");
+
+            var ticketsInQueue = _ticketRepository.GetUnservedTicketsByServiceID(servicePointId); //get service id from session
             var noShowTickets = null; //get from list of noshow tickets in session
-            var services = _serviceRepository.GetServices();
+            var services = _serviceRepository.GetServices(); //todo only required after markasfinshed
 
             var viewModel = new ServicePointViewModel(){
-                ServicePointId = null, //get from session
-                ServiceDescription = null, //get from session
+                ServicePointId = servicePointId, //get from session
+                ServiceDescription = serviceDescription, //get from session
                 TicketsInQueue = ticketsInQueue,
                 NoshowTickets = noShowTickets,
                 Services = services,
@@ -118,6 +129,7 @@ namespace Queue_Management_System.Controllers
             return View(viewModel);
         }
 
+//todo log out user and clear sesion
 
     }
 }

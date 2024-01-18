@@ -8,7 +8,7 @@ namespace Queue_Management_System.Models
 
         public string Email {get; set;}
 
-        public string password {get; set;}
+        public string Password {get; set;}
 
 
     }

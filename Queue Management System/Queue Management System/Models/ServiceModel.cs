@@ -2,9 +2,9 @@ namespace Queue_Management_System.Models
 {
     public class ServiceModel
     {
-        public string ServiceId { get; set; }
+        public string Id { get; set; }
     
-        public string ServiceDescription { get; set; }
+        public string Description { get; set; }
 
     }
     
