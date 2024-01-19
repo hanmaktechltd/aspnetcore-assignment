@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Queue_Management_System.Hubs;
 using Queue_Management_System.Models;
 
 namespace Queue_Management_System.Controllers
@@ -12,14 +14,19 @@ namespace Queue_Management_System.Controllers
         private readonly IServicePointService _servicePointService;
         private readonly IServiceProviderService _serviceProviderService;
 
+        private readonly IHubContext<TicketHub> _hubContext;
+
         public QueueController(
             ITicketService ticketService,
             IServicePointService servicePointService,
-            IServiceProviderService serviceProviderService)
+            IServiceProviderService serviceProviderService,
+            IHubContext<TicketHub> hubContext
+            )
         {
             _ticketService = ticketService;
             _servicePointService = servicePointService;
             _serviceProviderService = serviceProviderService;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -46,9 +53,10 @@ namespace Queue_Management_System.Controllers
             checkinData.CurrentServicePointName = servicePoint.ServicePointName;
             Ticket newTicket = _ticketService.SaveTicketToDatabase(checkinData);
             WaitingPageViewModel waitingPageView = new WaitingPageViewModel();
-            waitingPageView.TicketNumber = newTicket.TicketId;
-            waitingPageView.ServicePointName = servicePoint.ServicePointName;
-            waitingPageView.IssueTime = newTicket.IssueTime;
+            //waitingPageView.TicketNumber = newTicket.TicketId;
+            //waitingPageView.ServicePointName = servicePoint.ServicePointName;
+            //waitingPageView.IssueTime = newTicket.IssueTime;
+            waitingPageView.Tickets = _ticketService.GetUnfinishedTickets();
             return View(waitingPageView);
         }
 
@@ -106,6 +114,8 @@ namespace Queue_Management_System.Controllers
         public IActionResult CallTicket(int ticketId, int currentServicePointId, int currentServiceProviderId)
         {
             _ticketService.UpdateServiceStartTime(ticketId, DateTime.Now);
+
+              _hubContext.Clients.All.SendAsync("ReceiveCalledTicket", ticketId, _servicePointService.GetServicePointById(currentServicePointId).ServicePointName);
 
             var updatedTickets = _servicePointService.findTicketsPerServicePoint(currentServicePointId);
 

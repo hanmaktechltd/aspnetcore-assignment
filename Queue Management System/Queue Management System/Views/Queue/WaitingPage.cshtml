@@ -1,12 +1,31 @@
 
 @model WaitingPageViewModel;
+
 <div class="container mt-5">
     <div class="card text-center">
         <div class="card-body">
             <h2 class="card-title">Waiting Page</h2>
 
-            <p class="card-text">Ticket Number: @Model.TicketNumber</p>
-            <p class="card-text">Service Point: @Model.ServicePointName</p>
+              <div id="calledTicketSection">
+            </div>
+
+
+            @if (Model.Tickets.Any())
+            {
+                <ul class="list-group">
+                    @foreach (var ticket in Model.Tickets)
+                    {
+                        <li class="list-group-item">
+                            Ticket Number: @ticket.TicketId<br />
+                            Service Point: @ticket.ServicePoint
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="card-text text-muted">No tickets in the queue.</p>
+            }
 
             <p class="card-text text-muted">You are waiting for your ticket to be called. Please be patient.</p>
 
@@ -14,3 +33,6 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/ticket.js"></script>
