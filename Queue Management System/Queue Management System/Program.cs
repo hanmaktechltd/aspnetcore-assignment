@@ -2,6 +2,7 @@ using Npgsql;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Queue_Management_System.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSignalR();
+
 
 builder.Services.AddScoped<ITicketService, TicketService>();
 
@@ -77,5 +81,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<TicketHub>("/ticketHub");
 
 app.Run();
