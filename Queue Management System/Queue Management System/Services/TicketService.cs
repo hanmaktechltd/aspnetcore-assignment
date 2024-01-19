@@ -385,5 +385,36 @@ public class TicketService : ITicketService
         return false;
     }
 
+    public List<Ticket> GetUnfinishedTickets()
+{
+    List<Ticket> unfinishedTickets = new List<Ticket>();
+
+    using (var connection = new NpgsqlConnection(_connectionString))
+    {
+        connection.Open();
+
+        using (var command = new NpgsqlCommand("SELECT * FROM Ticket WHERE Status <> 'Finished'", connection))
+        {
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    unfinishedTickets.Add(new Ticket
+                    {
+                        TicketId = (int)reader["TicketId"],
+                        IssueTime = (DateTime)reader["IssueTime"],
+                        Status = reader.GetString(reader.GetOrdinal("Status")),
+                        ServicePointId = reader.GetInt32(reader.GetOrdinal("ServicePointId")),
+                        ServicePoint = reader.GetString(reader.GetOrdinal("ServicePoint"))
+                    });
+                }
+            }
+        }
+    }
+
+    return unfinishedTickets;
+}
+
+
 
 }

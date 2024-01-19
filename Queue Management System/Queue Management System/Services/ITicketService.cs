@@ -26,6 +26,8 @@ public interface ITicketService {
 
     public bool IsServiceStartTimeSet(int ticketId);
 
+    public List<Ticket> GetUnfinishedTickets();
+
 
 
 
