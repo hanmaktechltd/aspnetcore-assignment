@@ -1,0 +1,37 @@
+@model ServicePointModel
+
+@{
+    ViewData["Title"] = "Add Service Point";
+}
+
+<!DOCTYPE html>
+    <html>
+        <body>
+            <diV>
+                <h2>@ViewData["Title"]</h2>
+            </diV>
+
+            <form asp-action="AddServicePoint" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Id">Id</label>
+                    <input asp-for="Id" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description">Description</label>
+                    <input asp-for="Description" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ServiceProviderId">Service Provider Id</label>
+                    <input asp-for="ServiceProviderId" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Service Point</button>
+                <a asp-controller="Admin" asp-action="ConfigureServicePoints" class="btn btn-primary">Cancel</a>
+
+            </form>
+        </body>
+    </html>

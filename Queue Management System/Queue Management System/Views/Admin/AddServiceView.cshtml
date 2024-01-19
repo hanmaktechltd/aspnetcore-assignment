@@ -1,0 +1,32 @@
+@model ServiceModel
+
+@{
+    ViewData["Title"] = "Add Service";
+}
+
+<!DOCTYPE html>
+    <html>
+        <body>
+            <diV>
+                <h2>@ViewData["Title"]</h2>
+            </diV>
+
+            <form asp-action="AddService" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Id">Id</label>
+                    <input asp-for="Id" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description">Description</label>
+                    <input asp-for="Description" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Service</button>
+                <a asp-controller="Admin" asp-action="ConfigureServices" class="btn btn-primary">Cancel</a>
+
+            </form>
+        </body>
+    </html>

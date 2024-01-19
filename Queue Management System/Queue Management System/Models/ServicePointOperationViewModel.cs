@@ -1,6 +1,6 @@
 namespace Queue_Management_System.Models
 {
-    public class ServicePointViewModel
+    public class ServicePointOperationViewModel
     {
         public string? ServicePointId {get; set;}
 

@@ -9,6 +9,7 @@ namespace Queue_Management_System.Repositories
         ServiceProviderModel GetServiceProviderByEmail(string email);
 
         IEnumerable<ServiceProviderModel> GetServiceProviders();
+        
         void AddServiceProvider(ServiceProviderModel serviceProvider);
 
         void UpdateServiceProvider(ServiceProviderModel serviceProvider);

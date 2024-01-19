@@ -1,0 +1,42 @@
+@model ServiceProviderModel
+
+@{
+    ViewData["Title"] = "Add Service Provider";
+}
+
+<!DOCTYPE html>
+    <html>
+        <body>
+            <diV>
+                <h2>@ViewData["Title"]</h2>
+            </diV>
+
+            <form asp-action="AddServiceProvider" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Id">Id</label>
+                    <input asp-for="Id" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Name">Name</label>
+                    <input asp-for="Name" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Password">Password</label>
+                    <input asp-for="Password" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Service Provider</button>
+                <a asp-controller="Admin" asp-action="ConfigureServiceProviders" class="btn btn-primary">Cancel</a>
+
+            </form>
+        </body>
+    </html>
