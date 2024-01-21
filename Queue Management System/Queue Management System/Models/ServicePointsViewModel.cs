@@ -1,7 +1,7 @@
 namespace Queue_Management_System.Models
 {
-    public class servicePointsViewModel
+    public class ServicePointsViewModel
     {
-        public ServicePointModel[] ServicePoints {get; set;}
+        public IEnumerable<ServicePointModel> ServicePoints {get; set;}
     }
 }

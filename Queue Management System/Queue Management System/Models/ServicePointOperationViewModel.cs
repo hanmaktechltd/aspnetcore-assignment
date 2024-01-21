@@ -10,7 +10,7 @@ namespace Queue_Management_System.Models
 
         public TicketModel[]? NoshowTickets {get; set;}
 
-        public ServiceModel[]? Services {get; set;}
+        public IEnumerable<ServiceModel>? Services {get; set;}
 
     }
 }

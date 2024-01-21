@@ -31,8 +31,8 @@ namespace Queue_Management_System.Controllers
         {
             var services = _serviceRepository.GetServices();
             var servicesViewModel = new ServicesViewModel(){
-                Services = services;
-            }
+                Services = services
+            };
             return View(servicesViewModel);
         }
 
@@ -40,8 +40,8 @@ namespace Queue_Management_System.Controllers
         {
             var serviceProviders = _serviceProviderRepository.GetServiceProviders();
             var serviceProvidersViewModel = new ServiceProvidersViewModel(){
-                ServiceProviders = serviceProviders;
-            }
+                ServiceProviders = serviceProviders
+            };
             return View(serviceProvidersViewModel);
         }
 
@@ -49,8 +49,8 @@ namespace Queue_Management_System.Controllers
         {
             var servicePoints = _servicePointRepository.GetServicePoints();
             var servicePointsViewModel = new ServicePointsViewModel(){
-                ServicePoints = servicePoints;
-            }
+                ServicePoints = servicePoints
+            };
             return View(servicePointsViewModel);
         }
 
@@ -66,26 +66,38 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddService()
+        public IActionResult AddService(ServiceModel service)
         {
+            if (ModelState.IsValid)
+            {
+                _serviceRepository.AddService(service);
+                return RedirectToAction("ConfigureServices");
+            }
             return View();
         }
 
         [HttpGet]
-        public IActionResult EditService()
+        public IActionResult EditService(string id)
         {
-            return View();
+            var service = _serviceRepository.GetServiceById(id);
+            return View(service);
         }
 
         [HttpPost]
-        public IActionResult EditService()
+        public IActionResult EditService(ServiceModel service)
         {
+            if (ModelState.IsValid)
+            {
+                _serviceRepository.UpdateService(service);
+                return RedirectToAction("ConfigureServices");
+            }
             return View();
         }
 
-        public IActionResult DeleteService()
+        public IActionResult DeleteService(string id)
         {
-            return View();
+            _serviceRepository.DeleteService(id);
+            return RedirectToAction("ConfigureServices");
         }
 
         [HttpGet]
@@ -95,55 +107,87 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddServiceProvider()
+        public IActionResult AddServiceProvider(ServiceProviderModel serviceProvider)
         {
+            if (ModelState.IsValid)
+            {
+                _serviceProviderRepository.AddServiceProvider(serviceProvider);
+                return RedirectToAction("ConfigureServiceProviders");
+            }
             return View();
         }
 
         [HttpGet]
-        public IActionResult EditServiceProvider()
+        public IActionResult EditServiceProvider(string id)
         {
-            return View();
+            var serviceProvider = _serviceProviderRepository.GetServiceProviderById(id);
+            return View(serviceProvider);
         }
 
         [HttpPost]
-        public IActionResult EditServiceProvider()
+        public IActionResult EditServiceProvider(ServiceProviderModel serviceProvider)
         {
+            if (ModelState.IsValid)
+            {
+                _serviceProviderRepository.UpdateServiceProvider(serviceProvider);
+                return RedirectToAction("ConfigureServiceProviders");
+            }
             return View();
         }
 
-        public IActionResult DeleteServiceProvider()
+        public IActionResult DeleteServiceProvider(string id)
         {
-            return View();
+            _serviceProviderRepository.DeleteServiceProvider(id);
+            return RedirectToAction("ConfigureServiceProviders");
         }
 
         [HttpGet]
         public IActionResult AddServicePoint()
         {
+            var services = _serviceRepository.GetServices();
+            var serviceProviders = _serviceProviderRepository.GetServiceProviders();
+            ViewData["Services"] = services;
+            ViewData["ServiceProviders"] = serviceProviders;
             return View();
         }
 
         [HttpPost]
-        public IActionResult AddServicePoint()
+        public IActionResult AddServicePoint(ServicePointModel servicePoint)
         {
+            if (ModelState.IsValid)
+            {
+                _servicePointRepository.AddServicePoint(servicePoint);
+                return RedirectToAction("ConfigureServicePoints");
+            }
+            var services = _serviceRepository.GetServices();
+            var serviceProviders = _serviceProviderRepository.GetServiceProviders();
+            ViewData["Services"] = services;
+            ViewData["ServiceProviders"] = serviceProviders;
             return View();
         }
 
         [HttpGet]
-        public IActionResult EditServicePoint()
+        public IActionResult EditServicePoint(string id)
         {
-            return View();
+            var servicePoint = _servicePointRepository.GetServicePointById(id);
+            return View(servicePoint);
         }
 
         [HttpPost]
-        public IActionResult EditServicePoint()
+        public IActionResult EditServicePoint(ServicePointModel servicePoint)
         {
+            if (ModelState.IsValid)
+            {
+                _servicePointRepository.UpdateServicePoint(servicePoint);
+                return RedirectToAction("ConfigureServicePoints");
+            }
             return View();
         }
 
-        public IActionResult DeleteServicePoint()
+        public IActionResult DeleteServicePoint(string id)
         {
-            return View();
+            _servicePointRepository.DeleteServicePoint(id);
+            return RedirectToAction("ConfigureServicePoints");
         }
 
     }

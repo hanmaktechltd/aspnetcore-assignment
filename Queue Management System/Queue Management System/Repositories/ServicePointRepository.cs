@@ -14,6 +14,6 @@ namespace Queue_Management_System.Repositories
 
         void UpdateServicePoint(ServicePointModel servicePoint);
 
-        void DeleteServicePoint(ServicePointModel servicePoint);
+        void DeleteServicePoint(string id);
     }
 }

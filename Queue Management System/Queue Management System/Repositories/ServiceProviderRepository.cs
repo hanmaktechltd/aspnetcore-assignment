@@ -14,7 +14,7 @@ namespace Queue_Management_System.Repositories
 
         void UpdateServiceProvider(ServiceProviderModel serviceProvider);
 
-        void DeleteServiceProvider(ServiceProviderModel serviceProvider);
+        void DeleteServiceProvider(string id);
         
     }
 
