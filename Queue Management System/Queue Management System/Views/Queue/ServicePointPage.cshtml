@@ -12,27 +12,27 @@
         <div class="text-center m-2">
             <div>
                 <h3>You are now in service point @Model.ServicePointID offering @Model.ServiceDescription services.</h3><br />
-                <h4>@ViewData["callingMessage"]</h4><br/>
+                <h4>@ViewData["CallingMessage"]</h4><br/>
 
-                @if (ViewData["calledNumber"] is null)
+                @if (ViewData["CalledNumber"] is null)
                 {
                     @Html.ActionLink("Get Next Number", "ServicePoint", "Queue", new {buttonName = "GetNextNumber"} , new {@class = "btn btn-primary mt-3"} )<br>
                     @Html.ActionLink("Recall Next No Show Number", "ServicePoint", "Queue", new {buttonName = "RecallNextNoShowNumber"} , new {@class = "btn btn-primary mt-3"} )<br>
                 }
 
-                @if ((ViewData["calledNumber"] is true) && ViewData["showedUp"] is null)
+                @if ((ViewData["CalledNumber"] is true) && ViewData["ShowedUp"] is null)
                 {
-                    @Html.ActionLink("Mark As Show", "ServicePoint", "Queue", new {buttonName = "MarkAsShow"} , new {@class = "btn btn-primary mt-3"} )<br>
+                    @Html.ActionLink("Mark As Show", "ServicePoint", "Queue", new {buttonName = "MarkAsShow", } , new {@class = "btn btn-primary mt-3"} )<br>
                     @Html.ActionLink("Mark As No Show", "ServicePoint", "Queue", new {buttonName = "MarkAsNoShow"} , new {@class = "btn btn-primary mt-3"} )<br>
                 }
 
-                @if (ViewData["showedUp"] is true)
+                @if (ViewData["ShowedUp"] is true)
                 {
                     @Html.ActionLink("Mark As Finished", "ServicePoint", "Queue", new {buttonName = "MarkAsFinished"} , new {@class = "btn btn-primary mt-3"} )<br>
 
                 }
 
-                @if (ViewData["finished"] is true)
+                @if (ViewData["Finished"] is true)
                 {
                     @foreach (var service in Model.Services)
                     //todo if service is not the current service

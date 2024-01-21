@@ -28,10 +28,10 @@
                         <tr>
                             <td>@servicePoint.Id</td>
                             <td>@servicePoint.Description</td>
-                            <td>@servicePoint.serviceProviderId</td>
+                            <td>@servicePoint.ServiceProviderId</td>
                             <td>
-                                <a asp-controller="Admin" asp-action="EditServicePoint" asp-route-id="@servicePoint.Id">Edit</a>
-                                <a asp-controller="Admin" asp-action="DeleteServicePoint" asp-route-id="@servicePoint.Id">Delete</a>
+                                <a asp-controller="Admin" asp-action="EditServicePoint" asp-route-id=@servicePoint.Id>Edit</a>
+                                <a asp-controller="Admin" asp-action="DeleteServicePoint" asp-route-id=@servicePoint.Id>Delete</a>
                             </td>
                         </tr>
                     }
