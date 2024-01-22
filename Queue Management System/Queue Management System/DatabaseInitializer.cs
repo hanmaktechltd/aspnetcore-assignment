@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS Ticket (
     ServicePointId INT NOT NULL,
     ServicePoint VARCHAR(255),
     ServiceProvider VARCHAR(255),
-    FOREIGN KEY (ServicePointId) REFERENCES ServicePoint(ServicePointId)
+    FOREIGN KEY (ServicePointId) REFERENCES ServicePoint(ServicePointId) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS ServiceProvider (
@@ -51,8 +51,8 @@ CREATE TABLE IF NOT EXISTS ServiceProviderServicePoint (
     ServiceProviderId INT,
     ServicePointId INT,
     PRIMARY KEY (ServiceProviderId, ServicePointId),
-    FOREIGN KEY (ServiceProviderId) REFERENCES ServiceProvider(ServiceProviderId),
-    FOREIGN KEY (ServicePointId) REFERENCES ServicePoint(ServicePointId)
+    FOREIGN KEY (ServiceProviderId) REFERENCES ServiceProvider(ServiceProviderId) ON DELETE CASCADE,
+    FOREIGN KEY (ServicePointId) REFERENCES ServicePoint(ServicePointId) ON DELETE CASCADE
 );
 
 
@@ -80,9 +80,9 @@ WITH inserted_service_providers AS (
 
 INSERT INTO ServiceProviderServicePoint (ServiceProviderId, ServicePointId)
 VALUES 
-    ((SELECT ServiceProviderId FROM inserted_service_providers WHERE Username = 'superuser'), 1),
-    ((SELECT ServiceProviderId FROM inserted_service_providers WHERE Username = 'superuser'), 2),
-    ((SELECT ServiceProviderId FROM inserted_service_providers WHERE Username = 'regularuser'), 3)
+    ((SELECT ServiceProviderId FROM inserted_service_providers WHERE Username = 'superuser'), (SELECT ServicePointId FROM ServicePoint WHERE ServicePointName = 'servicePointTest 1')),
+    ((SELECT ServiceProviderId FROM inserted_service_providers WHERE Username = 'superuser'), (SELECT ServicePointId FROM ServicePoint WHERE ServicePointName = 'servicePointTest 2')),
+    ((SELECT ServiceProviderId FROM inserted_service_providers WHERE Username = 'regularuser'), (SELECT ServicePointId FROM ServicePoint WHERE ServicePointName = 'servicePointTest 3'))
 ON CONFLICT (ServiceProviderId, ServicePointId)
 DO NOTHING;
 

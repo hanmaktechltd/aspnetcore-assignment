@@ -35,15 +35,26 @@ namespace Queue_Management_System.Controllers
 
         public IActionResult Edit(int id)
         {
-            ServicePoint servicePoint = _servicePointService.GetServicePointById(id);
+           ServicePoint servicePoint = _servicePointService.GetServicePointById(id);
+
+           var associatedTickets = _servicePointService.findTicketsPerServicePoint(id);    
+           
+           if (associatedTickets.Count > 0) {
+
+            ViewBag.AssociatedTickets = associatedTickets;
+            
+           }
+
+
             return View(servicePoint);
         }
-
+ 
         [HttpPost]
         public IActionResult Edit(ServicePoint model)
         {
             if (ModelState.IsValid)
             {
+                _servicePointService.DeleteTicketsByServicePoint(model.ServicePointId);
                 _servicePointService.UpdateServicePoint(model);
                 _logger.LogInformation("ServicePoint updated successfully: {ServicePointId}", model.ServicePointId);
                 return RedirectToAction("Dashboard", "Admin");
@@ -55,12 +66,23 @@ namespace Queue_Management_System.Controllers
         public IActionResult Delete(int id)
         {
             var servicePoint = _servicePointService.GetServicePointById(id);
+
+            var associatedTickets = _servicePointService.findTicketsPerServicePoint(id);    
+           
+           if (associatedTickets.Count > 0) {
+
+            ViewBag.AssociatedTickets = associatedTickets;
+            
+           }
+
+
             return View(servicePoint);
         }
 
         [HttpPost]
         public IActionResult DeleteConfirmed(int id)
         {
+            //_servicePointService.DeleteTicketsByServicePoint(id);
             _servicePointService.DeleteServicePoint(id);
             return RedirectToAction("Dashboard", "Admin");
         }

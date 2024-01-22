@@ -2,6 +2,19 @@
 
 <h4>Delete Service Point</h4>
 
+@if (ViewBag.AssociatedTickets != null)
+{
+    <div class="alert alert-warning">
+        <p>This service point has associated tickets. Changing its Details will delete the following tickets:</p>
+        <ul>
+            @foreach (var ticket in ViewBag.AssociatedTickets)
+            {
+                <li>@ticket.TicketId</li>
+            }
+        </ul>
+    </div>
+}
+
 <p>Are you sure you want to delete the following service point?</p>
 
 <dl class="row">
@@ -14,5 +27,5 @@
 
 <form asp-action="DeleteConfirmed" asp-route-id="@Model.ServicePointId" method="post">
     <input type="submit" value="Delete" class="btn btn-danger" />
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-secondary">Cancel</a>
 </form>

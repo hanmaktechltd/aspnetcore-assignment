@@ -19,6 +19,8 @@ public interface IServicePointService {
 
    public void DeleteServicePoint(int id);
 
+   public void DeleteTicketsByServicePoint(int servicePointId);
+
 
 
 

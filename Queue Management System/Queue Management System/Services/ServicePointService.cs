@@ -211,4 +211,18 @@ public class ServicePointService : IServicePointService
             command.ExecuteNonQuery();
         }
     }
+
+       public void DeleteTicketsByServicePoint(int servicePointId)
+    {
+        using (var connection = new NpgsqlConnection(_connectionString))
+        using (var command = new NpgsqlCommand())
+        {
+            connection.Open();
+            command.Connection = connection;
+            command.CommandText = "DELETE FROM Ticket WHERE ServicePointId = @ServicePointId";
+            command.Parameters.AddWithValue("@ServicePointId", servicePointId);
+
+            command.ExecuteNonQuery();
+        }
+    }
 }
