@@ -112,58 +112,61 @@ public class ServiceProviderService : IServiceProviderService
         }
     }
 
-    public List<ServiceProvider> GetServiceProvidersWithServicePoints()
+   public List<ServiceProvider> GetServiceProvidersWithServicePoints()
+{
+    var serviceProviders = new List<ServiceProvider>();
+
+    using (var connection = new NpgsqlConnection(_connectionString))
     {
-        var serviceProviders = new List<ServiceProvider>();
+        connection.Open();
 
-        using (var connection = new NpgsqlConnection(_connectionString))
+        using (var command = new NpgsqlCommand("SELECT sp.ServiceProviderId, sp.Username, sp.Role, sp.PasswordHash, spsp.ServicePointId, spoint.ServicePointName " +
+            "FROM ServiceProvider sp " +
+            "LEFT JOIN ServiceProviderServicePoint spsp ON sp.ServiceProviderId = spsp.ServiceProviderId " +
+            "LEFT JOIN ServicePoint spoint ON spsp.ServicePointId = spoint.ServicePointId", connection))
+        using (var reader = command.ExecuteReader())
         {
-            connection.Open();
 
-            using (var command = new NpgsqlCommand("SELECT sp.ServiceProviderId, sp.Username, sp.Role, sp.PasswordHash, spsp.ServicePointId, spoint.ServicePointName " +
-                "FROM ServiceProvider sp " +
-                "LEFT JOIN ServiceProviderServicePoint spsp ON sp.ServiceProviderId = spsp.ServiceProviderId " +
-                "LEFT JOIN ServicePoint spoint ON spsp.ServicePointId = spoint.ServicePointId", connection))
-            using (var reader = command.ExecuteReader())
+            var serviceProviderDictionary = new Dictionary<int, ServiceProvider>();
+
+            while (reader.Read())
             {
-                int currentServiceProviderId = 0;
-                ServiceProvider currentServiceProvider = null;
+                int serviceProviderId = reader.GetInt32(reader.GetOrdinal("ServiceProviderId"));
 
-                while (reader.Read())
+                if (!serviceProviderDictionary.TryGetValue(serviceProviderId, out var currentServiceProvider))
                 {
-                    int serviceProviderId = reader.GetInt32(reader.GetOrdinal("ServiceProviderId"));
 
-                    if (serviceProviderId != currentServiceProviderId)
+                    currentServiceProvider = new ServiceProvider
                     {
-                        currentServiceProvider = new ServiceProvider
-                        {
-                            ServiceProviderId = serviceProviderId,
-                            Username = reader.GetString(reader.GetOrdinal("Username")),
-                            Password = reader.GetString(reader.GetOrdinal("PasswordHash")),
-                            Role = reader.GetString(reader.GetOrdinal("Role")),
-                            ServicePoints = new List<ServicePoint>()
-                        };
+                        ServiceProviderId = serviceProviderId,
+                        Username = reader.GetString(reader.GetOrdinal("Username")),
+                        Password = reader.GetString(reader.GetOrdinal("PasswordHash")),
+                        Role = reader.GetString(reader.GetOrdinal("Role")),
+                        ServicePoints = new List<ServicePoint>()
+                    };
 
-                        serviceProviders.Add(currentServiceProvider);
-                        currentServiceProviderId = serviceProviderId;
-                    }
+                    serviceProviders.Add(currentServiceProvider);
+                    serviceProviderDictionary.Add(serviceProviderId, currentServiceProvider);
+                }
 
-                    if (!reader.IsDBNull(reader.GetOrdinal("ServicePointId")))
+                if (!reader.IsDBNull(reader.GetOrdinal("ServicePointId")))
+                {
+                    var servicePoint = new ServicePoint
                     {
-                        var servicePoint = new ServicePoint
-                        {
-                            ServicePointId = reader.GetInt32(reader.GetOrdinal("ServicePointId")),
-                            ServicePointName = reader.GetString(reader.GetOrdinal("ServicePointName"))
-                        };
+                        ServicePointId = reader.GetInt32(reader.GetOrdinal("ServicePointId")),
+                        ServicePointName = reader.GetString(reader.GetOrdinal("ServicePointName"))
+                    };
 
-                        currentServiceProvider.ServicePoints.Add(servicePoint);
-                    }
+                
+                    currentServiceProvider.ServicePoints.Add(servicePoint);
                 }
             }
         }
-
-        return serviceProviders;
     }
+
+    return serviceProviders;
+}
+
 
     public ServiceProvider GetServiceProviderWithServicePointsById(int serviceProviderId)
     {

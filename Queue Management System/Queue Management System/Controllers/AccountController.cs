@@ -24,6 +24,7 @@ namespace Queue_Management_System.Controllers
         public IActionResult Login()
         {
             var serviceProviders = _serviceProviderService.GetServiceProvidersWithServicePoints();
+           
             var viewModel = new LoginViewModel
             {
                 AvailableServiceProviders = serviceProviders
@@ -36,9 +37,6 @@ namespace Queue_Management_System.Controllers
         public IActionResult LoginPost(LoginViewModel loginData)
         {
            
-            _logger.LogInformation("username received is {0}", loginData.Username);
-            _logger.LogInformation("password received is {0}", loginData.Password);
-
             var serviceProviders = _serviceProviderService.GetServiceProvidersWithServicePoints();
             
             var viewModel = new LoginViewModel
@@ -51,7 +49,7 @@ namespace Queue_Management_System.Controllers
             {
                 if (_authenticationService.AuthenticateServiceProvider(loginData.Username, loginData.Password))
                 {
-                    _logger.LogInformation("Authentication success");
+
 
                     var currentServiceProvider = _authenticationService.GetServiceProviderByUsername(loginData.Username);
                     
@@ -74,13 +72,11 @@ namespace Queue_Management_System.Controllers
                 }
                 else
                 {
-                    _logger.LogInformation("Authentication fail");
                     ModelState.AddModelError("", "Invalid password, try again");
                     return View("login", viewModel);
                 }
             }
 
-            _logger.LogInformation("validation fail");
 
             return View("login", viewModel);
         }
