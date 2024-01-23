@@ -1,0 +1,43 @@
+
+@model ServicePoint
+
+<h2>Edit Service Point</h2>
+
+@if (ViewBag.AssociatedTickets != null)
+{
+    <div class="alert alert-warning">
+        <p>This service point has associated tickets. Changing its Details will delete the following tickets:</p>
+        <ul>
+            @foreach (var ticket in ViewBag.AssociatedTickets)
+            {
+                <li>@ticket.TicketId</li>
+            }
+        </ul>
+        <p>Are you sure you want to proceed?</p>
+    </div>
+}
+
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <input type="hidden" asp-for="ServicePointId" />
+
+    <div class="form-group">
+        <label asp-for="ServicePointName"></label>
+        <input asp-for="ServicePointName" class="form-control" />
+        <span asp-validation-for="ServicePointName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+<a asp-controller="Admin" asp-action="Dashboard">Back to List</a>
+
+
+

@@ -1,0 +1,39 @@
+@model ServiceProviderViewModel
+
+<div class="container">
+    <h2>Create New ServiceProvider</h2>
+
+    <form asp-controller="ServiceProvider" asp-action="Create" method="post">
+        <div class="form-group">
+            <label asp-for="Username">Username:</label>
+            <input asp-for="Username" class="form-control" />
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Role:</label>
+            <select asp-for="Role" asp-items="Model.Roles" class="form-control"></select>
+            <span asp-validation-for="Role" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label>ServicePoints:</label>
+            @foreach (var servicePoint in Model.AllServicePoints)
+            {
+                <div class="form-check">
+                    <input type="checkbox" id="servicePoint_@servicePoint.Value" name="SelectedServicePointIds" value="@servicePoint.Value" class="form-check-input" />
+                    <label for="servicePoint_@servicePoint.Value" class="form-check-label">@servicePoint.Text</label>
+                </div>
+            }
+            <span asp-validation-for="SelectedServicePointIds" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-sm btn-primary">Create</button>
+        </div>
+    </form>
+
+    <div class="form-group">
+        <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-sm btn-secondary">Back to Dashboard</a>
+    </div>
+</div>

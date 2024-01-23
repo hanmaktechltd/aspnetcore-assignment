@@ -10,12 +10,18 @@
     <Description>A standalone queue management system with a dedicated kiosk mode.</Description>
     <PackageProjectUrl>https://github.com/hanmaktechltd/aspnetcore-assignment</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hanmaktechltd/aspnetcore-assignment</RepositoryUrl>
+     <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="Repository\" />
     <Folder Include="Services\" />
     <Folder Include="Views\Account\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FastReport.Core" Version="2024.1.2-demo" />
+    <PackageReference Include="Npgsql" Version="8.0.1" />
   </ItemGroup>
 
 </Project>

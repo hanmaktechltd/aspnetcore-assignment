@@ -1,0 +1,52 @@
+@model IEnumerable<ServiceProvider>
+
+<div class="container mt-4">
+    <h4 class="mb-4">Service Providers</h4>
+
+    <p>
+        <a asp-controller="ServiceProvider" asp-action="Create" class="btn btn-primary btn-sm">Add New Service Provider</a>
+    </p>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Provider Name</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Password</th>
+                    <th scope="col">Service Points</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var serviceProvider in Model)
+                {
+                    <tr>
+                        <td>@serviceProvider.Username</td>
+                        <td>@serviceProvider.Role</td>
+                        <td>@serviceProvider.Password</td>
+                        <td>
+                            @if (serviceProvider.ServicePoints != null && serviceProvider.ServicePoints.Any())
+                            {
+                                <ul class="list-unstyled">
+                                    @foreach (var servicePoint in serviceProvider.ServicePoints)
+                                    {
+                                        <li>@servicePoint.ServicePointName</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span>No Service Points</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-controller="ServiceProvider" asp-action="Edit" asp-route-id="@serviceProvider.ServiceProviderId" class="btn btn-outline-primary btn-sm">Edit</a>
+                            <a asp-controller="ServiceProvider" asp-action="Delete" asp-route-id="@serviceProvider.ServiceProviderId" class="btn btn-outline-danger btn-sm ml-2">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

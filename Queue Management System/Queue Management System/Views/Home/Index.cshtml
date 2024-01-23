@@ -1,3 +1,27 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@{    
+    ViewData["Title"] = "Home";
 }
+@{
+    ViewData["Title"] = "Home";
+}
+
+
+<div class="container text-center mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body p-5">
+                    <h2 class="card-title text-center mb-4">Welcome</h2>
+
+                    <a asp-action="CheckInPage" asp-controller="Queue">
+                        <button class="btn btn-outline-primary btn-lg mb-3">Select a Service</button>
+                    </a>
+
+                    <p>
+                        <a asp-action="Login" asp-controller="Account" class="text-decoration-underline">Service Provider Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
