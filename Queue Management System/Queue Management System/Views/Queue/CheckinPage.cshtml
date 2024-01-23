@@ -15,7 +15,7 @@
             
             @foreach (var service in Model.Services)
             {
-                @Html.ActionLink(@service.ServiceDescription, "CheckinPage", "Queue", new {serviceId = @service.ServiceId} , new {@class = "btn btn-primary mt-3"} )<br>
+                @Html.ActionLink(@service.Description, "CheckinPage", "Queue", new {serviceId = @service.Id} , new {@class = "btn btn-primary mt-3"} )<br>
             }
         
         </div>

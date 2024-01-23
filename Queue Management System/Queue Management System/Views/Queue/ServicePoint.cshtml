@@ -1,0 +1,76 @@
+@model ServicePointOperationViewModel
+
+
+@{
+
+    ViewData["Title"] = "Service Point";
+}
+
+<!DOCTYPE html>
+    <html>
+        
+    <body>
+        <div class="text-center m-2">
+            <div>
+                <h3>You are now in service point @ViewData["ServicePointId"] offering @ViewData["ServiceDescription"] services.</h3><br />
+                <h4>@ViewData["CallingMessage"]</h4><br/>
+
+                @if (ViewData["CalledNumber"] is null)
+                {
+                    @Html.ActionLink("Get Next Number", "ServicePoint", "Queue", new {buttonName = "GetNextNumber"} , new {@class = "btn btn-primary mt-3"} )<br>
+                    @Html.ActionLink("Recall Next No Show Number", "ServicePoint", "Queue", new {buttonName = "RecallNextNoShowNumber"} , new {@class = "btn btn-primary mt-3"} )<br>
+                }
+
+                @if ((ViewData["CalledNumber"] is true) && ViewData["ShowedUp"] is null)
+                {
+                    @Html.ActionLink("Mark As Show", "ServicePoint", "Queue", new {buttonName = "MarkAsShow", } , new {@class = "btn btn-primary mt-3"} )<br>
+                    @Html.ActionLink("Mark As No Show", "ServicePoint", "Queue", new {buttonName = "MarkAsNoShow"} , new {@class = "btn btn-primary mt-3"} )<br>
+                }
+
+                @if ((ViewData["ShowedUp"] is true) && ViewData["Finished"] is null)
+                {
+                    @Html.ActionLink("Mark As Finished", "ServicePoint", "Queue", new {buttonName = "MarkAsFinished"} , new {@class = "btn btn-primary mt-3"} )<br>
+
+                }
+
+                @if (ViewData["Finished"] is true)
+                {
+                    @Html.ActionLink("Dont Transfer", "ServicePoint", "Queue", new {serviceId = "DontTransfer"} , new {@class = "btn btn-primary mt-3"} )<br>
+                    @foreach (var service in Model.Services)
+                    //todo if service is not the current service
+                    {
+                        @Html.ActionLink("Transfer to " + @service.Description, "ServicePoint", "Queue", new {serviceId = @service.Id} , new {@class = "btn btn-primary mt-3"} )<br>
+                    }
+                
+                }
+            </div>
+
+            <div>
+                tickets in  queue <br>
+                @foreach (var ticket in Model.TicketsInQueue)
+                {
+                    <h4>@ticket.TicketNumber</h4>
+                }
+            </div>
+
+             <div>
+                no show tickets in  queue <br>
+                @foreach (var ticket in Model.NoShowTickets)
+                {
+                    <h4>@ticket.TicketNumber</h4>
+                }
+            </div>
+
+            <div>
+                @if (ViewBag.WebReport != null)
+                {
+                    @await ViewBag.WebReport.Render()
+                }
+            </div>
+
+        </div>
+
+    </body>
+
+</html>
+            
