@@ -1,0 +1,32 @@
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log In";
+}
+
+<!DOCTYPE html>
+    <html>
+        <body>
+            <diV>
+                <h2>@ViewData["Title"]</h2>
+            </diV>
+
+            <form asp-action="Login" method="post" role="form" asp-route-returnurl="@Context.Request.Query["ReturnUrl"]">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Password">Password</label>
+                    <input asp-for="Password" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Log In</button>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Cancel</a>
+
+            </form>
+        </body>
+    </html>

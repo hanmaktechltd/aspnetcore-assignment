@@ -45,20 +45,20 @@ namespace Queue_Management_System.Repositories
     {
         ServiceModel SampleService1 = new ServiceModel
         {
-            ServiceId = "Service1",
-            ServiceDescription = "Description for Service 1",
+            Id = "Service1",
+            Description = "Description for Service 1",
         };
 
         ServiceModel SampleService2 = new ServiceModel
         {
-            ServiceId = "Service2",
-            ServiceDescription = "Description for Service 2",
+            Id = "Service2",
+            Description = "Description for Service 2",
         };
 
         ServiceModel SampleService3 = new ServiceModel
         {
-            ServiceId = "Service3",
-            ServiceDescription = "Description for Service 3",
+            Id = "Service3",
+            Description = "Description for Service 3",
         };
 
         public ServiceModel GetServiceById(string id)
@@ -77,6 +77,16 @@ namespace Queue_Management_System.Repositories
         }
 
         public void AddService(ServiceModel service)
+        {
+            
+        }
+
+         public void UpdateService(ServiceModel service)
+        {
+            
+        }
+
+         public void DeleteService(string id)
         {
             
         }
