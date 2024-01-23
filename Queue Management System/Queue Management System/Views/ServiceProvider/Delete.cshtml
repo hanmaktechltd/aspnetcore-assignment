@@ -14,5 +14,5 @@
 
 <form asp-action="DeleteConfirmed" asp-route-id="@Model.ServiceProviderId" method="post">
     <input type="submit" value="Delete" class="btn btn-sm btn-danger" />
-    <a asp-action="Index" class="btn btn-sm btn-secondary">Cancel</a>
+    <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-sm btn-secondary">Cancel</a>
 </form>

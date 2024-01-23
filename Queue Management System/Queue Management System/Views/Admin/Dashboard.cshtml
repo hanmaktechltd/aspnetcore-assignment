@@ -2,18 +2,18 @@
 
 <h2>Admin Dashboard</h2>
 
-<div>
+<div class="mb-4">
     @Html.Partial("_ServicePointsPartial", Model.ServicePoints)
 </div>
 
-<div>
+<div class="mb-4">
     @Html.Partial("_ServiceProvidersPartial", Model.ServiceProviders)
-</div> 
+</div>
 
 <div class="mt-4">
-    <h4 class="mb-3">Generate Analytical Report</h4>
+    <h4>Generate Analytical Report</h4>
     <div>
-        <p class="mb-3">Generate an analytical report for your dashboard. Click the button below to download the report.</p>
+        <p>Generate an analytical report for your dashboard. Click the button below to download the report.</p>
         <button class="btn btn-primary" onclick="location.href='@Url.Action("DownloadReport", "Admin", @Model)'">Download Report</button>
     </div>
 </div>

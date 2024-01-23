@@ -3,28 +3,32 @@
 <div class="container mt-4">
     <h4>Service Points</h4>
 
-    <p><a asp-controller="ServicePoint" asp-action="Create" class="btn btn-outline-primary btn-sm">Create New Service Point</a></p>
+    <p>
+        <a asp-controller="ServicePoint" asp-action="Create" class="btn btn-primary btn-sm">Create New Service Point</a>
+    </p>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Service Point Name</th>
-                <th>Description</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var servicePoint in Model)
-            {
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="thead-dark">
                 <tr>
-                    <td>@servicePoint.ServicePointName</td>
-                    <td>@servicePoint.Description</td>
-                    <td>
-                        <a asp-controller="ServicePoint" asp-action="Edit" asp-route-id="@servicePoint.ServicePointId" class="btn btn-outline-primary btn-sm">Edit</a>
-                        <a asp-controller="ServicePoint" asp-action="Delete" asp-route-id="@servicePoint.ServicePointId" class="btn btn-outline-danger btn-sm">Delete</a>
-                    </td>
+                    <th scope="col">Service Point Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Action</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var servicePoint in Model)
+                {
+                    <tr>
+                        <td>@servicePoint.ServicePointName</td>
+                        <td>@servicePoint.Description</td>
+                        <td>
+                            <a asp-controller="ServicePoint" asp-action="Edit" asp-route-id="@servicePoint.ServicePointId" class="btn btn-outline-primary btn-sm">Edit</a>
+                            <a asp-controller="ServicePoint" asp-action="Delete" asp-route-id="@servicePoint.ServicePointId" class="btn btn-outline-danger btn-sm ml-2">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
