@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Queue_Management_System.Services;
 using Queue_Management_System.Repositories;
+using Queue_Management_System.Models;
 
 namespace Queue_Management_System.Controllers
 {
@@ -17,20 +18,22 @@ namespace Queue_Management_System.Controllers
             _authenticationService = authenticationService;
             _servicePointRepository = servicePointRepository;
         }
+
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string email, string password, string returnUrl = null)
+        public async Task<IActionResult> Login(LoginModel user, string returnUrl)
         {
             if(!ModelState.IsValid)
             {
                 return View();
             }
 
-            var serviceProvider = _authenticationService.AuthenticateUser(email, password);
+            var serviceProvider = _authenticationService.AuthenticateUser(user.Email, user.Password);
 
             if (serviceProvider == null)
             {
@@ -48,7 +51,8 @@ namespace Queue_Management_System.Controllers
             var claimsIdentity = new ClaimsIdentity(claims, "MyAuthScheme");
             var authProperties = new AuthenticationProperties
             {
-
+                IsPersistent = false,
+                ExpiresUtc = DateTime.UtcNow.AddMinutes(1)
             };
 
             await HttpContext.SignInAsync("MyAuthScheme", new ClaimsPrincipal(claimsIdentity), authProperties);

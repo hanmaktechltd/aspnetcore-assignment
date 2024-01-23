@@ -7,6 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddFastReport();
 
+builder.Services.AddAuthentication("MyAuthScheme").AddCookie("MyAuthScheme", options => {
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/Login";
+});
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
@@ -14,6 +19,8 @@ builder.Services.AddScoped<IServiceRepository, MockServiceRepository>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IAuthenticationService, MockAuthenticationService>();
+builder.Services.AddScoped<ITicketRepository, MockTicketRepository>();
+builder.Services.AddScoped<IServicePointRepository, MockServicePointRepository>();
 
 var app = builder.Build();
 
@@ -30,6 +37,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();
