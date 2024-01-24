@@ -18,7 +18,7 @@ builder.Services.AddSession();
 builder.Services.AddSingleton<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IReportService, ReportService>();
-builder.Services.AddScoped<IAuthenticationService, MockAuthenticationService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddSingleton<ITicketRepository, TicketRepository>();
 builder.Services.AddSingleton<IServicePointRepository, ServicePointRepository>();
 builder.Services.AddSingleton<IServiceProviderRepository, ServiceProviderRepository>();

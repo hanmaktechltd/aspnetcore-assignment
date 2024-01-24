@@ -5,7 +5,7 @@ using Queue_Management_System.Repositories;
 
 namespace Queue_Management_System.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly IServiceRepository _serviceRepository;

@@ -143,8 +143,8 @@ namespace Queue_Management_System.Repositories
                 servicePoint = new ServicePointModel
                 {
                     Id = reader.GetString(0),
-                    Description = reader.GetString(1), //todo change description field of spoint model to serviceid
-                    ServiceProviderId = reader.GetString(2)
+                    Description = reader.IsDBNull(1) ? null : reader.GetString(1), //todo change description field of spoint model to serviceid
+                    ServiceProviderId = reader.IsDBNull(2) ? null : reader.GetString(2)
                 };
             }
 

@@ -33,7 +33,8 @@ namespace Queue_Management_System.Controllers
                 return View();
             }
 
-            var serviceProvider = _authenticationService.AuthenticateUser(user.Email, user.Password);
+            var serviceProvider = await _authenticationService.AuthenticateUser(user.Email, user.Password);
+            string role = "";
 
             if (serviceProvider == null)
             {
@@ -41,11 +42,17 @@ namespace Queue_Management_System.Controllers
                 return View();
             }
 
+            if (serviceProvider.IsAdmin)
+            {
+                role = "Admin";
+            }
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, serviceProvider.Id),
                 new Claim(ClaimTypes.Name, serviceProvider.Name),
                 new Claim(ClaimTypes.Email, serviceProvider.Email),
+                new Claim(ClaimTypes.Role, role)
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, "MyAuthScheme");
@@ -63,7 +70,7 @@ namespace Queue_Management_System.Controllers
             if (servicePoint != null)
             {
                 HttpContext.Session.SetString("servicePointId", servicePoint.Id);
-                HttpContext.Session.SetString("serviceDescription", servicePoint.Description);
+                HttpContext.Session.SetString("serviceDescription", servicePoint.Description ?? "No Service Configured For this Service Point");
             }
            
             return LocalRedirect(returnUrl);
