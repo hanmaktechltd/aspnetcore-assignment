@@ -29,7 +29,7 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpGet]
-        public IActionResult CheckinPage(string serviceId)
+        public async Task<IActionResult> CheckinPage(string serviceId)
         {
 
             if (serviceId != null)
@@ -45,7 +45,7 @@ namespace Queue_Management_System.Controllers
                 return View("WaitingPage");
             }
 
-            var services = _serviceRepository.GetServices();
+            var services = await _serviceRepository.GetServices();
             var servicesViewModel = new ServicesViewModel(){
                 Services = services // refactor
             };
@@ -67,7 +67,7 @@ namespace Queue_Management_System.Controllers
 
 
         [Authorize, HttpGet]
-        public IActionResult ServicePoint(string buttonName, string serviceId)
+        public async Task<IActionResult> ServicePoint(string buttonName, string serviceId)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("servicePointId")))
             {
@@ -141,7 +141,7 @@ namespace Queue_Management_System.Controllers
             {
                 //set showed up to false in db
                 //transfer ticket to no show tickets
-                var ticket = _ticketRepository.GetUnservedTicketByTicketNumber(currentlyServedTicketNumber);
+                var ticket = await _ticketRepository.GetUnservedTicketByTicketNumber(currentlyServedTicketNumber);
                 Console.WriteLine(ticket.TicketNumber);
                 _ticketService.AddTicketToNoShowTickets(ticket);
                 //to do remove from called ticketss
@@ -193,7 +193,7 @@ namespace Queue_Management_System.Controllers
             ViewData["ServiceDescription"] = serviceDescription;
             var ticketsInQueue = _ticketService.GetAllTicketsInQueueByServiceId(serviceDescription); //get service id from session
             var noShowTickets = _ticketService.GetAllNoShowTicketsInQueueByServiceId(serviceDescription); //get from list of noshow tickets in session
-            var services = _serviceRepository.GetServices(); //todo only required after markasfinshed
+            var services = await _serviceRepository.GetServices(); //todo only required after markasfinshed
 
             var viewModel = new ServicePointOperationViewModel(){
                 ServicePointId = servicePointId, //get from session

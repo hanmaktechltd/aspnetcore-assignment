@@ -15,12 +15,13 @@ builder.Services.AddAuthentication("MyAuthScheme").AddCookie("MyAuthScheme", opt
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
-builder.Services.AddScoped<IServiceRepository, MockServiceRepository>();
+builder.Services.AddSingleton<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IAuthenticationService, MockAuthenticationService>();
-builder.Services.AddScoped<ITicketRepository, MockTicketRepository>();
-builder.Services.AddScoped<IServicePointRepository, MockServicePointRepository>();
+builder.Services.AddSingleton<ITicketRepository, TicketRepository>();
+builder.Services.AddSingleton<IServicePointRepository, ServicePointRepository>();
+builder.Services.AddSingleton<IServiceProviderRepository, ServiceProviderRepository>();
 
 var app = builder.Build();
 

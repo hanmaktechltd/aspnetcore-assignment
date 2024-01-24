@@ -27,27 +27,28 @@ namespace Queue_Management_System.Controllers
             return View();
         }
 
-        public IActionResult ConfigureServices()
+        public async Task<IActionResult> ConfigureServices()
         {
-            var services = _serviceRepository.GetServices();
+            var services = await _serviceRepository.GetServices();
             var servicesViewModel = new ServicesViewModel(){
                 Services = services
             };
+            
             return View(servicesViewModel);
         }
 
-        public IActionResult ConfigureServiceProviders()
+        public async Task<IActionResult> ConfigureServiceProviders()
         {
-            var serviceProviders = _serviceProviderRepository.GetServiceProviders();
+            var serviceProviders = await _serviceProviderRepository.GetServiceProviders();
             var serviceProvidersViewModel = new ServiceProvidersViewModel(){
                 ServiceProviders = serviceProviders
             };
             return View(serviceProvidersViewModel);
         }
 
-        public IActionResult ConfigureServicePoints()
+        public async Task<IActionResult> ConfigureServicePoints()
         {
-            var servicePoints = _servicePointRepository.GetServicePoints();
+            var servicePoints = await _servicePointRepository.GetServicePoints();
             var servicePointsViewModel = new ServicePointsViewModel(){
                 ServicePoints = servicePoints
             };
@@ -66,37 +67,37 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddService(ServiceModel service)
+        public async Task<IActionResult> AddService(ServiceModel service)
         {
             if (ModelState.IsValid)
             {
-                _serviceRepository.AddService(service);
+                await _serviceRepository.AddService(service);
                 return RedirectToAction("ConfigureServices");
             }
             return View();
         }
 
         [HttpGet]
-        public IActionResult EditService(string id)
+        public async Task<IActionResult> EditService(string id)
         {
-            var service = _serviceRepository.GetServiceById(id);
+            var service = await _serviceRepository.GetServiceById(id);
             return View(service);
         }
 
         [HttpPost]
-        public IActionResult EditService(ServiceModel service)
+        public async Task<IActionResult> EditService(ServiceModel service)
         {
             if (ModelState.IsValid)
             {
-                _serviceRepository.UpdateService(service);
+                await _serviceRepository.UpdateService(service);
                 return RedirectToAction("ConfigureServices");
             }
             return View();
         }
 
-        public IActionResult DeleteService(string id)
+        public async Task<IActionResult> DeleteService(string id)
         {
-            _serviceRepository.DeleteService(id);
+            await _serviceRepository.DeleteService(id);
             return RedirectToAction("ConfigureServices");
         }
 
@@ -107,86 +108,91 @@ namespace Queue_Management_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddServiceProvider(ServiceProviderModel serviceProvider)
+        public async Task<IActionResult> AddServiceProvider(ServiceProviderModel serviceProvider)
         {
             if (ModelState.IsValid)
             {
-                _serviceProviderRepository.AddServiceProvider(serviceProvider);
+                await _serviceProviderRepository.AddServiceProvider(serviceProvider);
                 return RedirectToAction("ConfigureServiceProviders");
             }
             return View();
         }
 
         [HttpGet]
-        public IActionResult EditServiceProvider(string id)
+        public async Task<IActionResult> EditServiceProvider(string id)
         {
-            var serviceProvider = _serviceProviderRepository.GetServiceProviderById(id);
+            var serviceProvider = await _serviceProviderRepository.GetServiceProviderById(id);
             return View(serviceProvider);
         }
 
         [HttpPost]
-        public IActionResult EditServiceProvider(ServiceProviderModel serviceProvider)
+        public async Task<IActionResult> EditServiceProvider(ServiceProviderModel serviceProvider)
         {
             if (ModelState.IsValid)
             {
-                _serviceProviderRepository.UpdateServiceProvider(serviceProvider);
+                await _serviceProviderRepository.UpdateServiceProvider(serviceProvider);
                 return RedirectToAction("ConfigureServiceProviders");
             }
             return View();
         }
 
-        public IActionResult DeleteServiceProvider(string id)
+        public async Task<IActionResult> DeleteServiceProvider(string id)
         {
-            _serviceProviderRepository.DeleteServiceProvider(id);
+            await _serviceProviderRepository.DeleteServiceProvider(id);
             return RedirectToAction("ConfigureServiceProviders");
         }
 
         [HttpGet]
-        public IActionResult AddServicePoint()
+        public async Task<IActionResult> AddServicePoint()
         {
-            var services = _serviceRepository.GetServices();
-            var serviceProviders = _serviceProviderRepository.GetServiceProviders();
+            var services = await _serviceRepository.GetServices();
+            var serviceProviders = await _serviceProviderRepository.GetServiceProviders();
             ViewData["Services"] = services;
             ViewData["ServiceProviders"] = serviceProviders;
             return View();
         }
 
         [HttpPost]
-        public IActionResult AddServicePoint(ServicePointModel servicePoint)
+        public async Task<IActionResult> AddServicePoint(ServicePointModel servicePoint)
         {
             if (ModelState.IsValid)
             {
-                _servicePointRepository.AddServicePoint(servicePoint);
+                await _servicePointRepository.AddServicePoint(servicePoint);
                 return RedirectToAction("ConfigureServicePoints");
             }
-            var services = _serviceRepository.GetServices();
-            var serviceProviders = _serviceProviderRepository.GetServiceProviders();
+            var services = await _serviceRepository.GetServices();
+            var serviceProviders = await _serviceProviderRepository.GetServiceProviders();
             ViewData["Services"] = services;
             ViewData["ServiceProviders"] = serviceProviders;
             return View();
         }
 
         [HttpGet]
-        public IActionResult EditServicePoint(string id)
+        public async Task<IActionResult> EditServicePoint(string id)
         {
-            var servicePoint = _servicePointRepository.GetServicePointById(id);
+            var services = await _serviceRepository.GetServices();
+            var serviceProviders = await _serviceProviderRepository.GetServiceProviders();
+            var servicePoint = await _servicePointRepository.GetServicePointById(id);
+            ViewData["Services"] = services;
+            ViewData["ServiceProviders"] = serviceProviders;
+            
             return View(servicePoint);
         }
 
         [HttpPost]
-        public IActionResult EditServicePoint(ServicePointModel servicePoint)
+        public async Task<IActionResult> EditServicePoint(ServicePointModel servicePoint)
         {
             if (ModelState.IsValid)
             {
-                _servicePointRepository.UpdateServicePoint(servicePoint);
+                await _servicePointRepository.UpdateServicePoint(servicePoint);
                 return RedirectToAction("ConfigureServicePoints");
             }
             return View();
         }
 
-        public IActionResult DeleteServicePoint(string id)
+        public async Task<IActionResult> DeleteServicePoint(string id)
         {
-            _servicePointRepository.DeleteServicePoint(id);
+            await _servicePointRepository.DeleteServicePoint(id);
             return RedirectToAction("ConfigureServicePoints");
         }
 

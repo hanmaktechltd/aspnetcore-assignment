@@ -58,7 +58,7 @@ namespace Queue_Management_System.Controllers
             await HttpContext.SignInAsync("MyAuthScheme", new ClaimsPrincipal(claimsIdentity), authProperties);
            
             //add user info to session
-            var servicePoint = _servicePointRepository.GetServicePointByProviderId(serviceProvider.Id);
+            var servicePoint = await _servicePointRepository.GetServicePointByServiceProviderId(serviceProvider.Id);
 
             if (servicePoint != null)
             {
