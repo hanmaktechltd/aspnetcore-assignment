@@ -4,8 +4,8 @@
 
 @{
     ViewData["Title"] = "Add Service Point";
-    var services = ViewData["Services"] as ServiceModel[];
-    var serviceProviders = ViewData["ServiceProviders"] as ServiceProviderModel[];
+    var services = ViewData["Services"] as IEnumerable<ServiceModel>;
+    var serviceProviders = ViewData["ServiceProviders"] as IEnumerable<ServiceProviderModel>;
 }
 
 <!DOCTYPE html>
@@ -26,10 +26,15 @@
                 <div class="form-group">
                     <label asp-for="Description">Description</label>
                     <select id="Description" name="Description" class="form-select">
-                        @foreach (var service in services)
+                        <option value="" selected>None</option>
+                        @if(services != null)
                         {
-                            <option value=@service.Id>@service.Description</option>
+                            foreach (var service in services)
+                            {
+                                <option value=@service.Id>@service.Description</option>
+                            }
                         }
+                        
                     </select>
                 </div>
 
@@ -37,11 +42,15 @@
                 <div class="form-group">
                     <label asp-for="ServiceProviderId">Service Provider Id</label>
                     <select id="ServiceProviderId" name="ServiceProviderId" class="form-select">
-                        <option></option>
-                        @foreach (var serviceProvider in serviceProviders)
+                        <option value="" selected>None</option>
+                        @if(serviceProviders != null)
                         {
-                            <option value=@serviceProvider.Id>@serviceProvider.Email</option>
+                            foreach (var serviceProvider in serviceProviders)
+                            {
+                                <option value=@serviceProvider.Id>@serviceProvider.Email</option>
+                            }
                         }
+                        
                     </select>
                 </div>
 

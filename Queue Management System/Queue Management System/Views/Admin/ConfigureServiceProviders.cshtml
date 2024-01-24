@@ -1,7 +1,7 @@
 @model ServiceProvidersViewModel
 
 @{
-    ViewData["Title"] = "COnfigure Service Providers";
+    ViewData["Title"] = "Configure Service Providers";
 }
 
 <!DOCTYPE html>
@@ -20,6 +20,7 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Password</th>
+                        <th>Is Administrator</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -31,6 +32,7 @@
                             <td>@serviceProvider.Name</td>
                             <td>@serviceProvider.Email</td>
                             <td>@serviceProvider.Password</td>
+                            <td>@serviceProvider.IsAdmin</td>
                             <td>
                                 <a asp-controller="Admin" asp-action="EditServiceProvider" asp-route-id=@serviceProvider.Id>Edit</a>
                                 <a asp-controller="Admin" asp-action="DeleteServiceProvider" asp-route-id=@serviceProvider.Id>Delete</a>

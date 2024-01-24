@@ -16,7 +16,7 @@
 
                 <div class="form-group">
                     <label asp-for="Id">Id</label>
-                    <input asp-for="Id" class="form-control" value=@Model.Id readonly="readonly">
+                    <input asp-for="Id" class="form-control" readonly="readonly">
                 </div>
 
                 <div class="form-group">
@@ -32,6 +32,19 @@
                 <div class="form-group">
                     <label asp-for="Password">Password</label>
                     <input asp-for="Password" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword">Confirm Password</label>
+                    <input asp-for="ConfirmPassword" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="IsAdmin">Is Administrator?</label>
+                    <select id="IsAdmin" name="IsAdmin" clas="form-select">
+                        <option value="false" selected>No</option>
+                        <option value="true">Yes</option>
+                    </select>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save Service Provider</button>

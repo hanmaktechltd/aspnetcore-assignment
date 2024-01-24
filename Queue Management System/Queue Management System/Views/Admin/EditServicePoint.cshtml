@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Edit Service Point";
+    var services = ViewData["Services"] as IEnumerable<ServiceModel>;
+    var serviceProviders = ViewData["ServiceProviders"] as IEnumerable<ServiceProviderModel>;
 }
 
 <!DOCTYPE html>
@@ -16,17 +18,37 @@
 
                 <div class="form-group">
                     <label asp-for="Id">Id</label>
-                    <input asp-for="Id" class="form-control" value=@Model.Id readonly="readonly">
+                    <input asp-for="Id" class="form-control" readonly="readonly">
                 </div>
 
                 <div class="form-group">
                     <label asp-for="Description">Description</label>
-                    <input asp-for="Description" class="form-control">
+                    <select id="Description" name="Description" class="form-select">
+                        <option value="" selected>None</option>
+                        @if(services != null)
+                        {
+                            foreach (var service in services)
+                            {
+                                <option value=@service.Id>@service.Description</option>
+                            }
+                        }
+                        
+                    </select>
                 </div>
 
                 <div class="form-group">
                     <label asp-for="ServiceProviderId">Service Provider Id</label>
-                    <input asp-for="ServiceProviderId" class="form-control">
+                    <select id="ServiceProviderId" name="ServiceProviderId" class="form-select">
+                        <option value="" selected>None</option>
+                        @if(serviceProviders != null)
+                        {
+                            foreach (var serviceProvider in serviceProviders)
+                            {
+                                <option value=@serviceProvider.Id>@serviceProvider.Email</option>
+                            }
+                        }
+                        
+                    </select>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save Service Point</button>
