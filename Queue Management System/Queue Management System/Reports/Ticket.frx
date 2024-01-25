@@ -1,5 +1,5 @@
-﻿﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="12/27/2023 11:05:36" ReportInfo.Modified="12/29/2023 16:42:49" ReportInfo.CreatorVersion="2024.1.2.0">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="12/27/2023 11:05:36" ReportInfo.Modified="01/25/2024 08:43:39" ReportInfo.CreatorVersion="2024.1.2.0">
   <Dictionary>
     <TableDataSource Name="Categories" ReferenceName="NorthWind.Categories" DataType="System.Int32" Enabled="true">
       <Column Name="CategoryID" DataType="System.Int32"/>
@@ -127,18 +127,22 @@
     <Relation Name="OrdersOrderDetails" ReferenceName="NorthWind.OrdersOrderDetails" ParentDataSource="Orders" ChildDataSource="Order Details" ParentColumns="OrderID" ChildColumns="OrderID" Enabled="true"/>
   </Dictionary>
   <ReportPage Name="Page1" Landscape="true" PaperWidth="225.3" PaperHeight="98.3" RawPaperSize="19" Watermark.Font="Arial, 60pt" LastPageSource="15" FirstPageSource="15">
-    <ReportTitleBand Name="ReportTitle1" Width="776.03" Height="37.8" Fill.Color="Silver">
-      <TextObject Name="Text4" Left="160.65" Width="94.5" Height="28.35" Fill.Color="Silver" Text="QMS SYSTEM TICKET" AutoWidth="true" Underlines="true" Font="Arial, 20pt, style=Bold, Underline"/>
+    <ReportTitleBand Name="ReportTitle1" Width="776.03" Height="66.15" Fill.Color="Silver">
+      <TextObject Name="Text4" Left="207.9" Top="18.9" Width="321.3" Height="28.35" Fill.Color="Silver" Text="QMS SYSTEM TICKET" AutoWidth="true" Underlines="true" Font="Arial, 20pt, style=Bold, Underline"/>
     </ReportTitleBand>
-    <PageHeaderBand Name="PageHeader1" Top="41.8" Width="776.03" Height="28.35" Fill.Color="Silver"/>
-    <DataBand Name="Data1" Top="74.15" Width="776.03" Height="179.55" Fill.Color="LightGray">
-      <TextObject Name="Text1" Left="37.8" Top="18.9" Width="151.2" Height="28.35" Text="TICKET NUMBER:" AutoWidth="true" VertAlign="Center" Font="Arial, 15pt"/>
-      <TextObject Name="Text2" Left="37.8" Top="56.7" Width="151.2" Height="28.35" Text="SERVICE POINT ID:" AutoWidth="true" VertAlign="Center" Font="Arial, 15pt"/>
-      <TextObject Name="Text3" Left="37.8" Top="94.5" Width="151.2" Height="28.35" Text="TIME PRINTED:" AutoWidth="true" VertAlign="Center" Font="Arial, 15pt"/>
-      <TextObject Name="TicketNo" Left="264.6" Top="18.9" Width="415.8" Height="18.9" Text="[TicketNo]" Font="Arial, 12pt"/>
-      <TextObject Name="serviceID" Left="264.6" Top="56.7" Width="94.5" Height="18.9" Text="[serviceID]" Font="Arial, 12pt"/>
-      <TextObject Name="printTime" Left="264.6" Top="94.5" Width="302.4" Height="18.9" Text="[printTime]" Font="Arial, 12pt"/>
+    <PageHeaderBand Name="PageHeader1" Top="70.15" Width="776.03" Height="37.8" Fill.Color="Silver">
+      <TextObject Name="Text5" Left="103.95" Top="9.45" Width="538.65" Height="18.9" Text="Please wait for you ticket number to be called to head to the appropriate service point." Font="Arial Narrow, 9.75pt, style=Bold, Italic"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="111.95" Width="776.03" Height="151.2" Fill.Color="LightGray">
+      <TextObject Name="Text1" Left="37.8" Top="18.9" Width="151.2" Height="28.35" Text="TICKET NUMBER:" AutoWidth="true" VertAlign="Center" Font="Arial, 15pt, style=Bold"/>
+      <TextObject Name="Text2" Left="37.8" Top="66.15" Width="151.2" Height="28.35" Text="SERVICE ID:" AutoWidth="true" VertAlign="Center" Font="Arial, 15pt, style=Bold"/>
+      <TextObject Name="Text3" Left="37.8" Top="113.4" Width="151.2" Height="28.35" Text="TIME PRINTED:" AutoWidth="true" VertAlign="Center" Font="Arial, 15pt, style=Bold"/>
+      <TextObject Name="TicketNo" Left="264.6" Top="18.9" Width="415.8" Height="28.35" Text="[TicketNo]" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="serviceID" Left="264.6" Top="66.15" Width="132.3" Height="28.35" Text="[serviceID]" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="printTime" Left="264.6" Top="113.4" Width="302.4" Height="28.35" Text="[printTime]" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
     </DataBand>
-    <PageFooterBand Name="PageFooter1" Top="257.7" Width="776.03" Height="18.9" Fill.Color="Silver"/>
+    <PageFooterBand Name="PageFooter1" Top="267.15" Width="776.03" Height="28.35" Fill.Color="Silver">
+      <TextObject Name="Text6" Left="255.15" Top="9.45" Width="226.8" Height="18.9" Text="Thank you for using QMS services." Font="Arial Narrow, 9.75pt, style=Bold, Italic"/>
+    </PageFooterBand>
   </ReportPage>
 </Report>

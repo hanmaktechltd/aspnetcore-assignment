@@ -17,19 +17,22 @@
                 
             </div>
 
-            <div>
-                called tickets
+            <div style="height: 200px;">
+                <h3>Called Tickets:</h3>
+                
                 @if (calledTickets != null)
                 {
                     foreach(var item in calledTickets)
                     {
-                        <h4>Ticket Nummber : @item.Item1.TicketNumber head to @item.Item2</h4>
+                        <h4>Ticket Number : @item.Item1.TicketNumber head to @item.Item2</h4>
                     }
                 }
             </div>
-
+            <br>
+            <br>
+            <br>
             <div>
-                Your ticket details are shown below:<br/>
+                <h4>Your ticket details are shown below:</h4><br/>
                 @await ViewBag.WebReport.Render()
             </div>
         </div>
