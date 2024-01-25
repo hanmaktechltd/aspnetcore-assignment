@@ -29,6 +29,13 @@
             </li>
         </div>
 
+        <div>
+            @if (ViewBag.WebReport != null)
+            {
+                @await ViewBag.WebReport.Render()
+            }
+        </div>
+
     </body>
 
 </html>

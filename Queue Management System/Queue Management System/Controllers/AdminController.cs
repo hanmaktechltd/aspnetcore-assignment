@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Queue_Management_System.Models;
 using Queue_Management_System.Repositories;
+using Queue_Management_System.Services;
 
 namespace Queue_Management_System.Controllers
 {
@@ -14,11 +15,16 @@ namespace Queue_Management_System.Controllers
 
         private readonly IServicePointRepository _servicePointRepository;
 
-        public AdminController(IServiceRepository serviceRepository, IServiceProviderRepository serviceProviderRepository, IServicePointRepository servicePointRepository)
+        private readonly ITicketRepository _ticketRepository;
+
+        private readonly IReportService _reportService;
+        public AdminController(IServiceRepository serviceRepository, IServiceProviderRepository serviceProviderRepository, IServicePointRepository servicePointRepository, ITicketRepository ticketRepository, IReportService reportService)
         {
             _serviceRepository = serviceRepository;
             _serviceProviderRepository = serviceProviderRepository;
             _servicePointRepository = servicePointRepository;
+            _ticketRepository = ticketRepository;
+            _reportService = reportService;
         }
 
         [HttpGet]
@@ -55,9 +61,13 @@ namespace Queue_Management_System.Controllers
             return View(servicePointsViewModel);
         }
 
-        public IActionResult GenerateAnalyticalReport()
+        public async Task<IActionResult> GenerateAnalyticalReport()
         {
-            return View();
+            var analytics = await _ticketRepository.GetServicePointAnalytics();
+            var report = _reportService.GenerateAnalyticalReport(analytics);
+
+            ViewBag.WebReport = report;
+            return View("Dashboard");
         }
 
         [HttpGet]

@@ -7,6 +7,8 @@ using Queue_Management_System.Services;
 using FastReport.Web;
 using FastReport.DataVisualization.Charting;
 using System.IO;
+using FastReport;
+using System.Text.Json;
 
 namespace Queue_Management_System.Controllers
 {
@@ -35,31 +37,27 @@ namespace Queue_Management_System.Controllers
             if (serviceId != null)
             {
                 TicketModel ticket = _ticketService.CreateTicket(serviceId);
-                _ticketRepository.AddTicket(ticket);
+                await _ticketRepository.AddTicket(ticket);
                 _ticketService.AddTicketToQueue(ticket);
 
-                WebReport report = _reportService.GenerateTicketReport(ticket.TicketNumber, ticket.ServiceId, ticket.TimePrinted);
-                //redirect to waiting page with report attached
-                ViewBag.WebReport = report;
-                ViewData["CalledTickets"] = _ticketService.GetCalledTickets();
-                return View("WaitingPage");
+                return RedirectToAction("WaitingPage", new {ticketNumber = ticket.TicketNumber, serviceId = ticket.ServiceId, timePrinted = ticket.TimePrinted});
             }
 
             var services = await _serviceRepository.GetServices();
             var servicesViewModel = new ServicesViewModel(){
-                Services = services // refactor
+                Services = services 
             };
 
             return View(servicesViewModel);
         }
 
-
-
         [HttpGet]
-        public IActionResult WaitingPage()
+        public IActionResult WaitingPage(string ticketNumber, string serviceId, DateTime timePrinted)
         {
+            
+            WebReport report = _reportService.GenerateTicketReport(ticketNumber, serviceId, timePrinted);
+            ViewBag.WebReport = report;
             var calledTickets = _ticketService.GetCalledTickets();
-           
             ViewData["CalledTickets"] = calledTickets;
             return View();
         }
@@ -84,14 +82,11 @@ namespace Queue_Management_System.Controllers
 
             if (buttonName == "GetNextNumber")
             {
-                //_ticket repo.get nexno
-                //if number, setviewdatamessage, setviewdatacalled = true
                 var ticket = _ticketService.GetTicketFromQueue(serviceDescription);
                 if (ticket != null)
                 {
                     ViewData["CalledNumber"] = true;
                     ViewData["CallingMessage"] = "Calling Ticket number " + ticket.TicketNumber;
-                    //ViewData["CalledTicket"] = ticket;
                     _ticketService.AddTicketToTicketsBeingCalled(ticket, servicePointId);
                     HttpContext.Session.SetString("currentlyServedTicketNumber", ticket.TicketNumber);
                 }
@@ -103,8 +98,6 @@ namespace Queue_Management_System.Controllers
 
             if (buttonName == "RecallNextNoShowNumber")
             {
-                //get number from no show tickets, remove from no show
-                //set viewdatacalledmessage, set viewdatacallednumber to true
                 var ticket = _ticketService.GetTicketFromNoShowTickets(serviceDescription);
                 if (ticket != null)
                 {
@@ -122,14 +115,10 @@ namespace Queue_Management_System.Controllers
 
             if (buttonName == "MarkAsShow")
             {
-
-                //mark ticket as shown in db
-                //record time marked as shown in db
-                //set viewdatacalled = true, set viewdatashowedup = true
                 DateTime showUpTime = DateTime.Now; 
-                _ticketRepository.MarkTicketAsShowedUp(currentlyServedTicketNumber, showUpTime);
+                Console.WriteLine("cstn" + currentlyServedTicketNumber);
+                await _ticketRepository.MarkTicketAsShowedUp(currentlyServedTicketNumber, showUpTime, servicePointId);
 
-                //todo remove from called tickets
                 _ticketService.RemoveTicketFromTicketsBeingCalled(currentlyServedTicketNumber);
 
                 ViewData["CalledNumber"] = true;
@@ -158,7 +147,7 @@ namespace Queue_Management_System.Controllers
                 //set viewdatacalled = true, set viewdatashowedup = true, set viewdatafished = true
                 //pass services to view excluding current service
                 DateTime finishTime = DateTime.Now;
-                _ticketRepository.SetTicketFinishTime(currentlyServedTicketNumber, finishTime);
+                await _ticketRepository.SetTicketFinishTime(currentlyServedTicketNumber, finishTime);
 
                 ViewData["CalledNumber"] = true;
                 ViewData["ShowedUp"] = true;
@@ -173,7 +162,7 @@ namespace Queue_Management_System.Controllers
                 if (serviceId != "DontTransfer")
                 {
                     TicketModel ticket = _ticketService.TransferTicket(currentlyServedTicketNumber, serviceId);
-                    _ticketRepository.AddTicket(ticket);
+                    await _ticketRepository.AddTicket(ticket);
                     _ticketService.AddTicketToQueue(ticket);
 
                     WebReport report = _reportService.GenerateTicketReport(ticket.TicketNumber, ticket.ServiceId, ticket.TimePrinted);

@@ -41,7 +41,9 @@ namespace Queue_Management_System.Services
 
         private string GenerateTicketNumber()
         {
-            return "T0012";
+            string startTime = "1/06/2010";
+            var seconds = (DateTime.Now - DateTime.Parse(startTime)).TotalSeconds;
+            return "TN" + Convert.ToString(Convert.ToInt32(seconds % 100000));
         }
         
         public TicketModel CreateTicket(string serviceId)
@@ -78,7 +80,7 @@ namespace Queue_Management_System.Services
 
         public TicketModel? GetTicketFromQueue(string serviceId)
         {
-            TicketModel? ticket = TicketsQueue.Find(ticket => ticket.ServiceId == "Service2");
+            TicketModel? ticket = TicketsQueue.Find(ticket => ticket.ServiceId == serviceId);
             TicketsQueue.Remove(ticket);
            
             return ticket;
@@ -91,7 +93,7 @@ namespace Queue_Management_System.Services
 
         public TicketModel? GetTicketFromNoShowTickets(string serviceId)
         {
-            TicketModel? ticket = NoShowTicketsQueue.Find(ticket => ticket.ServiceId == "Service2");
+            TicketModel? ticket = NoShowTicketsQueue.Find(ticket => ticket.ServiceId == serviceId);
             NoShowTicketsQueue.Remove(ticket);
 
             return ticket;
@@ -109,12 +111,12 @@ namespace Queue_Management_System.Services
 
         public IEnumerable<TicketModel> GetAllTicketsInQueueByServiceId(string serviceId)
         {
-            return TicketsQueue.FindAll(ticket => ticket.ServiceId == "Service2");
+            return TicketsQueue.FindAll(ticket => ticket.ServiceId == serviceId);
         }
 
          public IEnumerable<TicketModel> GetAllNoShowTicketsInQueueByServiceId(string serviceId)
         {
-            return NoShowTicketsQueue.FindAll(ticket => ticket.ServiceId == "Service2");
+            return NoShowTicketsQueue.FindAll(ticket => ticket.ServiceId == serviceId);
         }
 
         public IEnumerable<(TicketModel, string)> GetCalledTickets()

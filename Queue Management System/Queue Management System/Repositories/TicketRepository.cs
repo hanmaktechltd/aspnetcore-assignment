@@ -1,5 +1,6 @@
 using Queue_Management_System.Models;
 using Npgsql;
+using System.Drawing.Printing;
 
 namespace Queue_Management_System.Repositories
 {
@@ -9,13 +10,13 @@ namespace Queue_Management_System.Repositories
 
         Task<TicketModel> GetUnservedTicketByTicketNumber(string ticketNumber);
 
-        //IEnumerable<TicketModel> GetUnservedTicketsByServiceID(string serviceId);
-
-        //void UpdateTicket(TicketModel ticket);
-
-        Task MarkTicketAsShowedUp(string ticketNumber, DateTime showUpTime);
+        Task MarkTicketAsShowedUp(string ticketNumber, DateTime showUpTime, string servicePointId);
 
         Task SetTicketFinishTime(string ticketNumber, DateTime finishTime);
+
+        Task<IEnumerable<ServicePointAnalyticModel>> GetServicePointAnalytics();
+
+    
     }
 
     /*public class MockTicketRepository : ITicketRepository
@@ -134,20 +135,23 @@ namespace Queue_Management_System.Repositories
 
         }
     
-        public async Task MarkTicketAsShowedUp(string ticketNumber, DateTime showUpTime)
+        public async Task MarkTicketAsShowedUp(string ticketNumber, DateTime showUpTime, string servicePointId)
         {
-
+            Console.WriteLine("mark"+ticketNumber);
             await using var connection = await dataSource.OpenConnectionAsync();
-            await using var command = new NpgsqlCommand("UPDATE tickets SET (showed_up, time_showed_up) = ($1, $2) WHERE id = $3", connection)
+            await using var command = new NpgsqlCommand("UPDATE tickets SET (service_point_id, showed_up, time_showed_up) = ($1, $2, $3) WHERE (ticket_number = $4 AND showed_up IS NULL)", connection)
             {
                 Parameters = 
                 {
+                    new() {Value = servicePointId},
                     new() {Value = true},
                     new() {Value = showUpTime},
                     new() {Value = ticketNumber},
+                    //new() {Value = DBNull.Value}
                 }
             };
             await command.ExecuteNonQueryAsync();
+            Console.WriteLine("successfull");
 
         }
 
@@ -155,17 +159,50 @@ namespace Queue_Management_System.Repositories
         {
 
             await using var connection = await dataSource.OpenConnectionAsync();
-            await using var command = new NpgsqlCommand("UPDATE tickets SET (time_finsihed) = ($1) WHERE id = $2", connection)
+            await using var command = new NpgsqlCommand("UPDATE tickets SET time_finished = $1 WHERE ticket_number = $2 AND time_finished IS NULL", connection)
             {
                 Parameters = 
                 {
                     new() {Value = finishTime},
                     new() {Value = ticketNumber},
+                    //new() {Value = DBNull.Value},
                 }
             };
 
             await command.ExecuteNonQueryAsync();
+            Console.WriteLine("settofinish");
 
+        }
+
+        public async Task<IEnumerable<ServicePointAnalyticModel>> GetServicePointAnalytics()
+        {
+            await using var connection = await dataSource.OpenConnectionAsync();
+            await using var command = new NpgsqlCommand("SELECT service_point_id, AVG(time_showed_up - time_printed), AVG(time_finished - time_showed_up), COUNT(service_point_id) FROM tickets WHERE showed_up=$1 GROUP BY service_point_id", connection)
+            {
+                Parameters = 
+                {
+                    new() {Value = true}
+                }
+            };
+
+            await using var reader = await command.ExecuteReaderAsync();
+            var result = new List<ServicePointAnalyticModel>();
+            while (await reader.ReadAsync())
+            {
+                var analytic = new ServicePointAnalyticModel
+                {
+                    ServicePointId = reader.GetString(0),
+                    AverageWaitingTime = reader.GetTimeSpan(1),
+                    AverageServiceTime = reader.GetTimeSpan(2),
+                    TotalCustomers = reader.GetInt32(3)
+                };
+                result.Add(analytic);
+            }
+            foreach (var analytic in result)
+            {
+                Console.WriteLine(analytic.AverageServiceTime);
+            }
+            return result;
         }
     }
 }
