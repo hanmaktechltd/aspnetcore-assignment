@@ -1,0 +1,25 @@
+@model ServicesViewModel
+
+@{
+    ViewData["Title"] = "Check-In";
+}
+
+<!DOCTYPE html>
+    <html>
+        
+    <body>
+        <div class="text-center m-2">
+            <h2>Welcome to QMS kiosk.</h2><br />
+            <h3>Please Select A Service You Would Like</h3><br />
+            
+            
+        @foreach (var service in Model.Services)
+        {
+            @Html.ActionLink(@service.Description, "CheckinPage", "Queue", new {serviceId = @service.Id} , new {@class = "btn btn-primary btn-block btn-lg mt-3"} )<br>
+            <br>
+        }
+        </div> 
+        
+        
+    </body> 
+</html>

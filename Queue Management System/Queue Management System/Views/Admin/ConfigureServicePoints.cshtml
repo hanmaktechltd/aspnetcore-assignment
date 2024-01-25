@@ -1,0 +1,42 @@
+@model ServicePointsViewModel
+
+@{
+    ViewData["Title"] = "COnfigure Service Points";
+}
+
+<!DOCTYPE html>
+
+    <html>
+        <body>
+            <div>
+                <h2>List of Service Points</h2>
+            </div>
+
+            <a asp-controller="Admin" asp-action="AddServicePoint">Add New Service Point</a>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Description</th>
+                        <th>Service Provider Id</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var servicePoint in Model.ServicePoints)
+                    {
+                        <tr>
+                            <td>@servicePoint.Id</td>
+                            <td>@servicePoint.Description</td>
+                            <td>@servicePoint.ServiceProviderId</td>
+                            <td>
+                                <a asp-controller="Admin" asp-action="EditServicePoint" asp-route-id=@servicePoint.Id>Edit</a>
+                                <a asp-controller="Admin" asp-action="DeleteServicePoint" asp-route-id=@servicePoint.Id>Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <a asp-controller="Admin" asp-action="Dashboard">Back to DashBoard</a>
+        </body>
+    </html>

@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Waiting Page";
+    var calledTickets = ViewData["CalledTickets"] as IEnumerable<(TicketModel, string)>;
+}
+
+<!DOCTYPE html>
+    <html>
+       
+    <body>
+        <div class="text-center m-2">
+            <div>
+                <h3>
+                Thank you for choosing to use qms services.<br />
+                You are now at the waiting room.<br />
+                
+                <br/>
+                
+            </div>
+
+            <div style="height: 200px;">
+                <h3>Called Tickets:</h3>
+                
+                @if (calledTickets != null)
+                {
+                    foreach(var item in calledTickets)
+                    {
+                        <h4>Ticket Number : @item.Item1.TicketNumber head to @item.Item2</h4>
+                    }
+                }
+            </div>
+            <br>
+            <br>
+            <br>
+            <div>
+                <h4>Your ticket details are shown below:</h4><br/>
+                @await ViewBag.WebReport.Render()
+            </div>
+        </div>
+    </body> 
+</html>

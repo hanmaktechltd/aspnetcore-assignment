@@ -1,0 +1,59 @@
+@model ServicePointModel
+
+@{
+    ViewData["Title"] = "Edit Service Point";
+    var services = ViewData["Services"] as IEnumerable<ServiceModel>;
+    var serviceProviders = ViewData["ServiceProviders"] as IEnumerable<ServiceProviderModel>;
+}
+
+<!DOCTYPE html>
+    <html>
+        <body>
+            <diV>
+                <h2>@ViewData["Title"]</h2>
+            </diV>
+
+            <form asp-action="EditServicePoint" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Id">Id</label>
+                    <input asp-for="Id" class="form-control" readonly="readonly">
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description">Description</label>
+                    <select id="Description" name="Description" class="form-select">
+                        <option value="" selected>None</option>
+                        @if(services != null)
+                        {
+                            foreach (var service in services)
+                            {
+                                <option value=@service.Id>@service.Description</option>
+                            }
+                        }
+                        
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ServiceProviderId">Service Provider Id</label>
+                    <select id="ServiceProviderId" name="ServiceProviderId" class="form-select">
+                        <option value="" selected>None</option>
+                        @if(serviceProviders != null)
+                        {
+                            foreach (var serviceProvider in serviceProviders)
+                            {
+                                <option value=@serviceProvider.Id>@serviceProvider.Email</option>
+                            }
+                        }
+                        
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Service Point</button>
+                <a asp-controller="Admin" asp-action="ConfigureServicePoints" class="btn btn-primary">Cancel</a>
+
+            </form>
+        </body>
+    </html>

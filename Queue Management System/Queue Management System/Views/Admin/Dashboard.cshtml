@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<!DOCTYPE html>
+    <html>
+        
+    <body>
+        <div class="text-center m-2">
+            <div>
+                <h2>Welcome to QMS Admin Dashboard.</h2>
+ 
+            </div>
+            <h4>
+            <li>
+                @Html.ActionLink("Configure Services", "ConfigureServices", "Admin", null)
+            </li>
+
+            <li>
+                @Html.ActionLink("Configure Service Providers", "ConfigureServiceProviders", "Admin", null)
+            </li>
+
+            <li>
+                @Html.ActionLink("Configure Service Points", "ConfigureServicePoints", "Admin", null)
+            </li>
+
+            <li>
+                @Html.ActionLink("Generate Analytical Report", "GenerateAnalyticalReport", "Admin", null)
+            </li>
+        </div>
+
+        <div>
+            @if (ViewBag.WebReport != null)
+            {
+                @await ViewBag.WebReport.Render()
+            }
+        </div>
+
+    </body>
+
+</html>

@@ -1,0 +1,46 @@
+@model ServiceProvidersViewModel
+
+@{
+    ViewData["Title"] = "Configure Service Providers";
+}
+
+<!DOCTYPE html>
+
+    <html>
+        <body>
+            <div>
+                <h2>List of Service Providers</h2>
+            </div>
+
+            <a asp-controller="Admin" asp-action="AddServiceProvider">Add New Service Provider</a>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Password</th>
+                        <th>Is Administrator</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var serviceProvider in Model.ServiceProviders)
+                    {
+                        <tr>
+                            <td>@serviceProvider.Id</td>
+                            <td>@serviceProvider.Name</td>
+                            <td>@serviceProvider.Email</td>
+                            <td>@serviceProvider.Password</td>
+                            <td>@serviceProvider.IsAdmin</td>
+                            <td>
+                                <a asp-controller="Admin" asp-action="EditServiceProvider" asp-route-id=@serviceProvider.Id>Edit</a>
+                                <a asp-controller="Admin" asp-action="DeleteServiceProvider" asp-route-id=@serviceProvider.Id>Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <a asp-controller="Admin" asp-action="Dashboard">Back to DashBoard</a>
+        </body>
+    </html>

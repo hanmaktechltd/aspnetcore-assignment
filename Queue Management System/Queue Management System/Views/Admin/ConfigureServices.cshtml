@@ -1,0 +1,40 @@
+@model ServicesViewModel
+
+@{
+    ViewData["Title"] = "Configure Services";
+}
+
+<!DOOCTYPE html>
+
+    <html>
+        <body>
+            <div>
+                <h2>List of Offered Services</h2>
+            </div>
+
+            <a asp-controller="Admin" asp-action="AddService">Add New Service</a>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var service in Model.Services)
+                    {
+                        <tr>
+                            <td>@service.Id</td>
+                            <td>@service.Description</td>
+                            <td>
+                                <a asp-controller="Admin" asp-action="EditService" asp-route-id=@service.Id>Edit</a>
+                                <a asp-controller="Admin" asp-action="DeleteService" asp-route-id=@service.Id>Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <a asp-controller="Admin" asp-action="Dashboard">Back to DashBoard</a>
+        </body>
+    </html>
