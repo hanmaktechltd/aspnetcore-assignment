@@ -96,137 +96,173 @@ namespace Queue_Management_System.Repositories
 
         public async Task<ServicePointModel> GetServicePointById(string id)
         {
-            
-            await using var connection = await dataSource.OpenConnectionAsync();
-            //string querystring = $"SELECT * FROM services WHERE id='{id}'";
-            await using var command = new NpgsqlCommand("SELECT * FROM service_points WHERE id=$1", connection)
+            try
             {
-                Parameters = 
+                await using var connection = await dataSource.OpenConnectionAsync();
+                await using var command = new NpgsqlCommand("SELECT * FROM service_points WHERE id=$1", connection)
                 {
-                    new() {Value = id}
-                }
-            };
-            await using var reader = await command.ExecuteReaderAsync();
-
-            ServicePointModel? servicePoint = null;
-            while (await reader.ReadAsync())
-            {
-                servicePoint = new ServicePointModel
-                {
-                    Id = reader.GetString(0),
-                    Description = reader.IsDBNull(1) ? null : reader.GetString(1), //todo change description field of spoint model to serviceid
-                    ServiceProviderId = reader.IsDBNull(2) ? null : reader.GetString(2)
+                    Parameters = 
+                    {
+                        new() {Value = id}
+                    }
                 };
+                await using var reader = await command.ExecuteReaderAsync();
+
+                ServicePointModel? servicePoint = null;
+                while (await reader.ReadAsync())
+                {
+                    servicePoint = new ServicePointModel
+                    {
+                        Id = reader.GetString(0),
+                        Description = reader.IsDBNull(1) ? null : reader.GetString(1), 
+                        ServiceProviderId = reader.IsDBNull(2) ? null : reader.GetString(2)
+                    };
+                }
+
+                return servicePoint;
             }
-
-            return servicePoint;
-
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public async Task<ServicePointModel> GetServicePointByServiceProviderId(string serviceProviderId)
         {
-            
-            await using var connection = await dataSource.OpenConnectionAsync();
-            //string querystring = $"SELECT * FROM services WHERE id='{id}'";
-            await using var command = new NpgsqlCommand("SELECT * FROM service_points WHERE service_provider_id=$1", connection)
+            try
             {
-                Parameters = 
+                await using var connection = await dataSource.OpenConnectionAsync();
+                await using var command = new NpgsqlCommand("SELECT * FROM service_points WHERE service_provider_id=$1", connection)
                 {
-                    new() {Value = serviceProviderId}
-                }
-            };
-            await using var reader = await command.ExecuteReaderAsync();
-
-            ServicePointModel? servicePoint = null;// = new ServicePointModel();
-            while (await reader.ReadAsync())
-            {
-                servicePoint = new ServicePointModel
-                {
-                    Id = reader.GetString(0),
-                    Description = reader.IsDBNull(1) ? null : reader.GetString(1), //todo change description field of spoint model to serviceid
-                    ServiceProviderId = reader.IsDBNull(2) ? null : reader.GetString(2)
+                    Parameters = 
+                    {
+                        new() {Value = serviceProviderId}
+                    }
                 };
+                await using var reader = await command.ExecuteReaderAsync();
+
+                ServicePointModel? servicePoint = null;
+                while (await reader.ReadAsync())
+                {
+                    servicePoint = new ServicePointModel
+                    {
+                        Id = reader.GetString(0),
+                        Description = reader.IsDBNull(1) ? null : reader.GetString(1), 
+                        ServiceProviderId = reader.IsDBNull(2) ? null : reader.GetString(2)
+                    };
+                }
+
+                return servicePoint;
             }
-
-            return servicePoint;
-
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public async Task<IEnumerable<ServicePointModel>> GetServicePoints()
         {
-            await using var connection = await dataSource.OpenConnectionAsync();
-            await using var command = new NpgsqlCommand("SELECT * FROM service_points", connection);
-            await using var reader = await command.ExecuteReaderAsync();
-
-            var servicePoints = new List<ServicePointModel>();
-            while (await reader.ReadAsync())
+            try
             {
-                var servicePoint = new ServicePointModel
+                await using var connection = await dataSource.OpenConnectionAsync();
+                await using var command = new NpgsqlCommand("SELECT * FROM service_points", connection);
+                await using var reader = await command.ExecuteReaderAsync();
+
+                var servicePoints = new List<ServicePointModel>();
+                while (await reader.ReadAsync())
                 {
-                    Id = reader.GetString(0),
-                    Description = reader.IsDBNull(1) ? null : reader.GetString(1),
-                    ServiceProviderId = reader.IsDBNull(2) ? null : reader.GetString(2)
-                };
+                    var servicePoint = new ServicePointModel
+                    {
+                        Id = reader.GetString(0),
+                        Description = reader.IsDBNull(1) ? null : reader.GetString(1),
+                        ServiceProviderId = reader.IsDBNull(2) ? null : reader.GetString(2)
+                    };
 
-                servicePoints.Add(servicePoint);
+                    servicePoints.Add(servicePoint);
+                }
+
+                return servicePoints;
             }
-
-            return servicePoints;
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+            
         }
 
         public async Task AddServicePoint(ServicePointModel servicePoint)
         {
-            string id = servicePoint.Id;
-            string? description = servicePoint.Description;
-            string? serviceProviderId = servicePoint.ServiceProviderId;
-
-            await using var connection = await dataSource.OpenConnectionAsync();
-            //string querystring = $"INSERT INTO services (id, description) VALUES ('{id}', '{description}')";
-            await using var command = new NpgsqlCommand("INSERT INTO service_points (id, service_id, service_provider_id) VALUES ($1, $2, $3)", connection)
+            try
             {
-                Parameters = 
-                {
-                    new() {Value = id},
-                    new() {Value = description ?? (object)DBNull.Value},
-                    new() {Value = serviceProviderId ?? (object)DBNull.Value}
-                }
-            };
-            await command.ExecuteNonQueryAsync();
+                string id = servicePoint.Id;
+                string? description = servicePoint.Description;
+                string? serviceProviderId = servicePoint.ServiceProviderId;
 
+                await using var connection = await dataSource.OpenConnectionAsync();
+                await using var command = new NpgsqlCommand("INSERT INTO service_points (id, service_id, service_provider_id) VALUES ($1, $2, $3)", connection)
+                {
+                    Parameters = 
+                    {
+                        new() {Value = id},
+                        new() {Value = description ?? (object)DBNull.Value},
+                        new() {Value = serviceProviderId ?? (object)DBNull.Value}
+                    }
+                };
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public async Task UpdateServicePoint(ServicePointModel servicePoint)
         {
-            string id = servicePoint.Id;
-            string description = servicePoint.Description;
-            string? serviceProviderId = servicePoint.ServiceProviderId;
-
-            await using var connection = await dataSource.OpenConnectionAsync();
-            //string querystring = $"INSERT INTO services (id, description) VALUES ('{id}', '{description}')";
-            await using var command = new NpgsqlCommand("UPDATE service_points SET (service_id, service_provider_id) = ($2, $3) WHERE id = $1", connection)
+            try
             {
-                Parameters = 
-                {
-                    new() {Value = id},
-                    new() {Value = description ?? (object)DBNull.Value},
-                    new() {Value = serviceProviderId ?? (object)DBNull.Value}
-                }
-            };
-            await command.ExecuteNonQueryAsync();
+                string id = servicePoint.Id;
+                string description = servicePoint.Description;
+                string? serviceProviderId = servicePoint.ServiceProviderId;
 
+                await using var connection = await dataSource.OpenConnectionAsync();
+                await using var command = new NpgsqlCommand("UPDATE service_points SET (service_id, service_provider_id) = ($2, $3) WHERE id = $1", connection)
+                {
+                    Parameters = 
+                    {
+                        new() {Value = id},
+                        new() {Value = description ?? (object)DBNull.Value},
+                        new() {Value = serviceProviderId ?? (object)DBNull.Value}
+                    }
+                };
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public async Task DeleteServicePoint(string id)
         {
-            await using var connection = await dataSource.OpenConnectionAsync();
-            await using var command = new NpgsqlCommand("DELETE FROM service_points WHERE id = $1", connection)
+            try
             {
-                Parameters = 
+                await using var connection = await dataSource.OpenConnectionAsync();
+                await using var command = new NpgsqlCommand("DELETE FROM service_points WHERE id = $1", connection)
                 {
-                    new() {Value = id}
-                }
-            };
-            await command.ExecuteNonQueryAsync();
+                    Parameters = 
+                    {
+                        new() {Value = id}
+                    }
+                };
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     
     }

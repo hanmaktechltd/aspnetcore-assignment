@@ -32,102 +32,135 @@ namespace Queue_Management_System.Repositories
 
         public async Task<ServiceModel> GetServiceById(string id)
         {
-            
-            await using var connection = await dataSource.OpenConnectionAsync();
-            //string querystring = $"SELECT * FROM services WHERE id='{id}'";
-            await using var command = new NpgsqlCommand("SELECT * FROM services WHERE id=$1", connection)
+            try
             {
-                Parameters = 
+                await using var connection = await dataSource.OpenConnectionAsync();
+                await using var command = new NpgsqlCommand("SELECT * FROM services WHERE id=$1", connection)
                 {
-                    new() {Value = id}
-                }
-            };
-            await using var reader = await command.ExecuteReaderAsync();
-
-            ServiceModel? service = null;
-            while (await reader.ReadAsync())
-            {
-                service = new ServiceModel
-                {
-                    Id = reader.GetString(0),
-                    Description = reader.GetString(1) 
+                    Parameters = 
+                    {
+                        new() {Value = id}
+                    }
                 };
+                await using var reader = await command.ExecuteReaderAsync();
+
+                ServiceModel? service = null;
+                while (await reader.ReadAsync())
+                {
+                    service = new ServiceModel
+                    {
+                        Id = reader.GetString(0),
+                        Description = reader.GetString(1) 
+                    };
+                }
+
+                return service;
             }
-
-            return service;
-
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public async Task<IEnumerable<ServiceModel>> GetServices()
         {
-            await using var connection = await dataSource.OpenConnectionAsync();
-            await using var command = new NpgsqlCommand("SELECT * FROM services", connection);
-            await using var reader = await command.ExecuteReaderAsync();
-
-            var services = new List<ServiceModel>();
-            while (await reader.ReadAsync())
+            try
             {
-                var service = new ServiceModel
+                await using var connection = await dataSource.OpenConnectionAsync();
+                await using var command = new NpgsqlCommand("SELECT * FROM services", connection);
+                await using var reader = await command.ExecuteReaderAsync();
+
+                var services = new List<ServiceModel>();
+                while (await reader.ReadAsync())
                 {
-                    Id = reader.GetString(0),
-                    Description = reader.GetString(1),
-                };
+                    var service = new ServiceModel
+                    {
+                        Id = reader.GetString(0),
+                        Description = reader.GetString(1),
+                    };
 
-                services.Add(service);
+                    services.Add(service);
+                }
+
+                return services;
             }
-
-            return services;
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public async Task AddService(ServiceModel service)
         {
-            string id = service.Id;
-            string description = service.Description;
-
-            await using var connection = await dataSource.OpenConnectionAsync();
-            //string querystring = $"INSERT INTO services (id, description) VALUES ('{id}', '{description}')";
-            await using var command = new NpgsqlCommand("INSERT INTO services (id, description) VALUES ($1, $2)", connection)
+            try
             {
-                Parameters = 
-                {
-                    new() {Value = id},
-                    new() {Value = description}
-                }
-            };
-            await command.ExecuteNonQueryAsync();
+                string id = service.Id;
+                string description = service.Description;
 
+                await using var connection = await dataSource.OpenConnectionAsync();
+                //string querystring = $"INSERT INTO services (id, description) VALUES ('{id}', '{description}')";
+                await using var command = new NpgsqlCommand("INSERT INTO services (id, description) VALUES ($1, $2)", connection)
+                {
+                    Parameters = 
+                    {
+                        new() {Value = id},
+                        new() {Value = description}
+                    }
+                };
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public async Task UpdateService(ServiceModel service)
         {
-            string id = service.Id;
-            string description = service.Description;
-
-            await using var connection = await dataSource.OpenConnectionAsync();
-            //string querystring = $"INSERT INTO services (id, description) VALUES ('{id}', '{description}')";
-            await using var command = new NpgsqlCommand("UPDATE services SET (description) = ($1) WHERE id = $2", connection)
+            try
             {
-                Parameters = 
-                {
-                    new() {Value = description},
-                    new() {Value = id}
-                }
-            };
-            await command.ExecuteNonQueryAsync();
+                string id = service.Id;
+                string description = service.Description;
 
+                await using var connection = await dataSource.OpenConnectionAsync();
+                //string querystring = $"INSERT INTO services (id, description) VALUES ('{id}', '{description}')";
+                await using var command = new NpgsqlCommand("UPDATE services SET (description) = ($1) WHERE id = $2", connection)
+                {
+                    Parameters = 
+                    {
+                        new() {Value = description},
+                        new() {Value = id}
+                    }
+                };
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public async Task DeleteService(string id)
         {
-            await using var connection = await dataSource.OpenConnectionAsync();
-            await using var command = new NpgsqlCommand("DELETE FROM services WHERE id = $1", connection)
+            try
             {
-                Parameters = 
+                await using var connection = await dataSource.OpenConnectionAsync();
+                await using var command = new NpgsqlCommand("DELETE FROM services WHERE id = $1", connection)
                 {
-                    new() {Value = id}
-                }
-            };
-            await command.ExecuteNonQueryAsync();
+                    Parameters = 
+                    {
+                        new() {Value = id}
+                    }
+                };
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 
