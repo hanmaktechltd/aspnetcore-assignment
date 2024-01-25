@@ -15,6 +15,8 @@ namespace Queue_Management_System.Controllers
     public class QueueController : Controller
     {
         private readonly IServiceRepository _serviceRepository;
+
+        private readonly IServicePointRepository _servicePointRepository;
         
         private readonly ITicketService _ticketService;
 
@@ -22,9 +24,10 @@ namespace Queue_Management_System.Controllers
 
         private readonly ITicketRepository _ticketRepository;
 
-        public QueueController(IServiceRepository serviceRepository, ITicketService ticketService, IReportService reportService, ITicketRepository ticketRepository)
+        public QueueController(IServiceRepository serviceRepository, IServicePointRepository servicePointRepository, ITicketService ticketService, IReportService reportService, ITicketRepository ticketRepository)
         {
             _serviceRepository = serviceRepository;
+            _servicePointRepository = servicePointRepository;
             _ticketService = ticketService;
             _reportService = reportService;
             _ticketRepository = ticketRepository;
@@ -69,9 +72,17 @@ namespace Queue_Management_System.Controllers
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("servicePointId")))
             {
-                //check if logged in user has a service point
-
-                //return no configured service point view if logged in user has no service point
+                var serviceProviderId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (serviceProviderId != null)
+                {
+                    var servicePoint = await _servicePointRepository.GetServicePointByServiceProviderId(serviceProviderId);
+                    if (servicePoint != null)
+                    {
+                        HttpContext.Session.SetString("servicePointId", servicePoint.Id);
+                        HttpContext.Session.SetString("serviceDescription", servicePoint.Description ?? "No Service Configured For this Service Point");
+                        return View();
+                    }
+                }
                 return View("NotConfiguredServicePointPage");
             }
 
@@ -116,7 +127,6 @@ namespace Queue_Management_System.Controllers
             if (buttonName == "MarkAsShow")
             {
                 DateTime showUpTime = DateTime.Now; 
-                Console.WriteLine("cstn" + currentlyServedTicketNumber);
                 await _ticketRepository.MarkTicketAsShowedUp(currentlyServedTicketNumber, showUpTime, servicePointId);
 
                 _ticketService.RemoveTicketFromTicketsBeingCalled(currentlyServedTicketNumber);
@@ -128,24 +138,17 @@ namespace Queue_Management_System.Controllers
 
             if (buttonName == "MarkAsNoShow")
             {
-                //set showed up to false in db
-                //transfer ticket to no show tickets
                 var ticket = await _ticketRepository.GetUnservedTicketByTicketNumber(currentlyServedTicketNumber);
-                Console.WriteLine(ticket.TicketNumber);
                 _ticketService.AddTicketToNoShowTickets(ticket);
-                //to do remove from called ticketss
+                
                 _ticketService.RemoveTicketFromTicketsBeingCalled(currentlyServedTicketNumber);
 
-                //clear currently servedticket session variable
                 HttpContext.Session.Remove(currentlyServedTicketNumber);
 
             }
 
             if (buttonName == "MarkAsFinished")
             {
-                //mark ticket as finished in db and record finsihed time
-                //set viewdatacalled = true, set viewdatashowedup = true, set viewdatafished = true
-                //pass services to view excluding current service
                 DateTime finishTime = DateTime.Now;
                 await _ticketRepository.SetTicketFinishTime(currentlyServedTicketNumber, finishTime);
 
@@ -166,9 +169,7 @@ namespace Queue_Management_System.Controllers
                     _ticketService.AddTicketToQueue(ticket);
 
                     WebReport report = _reportService.GenerateTicketReport(ticket.TicketNumber, ticket.ServiceId, ticket.TimePrinted);
-                    //ViewBag.WebReport = report;
-
-                    //todo set webreport to its own widget
+                    
                 }
 
                 //clear currentlyservedticked session variable
@@ -180,13 +181,13 @@ namespace Queue_Management_System.Controllers
             
             ViewData["ServicePointId"] = servicePointId;
             ViewData["ServiceDescription"] = serviceDescription;
-            var ticketsInQueue = _ticketService.GetAllTicketsInQueueByServiceId(serviceDescription); //get service id from session
-            var noShowTickets = _ticketService.GetAllNoShowTicketsInQueueByServiceId(serviceDescription); //get from list of noshow tickets in session
-            var services = await _serviceRepository.GetServices(); //todo only required after markasfinshed
+            var ticketsInQueue = _ticketService.GetAllTicketsInQueueByServiceId(serviceDescription); 
+            var noShowTickets = _ticketService.GetAllNoShowTicketsInQueueByServiceId(serviceDescription);
+            var services = await _serviceRepository.GetServices();
 
             var viewModel = new ServicePointOperationViewModel(){
-                ServicePointId = servicePointId, //get from session
-                ServiceDescription = serviceDescription, //get from session
+                ServicePointId = servicePointId, 
+                ServiceDescription = serviceDescription,
                 TicketsInQueue = ticketsInQueue,
                 NoShowTickets = noShowTickets,
                 Services = services,
