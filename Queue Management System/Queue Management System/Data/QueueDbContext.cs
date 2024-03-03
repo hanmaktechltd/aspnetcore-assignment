@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Queue_Management_System.Models;
 
 namespace Queue_Management_System.Data
 {
@@ -9,5 +10,7 @@ namespace Queue_Management_System.Data
         {
                 
         }
+        public DbSet<CustomerService> Customers { get; set; }
+        public DbSet<Login> UserAccounts { get; set; }
     }
 }
