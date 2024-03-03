@@ -24,16 +24,18 @@ namespace Queue_Management_System.Controllers
         [HttpGet]
         public IActionResult Customers()
         {
-            var customer = _dbContext.Customers.ToList();
-            return View(customer);
+            var customer = _dbContext.Customers.Where(n=>n.Status=="Pending").ToList().Take(1);
+            return View(customer.OrderBy(n=>n.TicketNumber));
         }
 
 
 
-        [Authorize, HttpGet]
+        //[Authorize, HttpGet]
+        [HttpGet]
         public IActionResult ServicePoint()
         {
-            return View();
+            var customer = _dbContext.Customers.Where(n => n.Status == "Pending").ToList().Take(1);
+            return View(customer.OrderBy(n => n.TicketNumber));
         }
 
 

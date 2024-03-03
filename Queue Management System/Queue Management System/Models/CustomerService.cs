@@ -7,6 +7,7 @@ namespace Queue_Management_System.Models
         [Key]
         public long TicketNumber { get; set; }
         public string ServiceRequested { get; set; }
+        public string Status { get; set; }
         public DateTime serviceDate { get; set; }    
     }
 }

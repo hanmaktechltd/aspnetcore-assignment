@@ -32,7 +32,7 @@ namespace Queue_Management_System.Controllers
                 ModelState.AddModelError("Password", "Kindly provide password");
                 return View();
             }
-            var user = _dbContext.UserAccounts.FirstOrDefaultAsync(u => u.Username.Equals(login.Username));
+            var user = _dbContext.UserAccounts.FirstOrDefault(u => u.Username.Equals(login.Username));
             if (user == null)
             {
                 ModelState.AddModelError("Username", "Invalid User Name credentials");
@@ -42,7 +42,7 @@ namespace Queue_Management_System.Controllers
 
 
             var pass = Decryptor.Decript_String(login.Password);
-            if (!pass.Equals(login.Password))
+            if (!pass.Equals(user.Password))
             {
                 ModelState.AddModelError("Password", "Wrong Password.");
                 return View();
@@ -53,7 +53,7 @@ namespace Queue_Management_System.Controllers
                     {
                         try
                         {
-                            return RedirectToAction("Queue", "ServicePoint", new { area = "" });
+                            return RedirectToAction("ServicePoint", "Queue", new { area = "" });
 
 
                         }
