@@ -11,7 +11,7 @@ namespace Queue_Management_System.DataContext
         public DapperContext(IConfiguration configuration)
         {
             _configuration = configuration;
-            _connectionString = _configuration.GetConnectionString("DefaultConnection") ?? "No string";
+            _connectionString = _configuration.GetConnectionString("Default") ?? "";
         }
 
         public IDbConnection CreateConnection()
