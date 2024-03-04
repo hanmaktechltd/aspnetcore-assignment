@@ -1,0 +1,20 @@
+﻿@page
+@model Queue_Management_System.Pages.CheckInModel
+@{
+}
+<h1>Check-In</h1>
+
+<form method="post">
+    <div>
+        <label for="customerName">Customer Name:</label>
+        <input type="text" id="customerName" name="customerName" required>
+    </div>
+    <div>
+        <label for="serviceType">Select Service Type:</label>
+        <select id="serviceType" name="serviceType">
+            <option value="service1">Service 1</option>
+            <option value="service2">Service 2</option>
+        </select>
+    </div>
+    <button type="submit">Check-In</button>
+</form>

@@ -13,9 +13,35 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\CheckIn.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Repository\" />
     <Folder Include="Services\" />
     <Folder Include="Views\Account\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FastReport">
+      <HintPath>..\..\..\Program Files (x86)\FastReports\FastReport.Net Trial\FastReport.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\CheckIn.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\CheckIn.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\CheckIn.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="8.0.2" />
   </ItemGroup>
 
 </Project>
