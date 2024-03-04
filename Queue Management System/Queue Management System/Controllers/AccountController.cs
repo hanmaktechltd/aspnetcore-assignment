@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Queue_Management_System.Constants;
 using Queue_Management_System.Data;
 using Queue_Management_System.Models;
 using Queue_Management_System.Utils;
@@ -53,7 +54,10 @@ namespace Queue_Management_System.Controllers
                     {
                         try
                         {
-                            return RedirectToAction("ServicePoint", "Queue", new { area = "" });
+                        HttpContext.Session.SetString(StrValues.LoggedInUser, user.Username);
+
+                        HttpContext.Session.SetString(StrValues.Department, user.Department);
+                        return RedirectToAction("ServicePoint", "Queue", new { area = "" });
 
 
                         }

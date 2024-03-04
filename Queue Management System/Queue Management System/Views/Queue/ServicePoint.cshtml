@@ -43,9 +43,9 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="normal-table-list mg-t-30">
             <div class="row">
-                <div class="col-lg-3 col-md-3  col-xs-3">
+                <div class="col-lg-9 col-md-9  col-xs-9">
                     <a asp-action="Customers" class="btn btn-primary">Get next Number</a>
-                    <a asp-action="Customers" class="btn btn-primary">Recall Number</a>
+                    <a asp-action="Recall" class="btn btn-primary">Recall Number</a>
                     <a asp-action="Customers" class="btn btn-primary">View Queue</a>
                 </div><br><br>
             </div>
@@ -88,10 +88,8 @@
                                         </td>
 
                                           <td>
-
-                                            <a class="btn btn-primary" asp-action="Recall" asp-route-id="@item.TicketNumber">Recall</a>
-                                            <a class="btn btn-warning" asp-action="StatusChanged" asp-route-id="@item.TicketNumber">Update</a>
-                                            <a class="btn btn-success" asp-action="Finished" asp-route-id="@item.TicketNumber">Transfer</a>
+                                            <a class="btn btn-warning" asp-action="Update" asp-route-id="@item.TicketNumber">Update</a>
+                                            <a class="btn btn-success" asp-action="Transfer" asp-route-id="@item.TicketNumber">Transfer</a>
                                     </td>
                                     </tr>
                                 }

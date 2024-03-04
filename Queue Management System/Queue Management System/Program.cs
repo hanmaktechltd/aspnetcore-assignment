@@ -9,7 +9,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<QueueDbContext>(options => options.UseNpgsql(
 builder.Configuration.GetConnectionString("DefaultConnection")
 ));
-
+builder.Services.AddSession(options => {
+    options.IdleTimeout = TimeSpan.FromHours(1);
+});
 
 var app = builder.Build();
 
@@ -23,7 +25,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
 
 app.UseAuthorization();
