@@ -5,7 +5,7 @@ namespace Queue_Management_System.Pages
 {
     public class CheckInModel : PageModel
     {
-        private readonly ICustomerService _customerService;
+       /* private readonly ICustomerService _customerService;
         public CheckInModel(ICustomerService customerService)
         {
             _customerService = customerService;
@@ -21,6 +21,6 @@ namespace Queue_Management_System.Pages
             }
             _customerService.CreateCustomer(customerName, serviceType);
             return RedirectToPage("/SuccessPage");
-        }
+        }*/
     }
 }

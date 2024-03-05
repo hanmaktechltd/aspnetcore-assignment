@@ -8,7 +8,7 @@ namespace Queue_Management_System.Controllers
     [ApiController]
     public class ServicePointController : ControllerBase
     {
-        private readonly AppDbContext _context;
+       /* private readonly AppDbContext _context;
 
         public ServicePointController(AppDbContext context)
         {
@@ -28,6 +28,6 @@ namespace Queue_Management_System.Controllers
                 return NotFound();
 
             return Ok(nextNumber);
-        }
+        }*/
     }
 }
