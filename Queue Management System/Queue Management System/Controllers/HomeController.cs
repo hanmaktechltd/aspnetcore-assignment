@@ -7,20 +7,85 @@ namespace Queue_Management_System.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
+        private readonly AppDbContext _context;
+        private readonly Random _random;
+        Customer _customer = new Customer();
+        public HomeController(ILogger<HomeController> logger,AppDbContext context)
+         {
+             _logger = logger;
+            _context = context;
+        } 
         public IActionResult Index()
         {
-            return View();
+            List<WaitingModel> waitingModels = _context.waitingModels.ToList();
+
+            return View(waitingModels);
         }
 
         public IActionResult Privacy()
         {
             return View();
+        }
+        public IActionResult CheckIn()
+        {
+            return View();
+        }
+        public IActionResult WaitingPage()
+        {
+            var CustWaiting = _context.waitingModels.ToList();
+            var viewModels = new List<WaitingModel>();
+            try
+            {
+                foreach (var waits in CustWaiting)
+                {
+                    var viewModel = new WaitingModel();
+                    viewModel.TicketNumber = waits.TicketNumber;
+                    viewModel.ServicePoint = waits.ServicePoint;
+                    viewModel.ServicePointName = waits.ServicePointName;
+                    viewModels.Add(viewModel);
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return View(viewModels);
+
+        }
+        public IActionResult WaitingPage1() 
+        {
+            List<Customer> customers = _context.customers.ToList();
+            var nextCustomer = _context.customers.OrderBy(c => c.Id).FirstOrDefault();
+            try
+            {
+                if ((nextCustomer != null) && (nextCustomer.Status == "Waiting"))
+                {
+                    var servicePoint = _context.ServicePoints.OrderBy(s => Guid.NewGuid()).FirstOrDefault();
+                    if ((servicePoint != null) && servicePoint.Status =="Open")
+                    {
+                        var viewModel = new WaitingModel
+                        {
+                            TicketNumber = nextCustomer?.Id,
+                            ServicePoint = servicePoint?.Id,
+                            ServicePointName = servicePoint?.Name,
+                            
+                        };
+                        _context.waitingModels.Add(viewModel);
+                        _context.SaveChanges();
+                        //update Service point status
+                       // servicePoint.Status = "Busy";
+                        //_context.ServicePoints.Update(servicePoint);
+                        //_context.SaveChanges();
+                        return View(viewModel);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            
+            }
+            return View();
+           
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

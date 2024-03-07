@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Queue_Management_System.Models;
@@ -11,9 +12,11 @@ using Queue_Management_System.Models;
 namespace Queue_Management_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240306174332_UpdateServicePoint")]
+    partial class UpdateServicePoint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,44 +92,12 @@ namespace Queue_Management_System.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Status")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("ServicePoints");
-                });
-
-            modelBuilder.Entity("Queue_Management_System.Models.WaitingModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ServicePoint")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ServicePointName")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("TicketNumber")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServicePoint");
-
-                    b.ToTable("waitingModels");
-                });
-
-            modelBuilder.Entity("Queue_Management_System.Models.WaitingModel", b =>
-                {
-                    b.HasOne("Queue_Management_System.Models.ServicePoint", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServicePoint");
-
-                    b.Navigation("Service");
                 });
 #pragma warning restore 612, 618
         }

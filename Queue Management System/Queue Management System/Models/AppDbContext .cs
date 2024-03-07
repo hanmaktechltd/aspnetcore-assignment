@@ -14,7 +14,7 @@ namespace Queue_Management_System.Models
         public DbSet<Customer> customers { get; set; }
         public DbSet<ServicePoint> ServicePoints { get; set; }
         public DbSet<QueueItem> QueueItems { get; set; }
-
+        public DbSet<WaitingModel> waitingModels { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseSerialColumns();

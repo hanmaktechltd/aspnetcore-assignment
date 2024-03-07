@@ -1,0 +1,47 @@
+﻿@model List<Queue_Management_System.Models.WaitingModel>
+
+<h1>Waiting Page</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ticket Number</th>
+            <th>Service PointId</th>
+            <th>Service Point Name</th>
+        </tr>
+    </thead>
+    @if (Model != null)
+    {
+        <tbody id="WaitingList">
+            @foreach (var item in Model)
+            {
+            <tr>
+                    <td>@item.TicketNumber</td>
+                    <td>@item.ServicePoint</td>
+                    <td>@item.ServicePointName</td>
+            </tr>
+            }
+    </tbody>
+    }
+</table>
+ @if (Model != null)
+{
+    @section scripts {
+    <script>
+        $(document).ready(function () {
+            // Send AJAX request to retrieve customer data
+            $.ajax({
+                url: '@Url.Action("Index", "HomeController")',
+                type: 'GET',
+                success: function (data) {
+                    // Clear existing rows
+                    $('#WaitingList').empty();
+                    // Append new rows with retrieved data
+                    $.each(data, function (index, item) {
+                        $('#WaitingList').append('<tr><td>' + item.TicketNumber + '</td><td>' + item.ServicePoint + '</td><td>' + item.ServicePointName + '</td><td></tr>');
+                    });
+                }
+            });
+        });
+    </script>
+ }
+}

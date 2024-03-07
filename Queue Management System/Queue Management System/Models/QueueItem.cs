@@ -8,5 +8,9 @@ namespace Queue_Management_System.Models
         [Required]
         public int ServicePointId { get; set; }
         public string TicketNumber { get; set; }
+        public QueueItem()
+        {
+            TicketNumber = string.Empty;
+        }
     }
 }
