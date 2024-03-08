@@ -20,7 +20,7 @@
                 <td>@QueuePoint.Finished</td>
                 <td>
                     <a asp-controller="ServicePoint" asp-action="NoShow" asp-route-id="@QueuePoint.Id">NoShow</a> |
-                    <a asp-controller="ServicePoint" asp-action="MarkAsFinished" asp-route-id="@QueuePoint.Id">Finished</a>
+                    <a asp-controller="Home" asp-action="MarkAsFinished" asp-route-id="@QueuePoint.Id">Finished</a>
                     <a asp-controller="ServicePoint" asp-action="RecallNumber" asp-route-id="@QueuePoint.Id">RecallNumber</a>
                 </td>
             </tr>
@@ -34,7 +34,7 @@
         $(document).ready(function () {
             // Send AJAX request to retrieve customer data
             $.ajax({
-                url: '@Url.Action("QueueItem", "ServicePoint")',
+                url: '@Url.Action("QueueItem", "Home")',
                 type: 'GET',
                 success: function (data) {
                     // Clear existing rows

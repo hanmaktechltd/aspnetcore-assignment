@@ -52,6 +52,28 @@ namespace Queue_Management_System.Controllers
             return View(viewModels);
 
         }
+        public IActionResult MarkAsFinished(int ticketNumber)
+        {
+            // Logic to mark a number as finished
+            var ticket = _context.QueueItems.FirstOrDefault(q => q.ServicePoint == ticketNumber);
+            if (ticket != null)
+            {
+                ticket.Finished = true;
+                _context.SaveChanges();
+                //Update the corresponding ServicePoint
+                var servicePointId = ticket?.ServicePoint;
+                if (servicePointId != null)
+                {
+                    var servicePoint = _context.ServicePoints.FirstOrDefault(s => s.Id == servicePointId);
+                    if (servicePoint != null)
+                    {
+                        servicePoint.Finished = true;
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            return RedirectToAction("ServicePoints", "Home");
+        }
         public IActionResult ServicePoints()
         {
             List<ServicePoint> _servicePoints = _context.ServicePoints.ToList();
@@ -92,6 +114,12 @@ namespace Queue_Management_System.Controllers
         public IActionResult Register()
         {
             return View();
+        }
+        public IActionResult QueueItem()
+        {
+            List<QueueItem> queues = _context.QueueItems.ToList();
+
+            return View(queues);
         }
         public IActionResult WaitingPage1() 
         {

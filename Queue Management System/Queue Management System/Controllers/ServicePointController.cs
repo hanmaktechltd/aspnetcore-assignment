@@ -88,11 +88,22 @@ namespace Queue_Management_System.Controllers
         public IActionResult MarkAsFinished(int ticketNumber)
         {
             // Logic to mark a number as finished
-            var ticket = _context.QueueItems.FirstOrDefault(q => q.TicketNumber == ticketNumber);
+            var ticket = _context.QueueItems.FirstOrDefault(q => q.ServicePoint == ticketNumber);
             if (ticket != null)
             {
                 ticket.Finished = true;
                 _context.SaveChanges();
+                //Update the corresponding ServicePoint
+                var servicePointId = ticket?.ServicePoint;
+                if (servicePointId != null)
+                {
+                    var servicePoint = _context.ServicePoints.FirstOrDefault(s => s.Id == servicePointId);
+                    if (servicePoint != null)
+                    {
+                        servicePoint.Finished = true;
+                        _context.SaveChanges();
+                    }
+                }
             }
             return RedirectToAction("ServicePoints", "Home");
         }
@@ -105,7 +116,18 @@ namespace Queue_Management_System.Controllers
                 ticket.NoShow = true;
                 _context.SaveChanges();
             }
-            return RedirectToAction("ServicePoints", "Home");
+            //Update the corresponding ServicePoint
+            var  servicePointId = ticket?.ServicePoint;
+            if (servicePointId != null)
+            {
+                var servicePoint = _context.ServicePoints.FirstOrDefault(s => s.Id == servicePointId);
+                if (servicePoint != null)
+                {
+                    servicePoint.NoShow = true; 
+                    _context.SaveChanges();
+                }
+            }
+                return RedirectToAction("ServicePoints", "Home");
         }
         public IActionResult TransferNumber(int ticketNumber, int newServicePointId)
         {

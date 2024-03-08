@@ -67,7 +67,8 @@ namespace Queue_Management_System.Controllers
             }
             return View();
         }
-        [HttpPost]
+        
+            [HttpPost]
         public IActionResult UpdateQueuePage(QueueItem queue)
         {
             var customerInwaiting = _context.customers.ToList();
@@ -77,7 +78,7 @@ namespace Queue_Management_System.Controllers
                 {
                     if ((client != null) && (client.Status == "Waiting"))
                     {
-                        var servicePoint = _context.ServicePoints.Where(sp => sp.Status == "Open").ToList();
+                        var servicePoint = _context.ServicePoints.Where(sp => sp.Status == "Busy").ToList();
                         if (servicePoint != null)
                         {
                             foreach (var queuePoint in servicePoint)
@@ -101,5 +102,21 @@ namespace Queue_Management_System.Controllers
             }
             return View();
         }
+        public IActionResult PrintTicket(int customerId)
+        {
+            // Fetch customer details from the database based on customerId
+            var customer = _context.customers.FirstOrDefault(c => c.Id == customerId);           
+            var report = new FastReport.Report();
+            report.Load(@"C:\TicketsTemplate.frx");
+            // Populate the report with data
+            report.SetParameterValue("CustomerName", customer?.Name);
+            report.SetParameterValue("ServiceType", customer?.ServiceType);
+            report.SetParameterValue("Check In time", customer?.CheckInTime);
+            // Render the report
+            var pdfStream = new MemoryStream();
+            report.Export(new FastReport.Export.Pdf.PDFExport(), pdfStream);
+            return File(pdfStream.ToArray(), "application/pdf", "Ticket.pdf");
+        }
+
     }
 }
