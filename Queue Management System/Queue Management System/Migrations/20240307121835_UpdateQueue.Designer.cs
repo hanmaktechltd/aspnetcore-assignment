@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Queue_Management_System.Models;
@@ -11,9 +12,11 @@ using Queue_Management_System.Models;
 namespace Queue_Management_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240307121835_UpdateQueue")]
+    partial class UpdateQueue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,11 +70,12 @@ namespace Queue_Management_System.Migrations
                     b.Property<int>("ServicePointId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("TicketNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("TicketNumber")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ServicePointId");
 
                     b.ToTable("QueueItems");
                 });
@@ -124,6 +128,17 @@ namespace Queue_Management_System.Migrations
                     b.HasIndex("ServicePoint");
 
                     b.ToTable("waitingModels");
+                });
+
+            modelBuilder.Entity("Queue_Management_System.Models.QueueItem", b =>
+                {
+                    b.HasOne("Queue_Management_System.Models.ServicePoint", "ServicePoint")
+                        .WithMany()
+                        .HasForeignKey("ServicePointId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ServicePoint");
                 });
 
             modelBuilder.Entity("Queue_Management_System.Models.WaitingModel", b =>

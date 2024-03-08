@@ -1,0 +1,10 @@
+﻿@model Queue_Management_System.Models.ServicePoint
+<h1>Delete Service Point</h1>
+@if (Model != null)
+{
+    <form asp-controller="ServicePoint" asp-action="Delete" method="post">
+        <input type="hidden" name="Id" value="@Model.Id" />
+        <p>Are you sure you want to delete this service point?</p>
+        <button type="submit">Delete</button>
+    </form>
+}

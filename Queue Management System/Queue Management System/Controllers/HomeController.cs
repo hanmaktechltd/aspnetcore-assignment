@@ -52,6 +52,47 @@ namespace Queue_Management_System.Controllers
             return View(viewModels);
 
         }
+        public IActionResult ServicePoints()
+        {
+            List<ServicePoint> _servicePoints = _context.ServicePoints.ToList();
+            return View(_servicePoints);
+        }
+        public IActionResult Create()
+        {
+            return View();
+        }
+        public IActionResult Delete(int id)
+        {
+            var servicepoint = _context.ServicePoints.FirstOrDefault(x => x.Id == id);
+            if (servicepoint != null)
+            {
+                _context.ServicePoints.Remove(servicepoint);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ServicePoints", "Home");
+        }
+        public IActionResult Edit(int id)
+        {
+            var servicePoint = _context.ServicePoints.FirstOrDefault(sp => sp.Id == id);
+
+            if (servicePoint == null)
+            {
+                return NotFound(); 
+            }
+            return View(servicePoint);
+        }
+        public IActionResult Login()
+        {
+            return View();
+        }
+        public IActionResult Logout()
+        {
+            return View();
+        }
+        public IActionResult Register()
+        {
+            return View();
+        }
         public IActionResult WaitingPage1() 
         {
             List<Customer> customers = _context.customers.ToList();

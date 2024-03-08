@@ -6,11 +6,11 @@ namespace Queue_Management_System.Models
     {
         public int Id { get; set; }
         [Required]
-        public int ServicePointId { get; set; }
         public string TicketNumber { get; set; }
-        public QueueItem()
-        {
-            TicketNumber = string.Empty;
-        }
+        public int ServicePointId { get; set; }
+        //public ServicePoint ServicePoint { get; set; }
+        public bool NoShow { get; set; }
+        public bool Finished { get; set; }
+
     }
 }

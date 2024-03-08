@@ -35,6 +35,11 @@ app.MapControllerRoute(
     pattern: "WaitingPage/{action}",
     defaults: new { controller = "WaitingPage" });
 app.MapControllerRoute(
+    name: "ServicePointController",
+    pattern: "ServicePointController/{action}",
+    defaults: new { controller = "ServicePointController" });
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 // Map the root URL to the CheckIn page

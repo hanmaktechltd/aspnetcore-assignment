@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Queue_Management_System.Models;
@@ -11,9 +12,11 @@ using Queue_Management_System.Models;
 namespace Queue_Management_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240307143942_UpdateQueue1")]
+    partial class UpdateQueue1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,12 +67,8 @@ namespace Queue_Management_System.Migrations
                     b.Property<bool>("NoShow")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("ServicePointId")
+                    b.Property<int>("TicketNumber")
                         .HasColumnType("integer");
-
-                    b.Property<string>("TicketNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
