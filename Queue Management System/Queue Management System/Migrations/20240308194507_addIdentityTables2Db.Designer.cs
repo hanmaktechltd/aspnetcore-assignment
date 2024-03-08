@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Queue_Management_System.Data;
@@ -11,9 +12,11 @@ using Queue_Management_System.Data;
 namespace QueueManagementSystem.Migrations
 {
     [DbContext(typeof(QueueDbContext))]
-    partial class QueueDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240308194507_addIdentityTables2Db")]
+    partial class addIdentityTables2Db
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

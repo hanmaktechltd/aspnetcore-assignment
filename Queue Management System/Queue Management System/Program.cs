@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Queue_Management_System.Data;
 using System.Configuration;
@@ -9,6 +10,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<QueueDbContext>(options => options.UseNpgsql(
 builder.Configuration.GetConnectionString("DefaultConnection")
 ));
+builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<QueueDbContext>();
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromHours(1);
 });
@@ -27,7 +29,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
