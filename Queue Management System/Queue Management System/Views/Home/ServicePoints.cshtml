@@ -1,6 +1,7 @@
 ﻿@model List<Queue_Management_System.Models.ServicePoint>
 <h1>Service Points</h1>
-<a asp-controller="Home" asp-action="Create">Add Service Point</a>
+<a asp-controller="Home" asp-action="Create">Add Service Point</a>|
+
 <table>
     <tr>
         <th style="padding: 10px;">ServicePointId</th>
@@ -21,7 +22,12 @@
             <td>@servicePoint.Finished</td>
             <td>
                     <a asp-controller="ServicePoint" asp-action="Edit" asp-route-id="@servicePoint.Id">Edit</a> |
-                    <a asp-controller="Home" asp-action="Delete" asp-route-id="@servicePoint.Id">Delete</a>
+                    <a asp-controller="Home" asp-action="Delete" asp-route-id="@servicePoint.Id">Delete</a>|
+                    <!-- Trigger GetNextNumber action -->
+                    <form method="post" action="@Url.Action("GetNextNumber", "ServicePoint")">
+                        <input type="hidden" name="servicePointId" value="@servicePoint.Id" />
+                        <button type="submit">Get Next Number</button>
+                    </form>
             </td>
         </tr>
     }

@@ -5,19 +5,19 @@
 namespace Queue_Management_System.Migrations
 {
     /// <inheritdoc />
-    public partial class AddServicePointForeignKey : Migration
+    public partial class ForeignKeyQueueItems : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateIndex(
-                name: "IX_waitingModels_ServicePoint",
-                table: "waitingModels",
+                name: "IX_QueueItems_ServicePoint",
+                table: "QueueItems",
                 column: "ServicePoint");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_waitingModels_ServicePoints_ServicePoint",
-                table: "waitingModels",
+                name: "FK_QueueItems_ServicePoints_ServicePoint",
+                table: "QueueItems",
                 column: "ServicePoint",
                 principalTable: "ServicePoints",
                 principalColumn: "Id");
@@ -27,12 +27,12 @@ namespace Queue_Management_System.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_waitingModels_ServicePoints_ServicePoint",
-                table: "waitingModels");
+                name: "FK_QueueItems_ServicePoints_ServicePoint",
+                table: "QueueItems");
 
             migrationBuilder.DropIndex(
-                name: "IX_waitingModels_ServicePoint",
-                table: "waitingModels");
+                name: "IX_QueueItems_ServicePoint",
+                table: "QueueItems");
         }
     }
 }

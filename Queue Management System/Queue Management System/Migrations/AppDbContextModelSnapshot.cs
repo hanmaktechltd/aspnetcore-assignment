@@ -61,17 +61,25 @@ namespace Queue_Management_System.Migrations
                     b.Property<bool>("Finished")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsCalled")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("NoShow")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("ServicePointId")
+                    b.Property<int?>("ServicePoint")
                         .HasColumnType("integer");
 
-                    b.Property<string>("TicketNumber")
-                        .IsRequired()
+                    b.Property<string>("ServicepointName")
                         .HasColumnType("text");
 
+                    b.Property<int?>("TicketNumber")
+                        .IsRequired()
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ServicePoint");
 
                     b.ToTable("QueueItems");
                 });
@@ -124,6 +132,15 @@ namespace Queue_Management_System.Migrations
                     b.HasIndex("ServicePoint");
 
                     b.ToTable("waitingModels");
+                });
+
+            modelBuilder.Entity("Queue_Management_System.Models.QueueItem", b =>
+                {
+                    b.HasOne("Queue_Management_System.Models.ServicePoint", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServicePoint");
+
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("Queue_Management_System.Models.WaitingModel", b =>

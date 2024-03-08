@@ -12,8 +12,8 @@ using Queue_Management_System.Models;
 namespace Queue_Management_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240306183521_UpdateWaitingPage")]
-    partial class UpdateWaitingPage
+    [Migration("20240308081340_QueueItems")]
+    partial class QueueItems
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,12 +61,18 @@ namespace Queue_Management_System.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ServicePointId")
+                    b.Property<bool>("Finished")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("NoShow")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("ServicePoint")
                         .HasColumnType("integer");
 
-                    b.Property<string>("TicketNumber")
+                    b.Property<int?>("TicketNumber")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -118,7 +124,18 @@ namespace Queue_Management_System.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ServicePoint");
+
                     b.ToTable("waitingModels");
+                });
+
+            modelBuilder.Entity("Queue_Management_System.Models.WaitingModel", b =>
+                {
+                    b.HasOne("Queue_Management_System.Models.ServicePoint", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServicePoint");
+
+                    b.Navigation("Service");
                 });
 #pragma warning restore 612, 618
         }

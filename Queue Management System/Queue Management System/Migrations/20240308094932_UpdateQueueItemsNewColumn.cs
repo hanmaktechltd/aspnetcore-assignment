@@ -5,21 +5,14 @@
 namespace Queue_Management_System.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateServicePoint : Migration
+    public partial class UpdateQueueItemsNewColumn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name: "Finished",
-                table: "ServicePoints",
-                type: "boolean",
-                nullable: false,
-                defaultValue: false);
-
-            migrationBuilder.AddColumn<bool>(
-                name: "NoShow",
-                table: "ServicePoints",
+                name: "IsCalled",
+                table: "QueueItems",
                 type: "boolean",
                 nullable: false,
                 defaultValue: false);
@@ -29,12 +22,8 @@ namespace Queue_Management_System.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Finished",
-                table: "ServicePoints");
-
-            migrationBuilder.DropColumn(
-                name: "NoShow",
-                table: "ServicePoints");
+                name: "IsCalled",
+                table: "QueueItems");
         }
     }
 }

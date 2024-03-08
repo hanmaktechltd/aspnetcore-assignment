@@ -5,24 +5,24 @@
 namespace Queue_Management_System.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateQueue2 : Migration
+    public partial class UpdateQueueItemsColumns : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "TicketNumber",
+            migrationBuilder.AddColumn<string>(
+                name: "ServicepointName",
                 table: "QueueItems",
-                newName: "ServicePointId");
+                type: "text",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "ServicePointId",
-                table: "QueueItems",
-                newName: "TicketNumber");
+            migrationBuilder.DropColumn(
+                name: "ServicepointName",
+                table: "QueueItems");
         }
     }
 }

@@ -55,5 +55,74 @@ namespace Queue_Management_System.Controllers
             return RedirectToAction("ServicePoints", "Home");
         }
 
+        public IActionResult QueueItem()
+        {
+            List<QueueItem> queues = _context.QueueItems.ToList();
+
+            return View(queues);
+        }
+        public IActionResult GetNextNumber(int servicePointId)
+        {
+            // Logic to get the next number for the given service point
+            var nextNumber = _context.QueueItems.Where(q => q.ServicePoint == servicePointId && !q.IsCalled)
+                                                .OrderBy(q => q.TicketNumber)
+                                                .FirstOrDefault();
+            if (nextNumber != null)
+            {
+                nextNumber.IsCalled = true;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("QueueItem", "ServicePoint");
+        }
+        public IActionResult RecallNumber(int ticketNumber)
+        {
+            // Logic to recall a number
+            var ticket = _context.QueueItems.FirstOrDefault(q => q.TicketNumber == ticketNumber);
+            if (ticket != null)
+            {
+                ticket.IsCalled = false;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ServicePoints", "Home");
+        }
+        public IActionResult MarkAsFinished(int ticketNumber)
+        {
+            // Logic to mark a number as finished
+            var ticket = _context.QueueItems.FirstOrDefault(q => q.TicketNumber == ticketNumber);
+            if (ticket != null)
+            {
+                ticket.Finished = true;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ServicePoints", "Home");
+        }
+        public IActionResult NoShow(int ticketNumber)
+        {
+            // Logic to mark a number as finished
+            var ticket = _context.QueueItems.FirstOrDefault(q => q.TicketNumber == ticketNumber);
+            if (ticket != null)
+            {
+                ticket.NoShow = true;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ServicePoints", "Home");
+        }
+        public IActionResult TransferNumber(int ticketNumber, int newServicePointId)
+        {
+            // Logic to transfer a number to another service point
+            var ticket = _context.QueueItems.FirstOrDefault(q => q.TicketNumber == ticketNumber);
+            if (ticket != null)
+            {
+                ticket.ServicePoint = newServicePointId;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ServicePoints", "Home");
+        }
+        public IActionResult ViewQueue(int servicePointId)
+        {
+            // Retrieve queue data from the database for the given service point
+            var queueData = _context.QueueItems.Where(q => q.ServicePoint == servicePointId).ToList();
+            return View(queueData);
+        }
     }
 }

@@ -22,10 +22,14 @@ namespace Queue_Management_System.Controllers
 
             model.CheckInTime = DateTime.UtcNow;
             model.Status = "Waiting";
-            _context.customers.Add(model);           
+            _context.customers.Add(model);
             _context.SaveChanges();
+            //Upate Waiting page
             var waitModel = new WaitingModel();
             UpdateWaitingPage(waitModel);
+            //Update Queue
+            var queueModel = new QueueItem();
+            UpdateQueuePage(queueModel);
             return RedirectToAction("Index", "Home");
         }
         [HttpPost]
@@ -52,6 +56,40 @@ namespace Queue_Management_System.Controllers
                                 queue.Status = "Busy";
                                 _context.ServicePoints.Update(queue);
                                 _context.SaveChanges();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return View();
+        }
+        [HttpPost]
+        public IActionResult UpdateQueuePage(QueueItem queue)
+        {
+            var customerInwaiting = _context.customers.ToList();
+            try
+            {
+                foreach (var client in customerInwaiting)
+                {
+                    if ((client != null) && (client.Status == "Waiting"))
+                    {
+                        var servicePoint = _context.ServicePoints.Where(sp => sp.Status == "Open").ToList();
+                        if (servicePoint != null)
+                        {
+                            foreach (var queuePoint in servicePoint)
+                            {
+                                queue.TicketNumber = client.Id;
+                                queue.ServicePoint = queuePoint.Id;
+                                queue.ServicepointName = queuePoint.Name;
+                                queue.NoShow = true;
+                                queue.Finished = false;
+                                _context.QueueItems.Add(queue);
+                                _context.SaveChanges();
+                                
                             }
                         }
                     }
