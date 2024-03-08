@@ -4,7 +4,7 @@ using Queue_Management_System.Models;
 
 namespace Queue_Management_System.Data
 {
-    public class QueueDbContext:DbContext
+    public class QueueDbContext:IdentityDbContext
     {
         public QueueDbContext(DbContextOptions<QueueDbContext> options) : base(options)
         {

@@ -55,54 +55,55 @@
                     <a asp-action="Generate" asp-route-id="NSSF" class="btn btn-primary">Request NSSF Service</a>
                 </div>
             </div>
-            @* <div class="bsc-tbl-hvr table-border-style">
-                <div class="divScroll">
-                    <div class="table-responsive">
-                        <table class="table table-hover" id="customers">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.Id)
-                                    </th>
-                                   
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.ServiceRequested)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.serviceDate)
-                                    </th>
-                                  
-                                   
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Id)
-                                        </td>
-                                        
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.ServiceRequested)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.serviceDate)
-                                        </td>
-                                      
-                                       
-                                        <td>
-                                            
-                                            <a class="btn-danger btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div> *@
+        
         </div>
     </div>
+    <script type="text/javascript">
+        // Disable back navigation
+        history.pushState(null, null, window.location.href);
+        window.onpopstate = function (event) {
+            history.pushState(null, null, window.location.href);
+        };
 
+        // Additional step to handle back button click
+        window.addEventListener('popstate', function (event) {
+            history.pushState(null, null, window.location.href);
+        });
+
+        // Disable right-click menu
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Disable keyboard shortcuts (e.g., F12, Ctrl+Shift+I)
+        document.onkeydown = function (e) {
+            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && e.keyCode === 73)) {
+                return false;
+            }
+        };
+
+        // Reset session after 5 minutes of inactivity
+        var idleTime = 0;
+        var idleInterval = setInterval(timerIncrement, 6000); // 1 minute
+
+        function timerIncrement() {
+            idleTime++;
+            if (idleTime > 5) {  // 5 minutes
+                // Reset the application state or redirect to the default page
+                location.reload();
+            }
+        }
+
+       
+
+        // Enter full-screen mode
+        function enterFullScreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) { /* Firefox */
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { /* IE/Edge */
+                document.documentElement.msRequestFullscreen();
+            }
+        }
+    </script>

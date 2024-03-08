@@ -39,7 +39,7 @@ namespace Queue_Management_System.Controllers
 
 
 
-        //[Authorize, HttpGet]
+        [Authorize]
         [HttpGet]
         public IActionResult ServicePoint()
         {
@@ -145,7 +145,7 @@ namespace Queue_Management_System.Controllers
                 rep.Report.Export(pdfExport, ms);
                 rep.Dispose();
                 ms.Position = 0;
-                return File(ms, "application/pdf", "myreport.pdf");
+                return File(ms, "application/pdf", "ticket.pdf");
             }
             else 
             {
