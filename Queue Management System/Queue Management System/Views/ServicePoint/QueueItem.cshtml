@@ -1,0 +1,51 @@
+﻿@model List<Queue_Management_System.Models.QueueItem>
+<h1>Queue Items</h1>
+<table>
+    <tr>
+        <th style="padding: 10px;">TicketNumber</th>
+        <th style="padding: 10px;">ServicePointId</th>
+        <th style="padding: 10px;">ServicepointName</th>
+        <th style="padding: 10px;">NoShow</th>
+        <th style="padding: 10px;">Finished</th>
+    </tr>
+    @if (Model != null)
+    {
+        @foreach (var QueuePoint in Model)
+        {
+            <tr>
+                <td>@QueuePoint.Id</td>
+                <td>@QueuePoint.ServicePoint</td>
+                <td>@QueuePoint.ServicepointName</td>
+                <td>@QueuePoint.NoShow</td>
+                <td>@QueuePoint.Finished</td>
+                <td>
+                    <a asp-controller="ServicePoint" asp-action="NoShow" asp-route-id="@QueuePoint.Id">NoShow</a> |
+                    <a asp-controller="Home" asp-action="MarkAsFinished" asp-route-id="@QueuePoint.Id">Finished</a>
+                    <a asp-controller="ServicePoint" asp-action="RecallNumber" asp-route-id="@QueuePoint.Id">RecallNumber</a>
+                </td>
+            </tr>
+        }
+    }
+</table>
+@if (Model != null)
+{
+    @section scripts {
+    <script>
+        $(document).ready(function () {
+            // Send AJAX request to retrieve customer data
+            $.ajax({
+                url: '@Url.Action("QueueItem", "Home")',
+                type: 'GET',
+                success: function (data) {
+                    // Clear existing rows
+                    $('#WaitingList').empty();
+                    // Append new rows with retrieved data
+                    $.each(data, function (index, item) {
+                        $('#WaitingList').append('<tr><td>' + item.Id + '</td><td>' + item.ServicePoint + '</td><td>' + item.ServicepointName + '</td><td>' + item.NoShow + '</td>' + item.Finished + '</td></tr>');
+                    });
+                }
+            });
+        });
+    </script>
+    }
+}
