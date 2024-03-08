@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Queue_Management_System.Models;
 using System.Linq;
+
 namespace Queue_Management_System.Controllers
 {
     public class CheckIn : Controller
@@ -30,7 +31,15 @@ namespace Queue_Management_System.Controllers
             //Update Queue
             var queueModel = new QueueItem();
             UpdateQueuePage(queueModel);
-            return RedirectToAction("Index", "Home");
+            //
+            int custid = model.Id;
+            var id = _context.customers.Select(x=>x.Id==custid).FirstOrDefault();
+            if (id != null)
+            {
+                PrintTicket(custid);
+            }
+            
+            return RedirectToAction("CheckIn", "Home");
         }
         [HttpPost]
         public IActionResult UpdateWaitingPage(WaitingModel model1)

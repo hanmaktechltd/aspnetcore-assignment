@@ -1,4 +1,5 @@
 ﻿@model Queue_Management_System.Models.Customer
+@using Microsoft.AspNetCore.Mvc.Rendering
 <h1>Check In</h1>
 
 <form method="post" action="/CheckIn/CheckIn1">
@@ -12,5 +13,48 @@
         <input type="text" id="serviceType" name="ServiceType" class="form-control">
         <span asp-validation-for="ServiceType" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Check In</button>
+     
+        <button type="submit" class="btn btn-primary">Check In</button>
+
 </form>
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            
+            $('#checkInForm').submit(function (event) {
+                event.preventDefault();               
+                $.ajax({
+                    url: '@Url.Action("CheckIn1", "CheckIn")',
+                    type: 'POST',
+                    data: $(this).serialize(), 
+                    success: function () {                      
+                        printTicket();
+                    },
+                    error: function () {
+                        alert('Failed to submit check-in form!');
+                    }
+                });
+            });
+
+            // Function to print the ticket
+            function printTicket() {
+                // Check if Model is not null
+                if (@Model != null) {
+                    // Send an AJAX request to trigger the PrintTicket action
+                    $.ajax({
+                        url: '@Url.Action("PrintTicket", "CheckIn")',
+                        type: 'GET',
+                        success: function () {
+                            alert('Ticket printed successfully!');
+                        },
+                        error: function () {
+                            alert('Failed to print ticket!');
+                        }
+                    });
+                } else {
+                    alert('Customer data not available!');
+                }
+            }
+        });
+    </script>
+}
