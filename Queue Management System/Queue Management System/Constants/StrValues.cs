@@ -1,8 +1,15 @@
-﻿namespace Queue_Management_System.Constants
+﻿using System.Reflection.Metadata;
+
+namespace Queue_Management_System.Constants
 {
     public class StrValues
     {
-        static public string LoggedInUser = "LoggedInUser";
-        static public string Department = "UserSacco";
+        
+         public const string AdminTole = "Admin";
+         public const string LoggedInUser = "User";
+         public const string Department = "Department";
+         public const string ProviderRole = "ServiceProvider";
+         public const string UserRole = "User";
+
     }
 }

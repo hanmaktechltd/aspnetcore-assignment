@@ -8,6 +8,7 @@ using Queue_Management_System.Models;
 using System.Reflection;
 using FastReport;
 using Microsoft.Extensions.Hosting.Internal;
+using Queue_Management_System.Constants;
 
 namespace Queue_Management_System.Controllers
 {
@@ -30,6 +31,7 @@ namespace Queue_Management_System.Controllers
 
 
 
+        [Authorize(Roles = StrValues.LoggedInUser)]
         [HttpGet]
         public IActionResult Customers()
         {
@@ -39,7 +41,7 @@ namespace Queue_Management_System.Controllers
 
 
 
-        [Authorize]
+       
         [HttpGet]
         public IActionResult ServicePoint()
         {

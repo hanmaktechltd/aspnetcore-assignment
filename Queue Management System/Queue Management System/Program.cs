@@ -10,7 +10,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<QueueDbContext>(options => options.UseNpgsql(
 builder.Configuration.GetConnectionString("DefaultConnection")
 ));
-builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<QueueDbContext>();
+builder.Services.AddIdentity<IdentityUser,IdentityRole>()
+    .AddDefaultTokenProviders().AddDefaultUI()
+    .AddEntityFrameworkStores<QueueDbContext>();
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromHours(1);
 });
@@ -31,7 +33,7 @@ app.UseSession();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
