@@ -18,7 +18,7 @@ namespace Queue_Management_System.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Customers()
         {
             return View();
         }

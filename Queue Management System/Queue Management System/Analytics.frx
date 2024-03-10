@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="03/03/2024 19:36:30" ReportInfo.Modified="03/11/2024 01:17:04" ReportInfo.CreatorVersion="2024.1.3.0">
+  <Dictionary>
+    <Parameter Name="param1" DataType="System.String" AsString=""/>
+    <Parameter Name="param2" DataType="System.String" AsString=""/>
+    <Parameter Name="param3" DataType="System.String" AsString=""/>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="283.5">
+      <TextObject Name="Text1" Left="236.25" Top="18.9" Width="207.9" Height="18.9" Text="TICKET SERVICE ANALYTICS" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text10" Left="226.8" Top="94.5" Width="425.25" Height="18.9" Text="[param1]" Font="Arial, 10pt"/>
+      <TextObject Name="Text11" Left="226.8" Top="151.2" Width="425.25" Height="18.9" Text="[param2]" Font="Arial, 10pt"/>
+      <TextObject Name="Text12" Left="529.2" Top="47.25" Width="132.3" Height="18.9" Text="[Date]" Font="Arial, 10pt"/>
+      <TextObject Name="Text14" Left="226.8" Top="207.9" Width="425.25" Height="18.9" Text="[param3]" Font="Arial, 10pt"/>
+      <TextObject Name="Text15" Left="9.45" Top="94.5" Width="170.1" Height="18.9" Text="Number of Customers" Font="Arial, 10pt"/>
+      <TextObject Name="Text16" Left="9.45" Top="151.2" Width="170.1" Height="18.9" Text="Average Waiting Time" Font="Arial, 10pt"/>
+      <TextObject Name="Text17" Left="9.45" Top="198.45" Width="170.1" Height="18.9" Text="Average Service Time" Font="Arial, 10pt"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="287.5" Width="718.2" Height="28.35"/>
+    <DataBand Name="Data1" Top="319.85" Width="718.2" Height="75.6"/>
+    <PageFooterBand Name="PageFooter1" Top="399.45" Width="718.2" Height="18.9">
+      <TextObject Name="Text13" Left="623.7" Width="94.5" Height="18.9" Text="[Page]" Font="Arial, 10pt"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>
