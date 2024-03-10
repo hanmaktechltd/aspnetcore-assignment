@@ -135,6 +135,7 @@ namespace Queue_Management_System.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+
                     if (User.IsInRole(StrValues.AdminTole))
                     {
                         await _userManager.AddToRoleAsync(user, StrValues.ProviderRole);

@@ -14,5 +14,7 @@ namespace Queue_Management_System.Data
         public DbSet<CustomerService> Customers { get; set; }
         public DbSet<Login> UserAccounts { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Sprovider> Providers { get; set; }
+        public DbSet<Spoints> Points { get; set; }
     }
 }

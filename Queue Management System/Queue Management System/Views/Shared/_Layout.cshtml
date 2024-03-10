@@ -18,7 +18,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <partial name="_LoginPartial" />
+                    
                     <ul class="navbar-nav flex-grow-1">
                         
                         <li class="nav-item">
@@ -28,14 +28,19 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Queue" asp-action="Customers">Waiting</a>
                         </li>
                         <li class="nav-item">
-                            @* <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Service Point</a> *@
-                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Service Point</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Queue" asp-action="ServicePoint">Service Point</a>
+                           
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Admin</a>
+                             <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Dashboard">Admin</a>
                         </li>
                     </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="nav-item">
+                            <partial name="_LoginPartial" />
+                        </li>
+                        </ul>
                 </div>
             </div>
         </nav>

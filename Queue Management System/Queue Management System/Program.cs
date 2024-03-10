@@ -12,6 +12,7 @@ builder.Configuration.GetConnectionString("DefaultConnection")
 ));
 builder.Services.AddIdentity<IdentityUser,IdentityRole>()
     .AddDefaultTokenProviders().AddDefaultUI()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<QueueDbContext>();
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromHours(1);

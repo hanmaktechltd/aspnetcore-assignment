@@ -31,7 +31,7 @@ namespace Queue_Management_System.Controllers
 
 
 
-        [Authorize(Roles = StrValues.LoggedInUser)]
+        
         [HttpGet]
         public IActionResult Customers()
         {
@@ -41,7 +41,7 @@ namespace Queue_Management_System.Controllers
 
 
 
-       
+        [Authorize(Roles = StrValues.ProviderRole)]
         [HttpGet]
         public IActionResult ServicePoint()
         {
