@@ -30,8 +30,84 @@ namespace Queue_Management_System.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult Update(long? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        
+            var spoint = _dbContext.Customers.FirstOrDefault(n => n.TicketNumber == id);
+            if (spoint == null)
+            {
+                return NotFound();
+            }
+           
+            return View(spoint);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(CustomerService service)
+        {
+            if (service.TicketNumber <1)
+            {
+                return NotFound();
+            }
+
+            var spoint = _dbContext.Customers.FirstOrDefault(n => n.TicketNumber == service.TicketNumber);
+            if (spoint == null)
+            {
+                return NotFound();
+            }
+            spoint.TicketNumber = service.TicketNumber;
+            spoint.ServiceRequested = service.ServiceRequested;
+            spoint.Status = service.Status;
+            spoint.serviceDate = service.serviceDate;
+            _dbContext.Update(spoint);
+            _dbContext.SaveChanges();
+            return View(spoint);
+        }
+        [HttpGet]
+        public IActionResult Transfer(long? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var spoint = _dbContext.Customers.FirstOrDefault(n => n.TicketNumber == id);
+            if (spoint == null)
+            {
+                return NotFound();
+            }
+            var zones = _dbContext.Providers.Select(b => b.Name).ToList(); ;
+            ViewBag.Points = new SelectList(zones);
+
+            return View(spoint);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Transfer(CustomerService service)
+        {
+            if (service.TicketNumber < 1)
+            {
+                return NotFound();
+            }
+
+            var spoint = _dbContext.Customers.FirstOrDefault(n => n.TicketNumber == service.TicketNumber);
+            if (spoint == null)
+            {
+                return NotFound();
+            }
+            spoint.TicketNumber = service.TicketNumber;
+            spoint.ServiceRequested = service.ServiceRequested;
+            spoint.Status = service.Status;
+            spoint.serviceDate = service.serviceDate;
+            _dbContext.Update(spoint);
+            _dbContext.SaveChanges();
+            return View(spoint);
+        }
         [HttpGet]
         public IActionResult Customers()
         {

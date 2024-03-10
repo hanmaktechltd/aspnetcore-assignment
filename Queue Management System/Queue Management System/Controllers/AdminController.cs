@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Queue_Management_System.Constants;
 using Queue_Management_System.Data;
 using Queue_Management_System.Models;
+using System;
 
 namespace Queue_Management_System.Controllers
 {
@@ -28,16 +29,22 @@ namespace Queue_Management_System.Controllers
         [HttpGet]
         public IActionResult AddServicePoint()
         {
-            var zones = _dbContext.Points.ToList();
+            var zones = _dbContext.Providers.Select(b => b.Name).ToList(); ;
             ViewBag.Points = new SelectList(zones);
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Service_Provider()
+        {
+            
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddServicePoint(Spoints point)
         {
-            if (ModelState.IsValid)
-            {
+            
                 _dbContext.Points.Add(new Spoints
                 {
                     Counter = point.Counter,
@@ -47,7 +54,7 @@ namespace Queue_Management_System.Controllers
 
                 });
                 _dbContext.SaveChanges();
-            }
+            
             return RedirectToAction(nameof(Service_Points));
             
         }
@@ -63,7 +70,26 @@ namespace Queue_Management_System.Controllers
             var providers = _dbContext.Providers;
             return View(providers.OrderBy(n => n.id));
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Service_Provider(Sprovider provider)
+        {
+           
+                _dbContext.Providers.Add(new Sprovider
+                {
+                    Name = provider.Name,
+                    Status= "Open",
+                    
+
+
+                });
+                _dbContext.SaveChanges();
+            
+            return RedirectToAction(nameof(Service_Providers));
+
+        }
         
+
         [HttpPost]
         public IActionResult Close(long? id)
         {
@@ -84,45 +110,54 @@ namespace Queue_Management_System.Controllers
             _dbContext.SaveChangesAsync();
             return View();
         }
-
-        public FileResult Analytics(string? id)
+        
+            [HttpPost]
+        public IActionResult CloseProvider(long? id)
+        {
+            if (id == null)
             {
-                if (id == null)
-                {
-                    return null;
-                }
-                var recentNo = _dbContext.Customers.ToList().OrderByDescending(s => s.TicketNumber)
-                        .Select(s => s.TicketNumber).FirstOrDefault();
-                var newNo = recentNo + 1;
-                _dbContext.Customers.Add(new CustomerService
-                {
-                    TicketNumber = newNo,
-                    ServiceRequested = id,
-                    Status = "Pending",
-                    serviceDate = DateTime.UtcNow,
+                return NotFound();
+            }
 
-                });
-                _dbContext.SaveChanges();
+            var provider = _dbContext.Providers.FirstOrDefault(n => n.id == id);
+            if (provider == null)
+            {
+                return NotFound();
+            }
+            provider.Name = provider.Name;
+            provider.Status = "Closed";
+            _dbContext.Update(provider);
+            _dbContext.SaveChangesAsync();
+            return View();
+        }
+        public FileResult Analytics()
+            {
+               
+                var allCustomers = _dbContext.Customers.Count();
+                var waitingTime = "12 mins";
+                var serviceTime = "14 mins";
                 FastReport.Utils.Config.WebMode = true;
                 Report rep = new Report();
-                string path = Path.Combine(_hostingEnvironment.ContentRootPath, "ServedCustomers.frx");
+                string path = Path.Combine(_hostingEnvironment.ContentRootPath, "Analytics.frx");
                 rep.Load(path);
-                List<CustomerService> cust = new List<CustomerService>();
-                cust.Add(new CustomerService() { TicketNumber = newNo, ServiceRequested = id, Status = "Pending", serviceDate = DateTime.Now });
-                rep.SetParameterValue("param1", "This Ticket is valid within 24 hrs ");
-                rep.SetParameterValue("param2", "If you misplaced the ticket,generate another one");
-                rep.RegisterData(cust, "CustomerServed");
+            
+
+            
+                rep.SetParameterValue("param1", allCustomers);
+                rep.SetParameterValue("param2", waitingTime);
+                rep.SetParameterValue("param3", serviceTime);
+                rep.RegisterData("", "CustomerServed");
                 if (rep.Report.Prepare())
                 {
                     FastReport.Export.PdfSimple.PDFSimpleExport pdfExport = new FastReport.Export.PdfSimple.PDFSimpleExport();
                     pdfExport.ShowProgress = false;
-                    pdfExport.Subject = "Subject Report";
-                    pdfExport.Title = "Report Title";
+                    pdfExport.Subject = "Analysis Report";
+                    pdfExport.Title = "CUstomer Service Analysis";
                     System.IO.MemoryStream ms = new System.IO.MemoryStream();
                     rep.Report.Export(pdfExport, ms);
                     rep.Dispose();
                     ms.Position = 0;
-                    return File(ms, "application/pdf", "ticket.pdf");
+                    return File(ms, "application/pdf", "Analytics.pdf");
                 }
                 else
                 {
