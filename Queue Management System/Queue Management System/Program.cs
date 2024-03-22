@@ -1,7 +1,13 @@
+using Queue_Management_System.DataContext;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Add Dapper Context to DI container
+builder.Services.AddSingleton<DapperContext>();
+
 
 var app = builder.Build();
 
